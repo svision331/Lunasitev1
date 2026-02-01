@@ -23,7 +23,7 @@ export function CosmosMap({ onClose }: CosmosMapProps) {
             {onClose && (
                 <button
                     onClick={onClose}
-                    className="absolute top-4 left-4 z-50 flex items-center gap-2 px-3 py-1.5 bg-black/60 backdrop-blur-md border border-red-500/20 rounded-full text-xs font-mono text-red-500/80 hover:bg-red-950/30 hover:text-red-400 transition-all duration-300 group/btn uppercase tracking-widest"
+                    className="absolute top-10 left-6 z-50 flex items-center gap-2 px-3 py-1.5 bg-black/60 backdrop-blur-md border border-red-500/20 rounded-full text-[9px] font-mono text-red-500/80 hover:bg-red-950/30 hover:text-red-400 transition-all duration-300 group/btn uppercase tracking-widest"
                 >
                     <span>[ End Transmission ]</span>
                 </button>

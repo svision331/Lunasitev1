@@ -13,6 +13,7 @@ const initAudio = () => {
 const authAudio = () => {
     if (typeof window === 'undefined') return false;
     if (!audioCtx) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const Ctx = window.AudioContext || (window as any).webkitAudioContext;
         if (!Ctx) return false;
 
@@ -50,7 +51,7 @@ export const useSoundEffects = () => {
             if (ambienceNodes.current) {
                 try {
                     ambienceNodes.current.source.stop();
-                } catch (e) { }
+                } catch (_e) { }
             }
         };
     }, []);
@@ -182,7 +183,7 @@ export const useSoundEffects = () => {
     }, [playTone]);
 
     const playSuccess = useCallback(() => {
-        const now = audioCtx?.currentTime || 0;
+        // const now = audioCtx?.currentTime || 0; // Removed unused variable
         [440, 554, 659, 880].forEach((freq, i) => {
             setTimeout(() => playTone(freq, 'sine', 0.2, 0.2), i * 50);
         });

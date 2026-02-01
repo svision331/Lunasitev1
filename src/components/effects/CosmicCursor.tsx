@@ -27,7 +27,7 @@ export function CosmicCursor() {
             {/* UFO Cursor */}
             <motion.div
                 ref={cursorRef}
-                className="fixed pointer-events-none z-50 w-12 h-12 flex items-center justify-center mix-blend-screen"
+                className="fixed pointer-events-none z-50 w-12 h-12 hidden md:flex items-center justify-center mix-blend-screen"
                 style={{
                     x: cursorX,
                     y: cursorY,

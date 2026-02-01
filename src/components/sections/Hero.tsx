@@ -1,24 +1,24 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { Users } from 'lucide-react';
-import { useParallax } from '@/hooks';
 import { GlowButton } from '@/components/ui';
 import { NebulaGradient, HolographicText } from '@/components/effects';
 import { communityStats } from '@/data/membership';
 
 export function Hero() {
-    const parallaxOffset = useParallax();
+    const { scrollY } = useScroll();
+    const y = useTransform(scrollY, [0, 500], [0, 100]); // Parallax effect
 
     return (
-        <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-16">
+        <section className="relative min-h-[100dvh] flex items-center justify-center overflow-hidden pt-16">
             {/* Base Background Image (Fallback) */}
             <motion.div
                 className="absolute inset-0 bg-cover bg-center"
                 style={{
                     backgroundImage: 'url(/images/hero-bg-v2.jpg)',
-                    transform: `translate3d(0, ${parallaxOffset}px, 0) scaleX(-1)`,
-                    willChange: 'transform',
+                    y, // GPU optimized parallax
+                    scaleX: -1
                 }}
             />
 

@@ -6,7 +6,7 @@ import { getTimeUntil, type TimeUntil } from '@/lib/utils';
 
 interface CountdownTimerProps {
     targetDate: string;
-    label?: string;
+    // label?: string;
 }
 
 function CountdownDigit({ value, label }: { value: number; label: string }) {
@@ -35,12 +35,12 @@ function CountdownDigit({ value, label }: { value: number; label: string }) {
     );
 }
 
-export function CountdownTimer({ targetDate, label }: CountdownTimerProps) {
+export function CountdownTimer({ targetDate }: CountdownTimerProps) {
     const [timeUntil, setTimeUntil] = useState<TimeUntil>({ days: 0, hours: 0, minutes: 0, seconds: 0, total: 0 });
     const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
-        setMounted(true);
+        setTimeout(() => setMounted(true), 0);
         const updateCountdown = () => setTimeUntil(getTimeUntil(targetDate));
         updateCountdown();
         const interval = setInterval(updateCountdown, 1000);
@@ -57,7 +57,7 @@ export function CountdownTimer({ targetDate, label }: CountdownTimerProps) {
                 animate={{ scale: 1, opacity: 1 }}
             >
                 <div className="text-xl font-bold text-cyan-400 font-mono tracking-widest animate-pulse">
-                    /// TRANSMISSION ACTIVE ///
+                    {'/// TRANSMISSION ACTIVE ///'}
                 </div>
                 <div className="text-xs text-cyan-600 mt-2 uppercase tracking-[0.3em]">
                     Signal Locked

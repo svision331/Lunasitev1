@@ -24,44 +24,58 @@ export function WarpSpeed({ className = '', starCount = 1000, speed = 2 }: WarpS
         let cx = 0;
         let cy = 0;
 
-        // Star class
-        class Star {
-            x: number;
-            y: number;
-            z: number;
+        // Star factory
+        const createStar = () => ({
+            x: (Math.random() - 0.5) * width * 2,
+            y: (Math.random() - 0.5) * height * 2,
+            z: Math.random() * width
+        });
 
-            constructor() {
-                this.x = (Math.random() - 0.5) * width * 2;
-                this.y = (Math.random() - 0.5) * height * 2;
-                this.z = Math.random() * width;
-            }
+        const stars = Array.from({ length: starCount }, createStar);
 
-            update() {
-                this.z -= speed * 10;
+        const handleResize = () => {
+            width = window.innerWidth;
+            height = window.innerHeight;
+            canvas.width = width;
+            canvas.height = height;
+            cx = width / 2;
+            cy = height / 2;
+        };
+
+        window.addEventListener('resize', handleResize);
+        handleResize();
+
+        const animate = () => {
+            if (!ctx) return;
+
+            // Fade trail effect
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+            ctx.fillRect(0, 0, width, height);
+
+            stars.forEach((star) => {
+                // Update
+                star.z -= speed * 10;
 
                 // Reset if passed camera
-                if (this.z <= 0) {
-                    this.z = width;
-                    this.x = (Math.random() - 0.5) * width * 2;
-                    this.y = (Math.random() - 0.5) * height * 2;
+                if (star.z <= 0) {
+                    star.z = width;
+                    star.x = (Math.random() - 0.5) * width * 2;
+                    star.y = (Math.random() - 0.5) * height * 2;
                 }
-            }
 
-            draw() {
-                if (!ctx) return;
-
-                const sx = (this.x / this.z) * width + cx;
-                const sy = (this.y / this.z) * height + cy;
+                // Draw
+                const sx = (star.x / star.z) * width + cx;
+                const sy = (star.y / star.z) * height + cy;
 
                 // Don't draw if outside canvas
                 if (sx < 0 || sx > width || sy < 0 || sy > height) return;
 
-                const size = (1 - this.z / width) * 3;
-                const alpha = (1 - this.z / width);
+                const size = (1 - star.z / width) * 3;
+                const alpha = (1 - star.z / width);
 
                 // Tail effect
-                const px = (this.x / (this.z + speed * 10)) * width + cx;
-                const py = (this.y / (this.z + speed * 10)) * height + cy;
+                const px = (star.x / (star.z + speed * 10)) * width + cx;
+                const py = (star.y / (star.z + speed * 10)) * height + cy;
 
                 ctx.beginPath();
                 ctx.strokeStyle = `rgba(200, 255, 255, ${alpha})`;
@@ -75,35 +89,6 @@ export function WarpSpeed({ className = '', starCount = 1000, speed = 2 }: WarpS
                 ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
                 ctx.arc(sx, sy, size / 2, 0, Math.PI * 2);
                 ctx.fill();
-            }
-        }
-
-        const stars: Star[] = Array.from({ length: starCount }, () => new Star());
-
-        const handleResize = () => {
-            width = window.innerWidth;
-            height = window.innerHeight;
-            canvas.width = width;
-            canvas.height = height;
-            cx = width / 2;
-            cy = height / 2;
-
-            // Re-init stars if needed or just let them loop
-        };
-
-        window.addEventListener('resize', handleResize);
-        handleResize();
-
-        const animate = () => {
-            if (!ctx) return;
-
-            // Fade trail effect
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
-            ctx.fillRect(0, 0, width, height);
-
-            stars.forEach(star => {
-                star.update();
-                star.draw();
             });
 
             requestRef.current = requestAnimationFrame(animate);

@@ -1,7 +1,7 @@
 'use server';
 
 import { saveVideo, saveVideoFile, updateVideo, deleteVideo } from '@/lib/storage';
-import { Video } from '@/data/videos';
+import { Video, VideoCategory } from '@/data/videos';
 import { revalidatePath } from 'next/cache';
 
 export async function uploadVideoAction(formData: FormData) {
@@ -9,7 +9,7 @@ export async function uploadVideoAction(formData: FormData) {
         const file = formData.get('file') as File;
         const thumbnail = formData.get('thumbnail') as File;
         const title = formData.get('title') as string;
-        const category = formData.get('category') as any;
+        const category = formData.get('category') as VideoCategory;
         const description = formData.get('description') as string;
         const youtubeId = formData.get('youtubeId') as string;
         const duration = formData.get('duration') as string || '0:00';
@@ -52,7 +52,7 @@ export async function uploadVideoAction(formData: FormData) {
         const newVideo: Video = {
             id,
             title,
-            category,
+            category: category as any,
             thumb: thumbnailUrl,
             description,
             isLocal,

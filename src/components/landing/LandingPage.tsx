@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import { Navbar, MobileNav, Footer } from '@/components/layout';
 import { NebulaConsole } from '@/components/landing/NebulaConsole';
@@ -24,16 +24,50 @@ interface LandingPageProps {
 
 export function LandingPage({ videos }: LandingPageProps) {
     const [hasEntered, setHasEntered] = useState(false);
+    const [isWarping, setIsWarping] = useState(false);
+    const [startSequence, setStartSequence] = useState(false);
+
+    useEffect(() => {
+        if (!startSequence) return;
+
+        // Sequence timers
+        const t1 = setTimeout(() => {
+            setHasEntered(true);
+        }, 1500);
+
+        const t2 = setTimeout(() => {
+            setIsWarping(false);
+            setStartSequence(false); // Reset sequence trigger
+        }, 3500); // 1500 + 2000
+
+        return () => {
+            clearTimeout(t1);
+            clearTimeout(t2);
+        };
+    }, [startSequence]);
+
+    const handleEnter = () => {
+        setStartSequence(true);
+        setIsWarping(true);
+    };
 
     return (
         <main className="min-h-screen relative">
-            {!hasEntered && <NebulaConsole onEnter={() => setHasEntered(true)} />}
+            {/* Global Background Effects - Always Visible */}
+            <Starfield warp={isWarping} />
 
-            <div className={hasEntered ? 'opacity-100 transition-opacity duration-1000' : 'opacity-0 h-0 overflow-hidden'}>
-                {/* Background Effects */}
-                <Starfield />
+            <div className={`transition-opacity duration-1000 ${hasEntered ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
                 <IceGiantMode />
+            </div>
 
+            {/* Entrance Console */}
+            {!hasEntered && (
+                <div className={`fixed inset-0 z-50 transition-opacity duration-1000 ${isWarping ? 'opacity-0' : 'opacity-100'}`}>
+                    <NebulaConsole onEnter={handleEnter} />
+                </div>
+            )}
+
+            <div className={hasEntered ? 'opacity-100 transition-opacity duration-2000 delay-500' : 'opacity-0 h-0 overflow-hidden'}>
                 {/* Navigation */}
                 <Navbar />
                 <MobileNav />

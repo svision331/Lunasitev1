@@ -73,7 +73,7 @@ export function ShowCard({ show, index }: ShowCardProps) {
                             {show.venue}
                             {show.type === 'Nebula Bash' && (
                                 <span className="block text-[10px] text-pink-400 mt-1 uppercase tracking-wider font-mono">
-                                    // PRECISE COORDS CLASSIFIED
+                                    {'// PRECISE COORDS CLASSIFIED'}
                                 </span>
                             )}
                         </span>

@@ -1,6 +1,8 @@
 import React from 'react';
 
-export function SystemBar({ label, value, icon: Icon }: { label: string; value: number; icon?: any }) {
+import type { LucideIcon } from 'lucide-react';
+
+export function SystemBar({ label, value, icon: Icon }: { label: string; value: number; icon?: LucideIcon }) {
     return (
         <div className="space-y-2">
             <div className="flex items-center justify-between text-[11px] tracking-widest uppercase text-white/60">

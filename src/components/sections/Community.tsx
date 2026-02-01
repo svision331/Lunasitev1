@@ -1,6 +1,5 @@
 'use client';
 
-import { useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Instagram, Star, Heart, Radio } from 'lucide-react';
 import Image from 'next/image';
@@ -116,7 +115,7 @@ export function Community() {
                                 <div className="flex justify-between items-end">
                                     <div>
                                         <p className="text-white font-mono text-[10px] uppercase tracking-wider mb-1">
-                                            <span className="text-cyan-400">IMG_0{photo.id}</span> // UPLOADED
+                                            <span className="text-cyan-400">IMG_0{photo.id}</span> {'// UPLOADED'}
                                         </p>
                                         <p className="text-slate-400 text-xs">@space_invader</p>
                                     </div>

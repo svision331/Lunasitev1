@@ -1,15 +1,15 @@
 'use client';
 
-import { motion } from 'framer-motion';
-import { useParallax } from '@/hooks';
+import { motion, useScroll, useTransform } from 'framer-motion';
 
 interface NebulaGradientProps {
     className?: string;
 }
 
 export function NebulaGradient({ className }: NebulaGradientProps) {
-    const parallaxOffset = useParallax({ speed: 0.2 });
-    const deepParallaxOffset = useParallax({ speed: 0.1 });
+    const { scrollY } = useScroll();
+    const parallaxY = useTransform(scrollY, [0, 1000], [0, 200]);
+    const deepParallaxY = useTransform(scrollY, [0, 1000], [0, 100]);
 
     return (
         <div className={`absolute inset-0 pointer-events-none ${className || ''}`}>
@@ -20,8 +20,7 @@ export function NebulaGradient({ className }: NebulaGradientProps) {
             <motion.div
                 className="absolute inset-0"
                 style={{
-                    transform: `translate3d(0, ${deepParallaxOffset}px, 0)`,
-                    willChange: 'transform',
+                    y: deepParallaxY,
                 }}
             >
                 <div
@@ -44,8 +43,7 @@ export function NebulaGradient({ className }: NebulaGradientProps) {
             <motion.div
                 className="absolute inset-0"
                 style={{
-                    transform: `translate3d(0, ${parallaxOffset}px, 0)`,
-                    willChange: 'transform',
+                    y: parallaxY,
                 }}
             >
                 {/* Primary gradient overlay */}

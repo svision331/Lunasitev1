@@ -1,6 +1,8 @@
 import React from 'react';
 
-export function StatCard({ label, value, trend, icon: Icon }: { label: string; value: string; trend?: string; icon: any }) {
+import type { LucideIcon } from 'lucide-react';
+
+export function StatCard({ label, value, trend, icon: Icon }: { label: string; value: string; trend?: string; icon: LucideIcon }) {
     return (
         <div className="panel p-4 flex flex-col justify-between group hover:bg-white/5 transition-colors">
             <div className="flex items-center justify-between mb-2">

@@ -5,6 +5,7 @@ import { useEffect, useRef } from 'react';
 interface Star {
     x: number;
     y: number;
+    z: number; // Depth for 3D effect
     size: number;
     baseOpacity: number;
     opacity: number;
@@ -23,8 +24,14 @@ interface ShootingStar {
     active: boolean;
 }
 
-export function Starfield() {
+interface StarfieldProps {
+    warp?: boolean;
+}
+
+export function Starfield({ warp = false }: StarfieldProps) {
     const canvasRef = useRef<HTMLCanvasElement>(null);
+    const starsRef = useRef<Star[]>([]);
+    const warpSpeedRef = useRef(0); // Current speed factor
 
     useEffect(() => {
         const canvas = canvasRef.current;
@@ -36,11 +43,12 @@ export function Starfield() {
         let animationFrameId: number;
         let width = 0;
         let height = 0;
+        let shootingStars: ShootingStar[] = [];
 
         // Configuration
-        const STAR_COUNT = 800; // Increased from 400 for richer detail
-        const STARS: Star[] = [];
-        let shootingStars: ShootingStar[] = [];
+        const STAR_COUNT = 800;
+        const TARGET_WARP_SPEED = 50; // Max speed during warp
+        const BASE_SPEED = 0.05; // Gentle drift
 
         // Initialize Canvas Size
         const handleResize = () => {
@@ -48,87 +56,37 @@ export function Starfield() {
             height = window.innerHeight;
             canvas.width = width;
             canvas.height = height;
-            // Re-distribute stars on resize so they don't clump
-            initStars();
+            // Only re-init if empty
+            if (starsRef.current.length === 0) {
+                initStars();
+            }
         };
 
         const initStars = () => {
-            STARS.length = 0;
-
-            // 1. Generate Standard Background Stars
+            starsRef.current = [];
             for (let i = 0; i < STAR_COUNT; i++) {
-                const depth = Math.random();
-                let size, opacity, twinkleSpeed;
-
-                // Create depth layers
-                if (depth < 0.4) { // Distant
-                    size = Math.random() * 0.8 + 0.2;
-                    opacity = Math.random() * 0.3 + 0.1;
-                    twinkleSpeed = Math.random() * 0.02 + 0.005; // Faster
-                } else if (depth < 0.8) { // Mid
-                    size = Math.random() * 1.5 + 0.8;
-                    opacity = Math.random() * 0.4 + 0.3;
-                    twinkleSpeed = Math.random() * 0.03 + 0.01; // Faster
-                } else { // Close
-                    size = Math.random() * 2 + 1.5;
-                    opacity = Math.random() * 0.5 + 0.5;
-                    twinkleSpeed = Math.random() * 0.05 + 0.02; // Faster
-                }
-
-                STARS.push({
-                    x: Math.random() * width,
-                    y: Math.random() * height,
-                    size,
-                    baseOpacity: opacity,
-                    opacity,
-                    twinkleSpeed,
-                    twinklePhase: Math.random() * Math.PI * 2,
-                });
-            }
-
-            // 2. Generate Heart Constellation
-            const HEART_STAR_COUNT = 60;
-            const centerX = width * 0.8; // Position on the right side
-            const centerY = height * 0.3; // Position in upper area
-            const scale = Math.min(width, height) / 40; // Scale relative to screen size
-
-            for (let i = 0; i < HEART_STAR_COUNT; i++) {
-                // Heart Curve Formula
-                const t = Math.random() * Math.PI * 2;
-
-                // Add some randomness/fuzziness to the line
-                const fuzz = 0.5;
-
-                // Heart equations
-                // x = 16sin^3(t)
-                // y = 13cos(t) - 5cos(2t) - 2cos(3t) - cos(4t)
-                const rawX = 16 * Math.pow(Math.sin(t), 3);
-                const rawY = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t)); // Negate Y because canvas Y is down
-
-                const x = centerX + (rawX * scale) + (Math.random() - 0.5) * scale * 2;
-                const y = centerY + (rawY * scale) + (Math.random() - 0.5) * scale * 2;
-
-                STARS.push({
-                    x,
-                    y,
-                    size: Math.random() * 2 + 1.5, // Slightly larger
-                    baseOpacity: 0.8, // Brighter
-                    opacity: 0.8,
-                    twinkleSpeed: Math.random() * 0.05 + 0.02,
+                starsRef.current.push({
+                    x: Math.random() * width - width / 2, // Center origin
+                    y: Math.random() * height - height / 2,
+                    z: Math.random() * width, // Random depth
+                    size: Math.random() * 0.8 + 0.2, // Base size (will scale by Z)
+                    baseOpacity: Math.random() * 0.5 + 0.5,
+                    opacity: 1,
+                    twinkleSpeed: Math.random() * 0.02 + 0.005,
                     twinklePhase: Math.random() * Math.PI * 2,
                 });
             }
         };
 
-        // Shooting Star Logic
+        // Shooting Star Logic (Only when not warping)
         const spawnShootingStar = () => {
-            const angle = (35 + Math.random() * 25) * (Math.PI / 180); // Convert to radians
+            const angle = (35 + Math.random() * 25) * (Math.PI / 180);
             const speed = 15 + Math.random() * 10;
 
             shootingStars.push({
                 id: Date.now(),
                 x: Math.random() * width,
-                y: Math.random() * (height * 0.4), // Start in top 40%
+                y: Math.random() * (height * 0.4),
                 length: 100 + Math.random() * 150,
                 speed: speed,
                 angle: angle,
@@ -139,77 +97,105 @@ export function Starfield() {
 
         // Animation Loop
         const render = () => {
-            ctx.clearRect(0, 0, width, height);
+            // Smoothly interpolate warp speed
+            const target = warp ? TARGET_WARP_SPEED : BASE_SPEED;
+            warpSpeedRef.current += (target - warpSpeedRef.current) * 0.05;
 
-            // Draw Stars
-            STARS.forEach((star) => {
-                // Update Twinkle
-                star.twinklePhase += star.twinkleSpeed;
-                // Stronger modulation: +/- 0.3 instead of 0.15
-                // Max limits max intensity, Min allows it to dim significantly but not totally vanish if base is high
-                star.opacity = star.baseOpacity + Math.sin(star.twinklePhase) * 0.3;
+            // Clear with trail effect during warp
+            if (warpSpeedRef.current > 1) {
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.3)'; // Leave trails
+                ctx.fillRect(0, 0, width, height);
+            } else {
+                ctx.clearRect(0, 0, width, height);
+            }
 
-                ctx.fillStyle = `rgba(255, 255, 255, ${Math.max(0.1, Math.min(1, star.opacity))})`;
-                ctx.beginPath();
-                ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
-                ctx.fill();
+            const cx = width / 2;
+            const cy = height / 2;
 
-                // Glow for big stars
-                if (star.size > 2) {
-                    const gradient = ctx.createRadialGradient(star.x, star.y, 0, star.x, star.y, star.size * 3);
-                    gradient.addColorStop(0, `rgba(255, 255, 255, ${Math.max(0, star.opacity * 0.5)})`);
-                    gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
-                    ctx.fillStyle = gradient;
+            // Update and Draw Stars
+            starsRef.current.forEach((star) => {
+                // Move Star
+                star.z -= warpSpeedRef.current;
+
+                // Reset star if it passes camera or is invalid
+                if (star.z <= 0 || isNaN(star.z)) {
+                    star.z = width;
+                    star.x = Math.random() * width - cx;
+                    star.y = Math.random() * height - cy;
+                }
+
+                // Project 3D position to 2D
+                // Prevent division by very small numbers
+                const safeZ = Math.max(0.1, star.z);
+                const k = 128.0 / safeZ;
+                const px = star.x * k + cx;
+                const py = star.y * k + cy;
+
+                if (px >= 0 && px <= width && py >= 0 && py <= height) {
+                    const size = (1 - safeZ / width) * 2.5; // Bigger as it gets closer
+                    const shade = parseInt(((1 - safeZ / width) * 255).toString());
+
+                    // Twinkle (only when slow)
+                    if (warpSpeedRef.current < 2) {
+                        star.twinklePhase += star.twinkleSpeed;
+                        star.opacity = star.baseOpacity + Math.sin(star.twinklePhase) * 0.3;
+                    } else {
+                        star.opacity = 1;
+                    }
+
                     ctx.beginPath();
-                    ctx.arc(star.x, star.y, star.size * 3, 0, Math.PI * 2);
-                    ctx.fill();
+
+                    if (warpSpeedRef.current > 2) {
+                        // Draw line streak
+                        const oldK = 128.0 / (star.z + warpSpeedRef.current * 1.5); // Previous Z
+                        const oldPx = star.x * oldK + cx;
+                        const oldPy = star.y * oldK + cy;
+
+                        ctx.strokeStyle = `rgb(${shade},${shade},${255})`;
+                        ctx.lineWidth = size;
+                        ctx.moveTo(px, py);
+                        ctx.lineTo(oldPx, oldPy);
+                        ctx.stroke();
+                    } else {
+                        // Draw circle
+                        ctx.fillStyle = `rgb(${shade},${shade},${255})`;
+                        ctx.arc(px, py, size, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
                 }
             });
 
-            // Draw and Update Shooting Stars
-            // Remove dead stars
-            shootingStars = shootingStars.filter(s => s.active);
+            // Shooting Stars (Only when calm)
+            if (warpSpeedRef.current < 5) {
+                shootingStars = shootingStars.filter(s => s.active);
+                shootingStars.forEach(star => {
+                    star.x += Math.cos(star.angle) * star.speed;
+                    star.y += Math.sin(star.angle) * star.speed;
 
-            shootingStars.forEach(star => {
-                // Move
-                star.x += Math.cos(star.angle) * star.speed;
-                star.y += Math.sin(star.angle) * star.speed;
+                    if (star.x > width + star.length || star.y > height + star.length) {
+                        star.active = false;
+                    }
 
-                // Fade out near end of life or if off screen
-                if (star.x > width + star.length || star.y > height + star.length) {
-                    star.active = false;
+                    const tailX = star.x - Math.cos(star.angle) * star.length;
+                    const tailY = star.y - Math.sin(star.angle) * star.length;
+
+                    const gradient = ctx.createLinearGradient(star.x, star.y, tailX, tailY);
+                    gradient.addColorStop(0, 'rgba(34, 211, 238, 1)');
+                    gradient.addColorStop(0.2, 'rgba(34, 211, 238, 0.4)');
+                    gradient.addColorStop(1, 'rgba(34, 211, 238, 0)');
+
+                    ctx.strokeStyle = gradient;
+                    ctx.lineWidth = 1.5;
+                    ctx.lineCap = 'round';
+                    ctx.beginPath();
+                    ctx.moveTo(star.x, star.y);
+                    ctx.lineTo(tailX, tailY);
+                    ctx.stroke();
+                });
+
+                if (Math.random() < 0.005) {
+                    spawnShootingStar();
                 }
-
-                // Draw Trail (Gradient Line)
-                const tailX = star.x - Math.cos(star.angle) * star.length;
-                const tailY = star.y - Math.sin(star.angle) * star.length;
-
-                const gradient = ctx.createLinearGradient(star.x, star.y, tailX, tailY);
-                gradient.addColorStop(0, 'rgba(34, 211, 238, 1)'); // Cyan head
-                gradient.addColorStop(0.2, 'rgba(34, 211, 238, 0.4)');
-                gradient.addColorStop(1, 'rgba(34, 211, 238, 0)');
-
-                ctx.strokeStyle = gradient;
-                ctx.lineWidth = 1.5;
-                ctx.lineCap = 'round';
-                ctx.beginPath();
-                ctx.moveTo(star.x, star.y);
-                ctx.lineTo(tailX, tailY);
-                ctx.stroke();
-
-                // Draw Head Glow
-                ctx.shadowBlur = 10;
-                ctx.shadowColor = 'rgba(34, 211, 238, 0.8)';
-                ctx.fillStyle = 'white';
-                ctx.beginPath();
-                ctx.arc(star.x, star.y, 1, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.shadowBlur = 0;
-            });
-
-            // Randomly spawn shooting stars
-            if (Math.random() < 0.005) { // Approx 1 every 3-4 seconds at 60fps
-                spawnShootingStar();
             }
 
             animationFrameId = requestAnimationFrame(render);
@@ -224,33 +210,37 @@ export function Starfield() {
             window.removeEventListener('resize', handleResize);
             cancelAnimationFrame(animationFrameId);
         };
-    }, []);
+    }, [warp]);
 
     return (
         <div className="fixed inset-0 pointer-events-none overflow-hidden" style={{ zIndex: 0 }}>
             <canvas ref={canvasRef} className="block w-full h-full" />
 
-            {/* Nebula Glow Spots (Preserved from original Design) */}
-            <div
-                className="absolute w-[800px] h-[800px] rounded-full opacity-[0.15]"
-                style={{
-                    background: 'radial-gradient(circle, rgba(124, 58, 237, 0.4), transparent 70%)',
-                    left: '-20%',
-                    top: '10%',
-                    filter: 'blur(100px)',
-                    zIndex: -1
-                }}
-            />
-            <div
-                className="absolute w-[600px] h-[600px] rounded-full opacity-[0.12]"
-                style={{
-                    background: 'radial-gradient(circle, rgba(6, 182, 212, 0.4), transparent 70%)',
-                    right: '5%',
-                    bottom: '-10%',
-                    filter: 'blur(90px)',
-                    zIndex: -1
-                }}
-            />
+            {/* Nebula Glow Spots */}
+            {!warp && (
+                <>
+                    <div
+                        className="absolute w-[800px] h-[800px] rounded-full opacity-[0.15] transition-opacity duration-1000"
+                        style={{
+                            background: 'radial-gradient(circle, rgba(124, 58, 237, 0.4), transparent 70%)',
+                            left: '-20%',
+                            top: '10%',
+                            filter: 'blur(100px)',
+                            zIndex: -1
+                        }}
+                    />
+                    <div
+                        className="absolute w-[600px] h-[600px] rounded-full opacity-[0.12] transition-opacity duration-1000"
+                        style={{
+                            background: 'radial-gradient(circle, rgba(6, 182, 212, 0.4), transparent 70%)',
+                            right: '5%',
+                            bottom: '-10%',
+                            filter: 'blur(90px)',
+                            zIndex: -1
+                        }}
+                    />
+                </>
+            )}
         </div>
     );
 }

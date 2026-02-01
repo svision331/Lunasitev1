@@ -1,13 +1,14 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from "react";
-import { Zap, Radio, Calendar, MapPin, Music, Activity } from "lucide-react";
+import { Zap, Radio, Calendar, MapPin, Music, Activity, Globe } from "lucide-react";
 import { SystemBar } from "@/components/bridge/SystemBar";
 import { NebulaRadar } from "@/components/bridge/NebulaRadar";
 import { StatCard } from "@/components/bridge/StatCard";
 import { MusicPlayer } from "@/components/bridge/MusicPlayer";
 import { CommsInterface } from "@/components/bridge/CommsInterface";
 import { MissionLog } from "@/components/bridge/MissionLog";
+import { CosmosMap } from "@/components/bridge/CosmosMap";
 import { useSoundEffects } from "@/hooks/useSoundEffects";
 import { ShipAmbience } from "@/components/effects/ShipAmbience";
 
@@ -32,7 +33,7 @@ interface NebulaConsoleProps {
 
 export function NebulaConsole({ onEnter }: NebulaConsoleProps) {
     const [mounted, setMounted] = useState(false);
-    const [activeModule, setActiveModule] = useState<'HOME' | 'MISSION' | 'MEDIA' | 'COMMS'>('HOME');
+    const [activeModule, setActiveModule] = useState<'HOME' | 'MISSION' | 'MEDIA' | 'COMMS' | 'COSMOS'>('HOME');
     const [now, setNow] = useState<Date | null>(null);
     const [signal, setSignal] = useState(0);
     const [power, setPower] = useState(0);
@@ -53,12 +54,14 @@ export function NebulaConsole({ onEnter }: NebulaConsoleProps) {
     const logContainerRef = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {
-        setMounted(true);
-        setNow(new Date());
-        setSignal(randInt(84, 99));
-        setPower(randInt(72, 96));
-        setVibe(randInt(88, 98));
-        setSync(randInt(65, 85));
+        setTimeout(() => {
+            setMounted(true);
+            setNow(new Date());
+            setSignal(randInt(84, 99));
+            setPower(randInt(72, 96));
+            setVibe(randInt(88, 98));
+            setSync(randInt(65, 85));
+        }, 0);
 
         const t = setInterval(() => {
             setNow(new Date());
@@ -82,12 +85,12 @@ export function NebulaConsole({ onEnter }: NebulaConsoleProps) {
     }
 
     function handleEnter() {
+        if (isEntering) return;
         playSuccess();
         setIsEntering(true);
-        pushLog("OK", "Initiating entry sequence...");
-        setTimeout(() => {
-            onEnter();
-        }, 800);
+        pushLog("OK", "Warp sequence initialized...");
+        // Trigger parent immediately to start warp effect in background
+        onEnter();
     }
 
     function onRun(e: React.FormEvent) {
@@ -124,9 +127,9 @@ export function NebulaConsole({ onEnter }: NebulaConsoleProps) {
     if (!mounted) return null;
 
     return (
-        <div className={`fixed inset-0 z-50 overflow-hidden bg-black text-white transition-opacity duration-1000 ${isEntering ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
-            {/* Cinematic Backdrop */}
-            <div className="absolute inset-0 space-backdrop" />
+        <div className="fixed inset-0 z-50 overflow-hidden text-white">
+            {/* Cinematic Backdrop - Reduced opacity to see Starfield */}
+            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
             <div className="absolute inset-0 cockpit-vignette" />
             <div className="absolute inset-0 scanlines pointer-events-none" />
             <div className="absolute inset-0 filmgrain pointer-events-none" />
@@ -225,9 +228,12 @@ export function NebulaConsole({ onEnter }: NebulaConsoleProps) {
                                             <button
                                                 onClick={handleEnter}
                                                 onMouseEnter={playHover}
-                                                className="btn-radioactive px-10 py-6 text-cyan-300 rounded-2xl"
+                                                disabled={isEntering}
+                                                className={`btn-radioactive px-10 py-6 text-cyan-300 rounded-2xl transition-all duration-500 ${isEntering ? 'scale-110 brightness-150 border-cyan-400 bg-cyan-500/20' : ''}`}
                                             >
-                                                <span className="text-lg font-bold tracking-[0.2em] uppercase">Enter Portal</span>
+                                                <span className="text-lg font-bold tracking-[0.2em] uppercase">
+                                                    {isEntering ? 'Engaging Warp...' : 'Enter Portal'}
+                                                </span>
                                             </button>
 
                                             <div className="text-[10px] uppercase text-white/30 tracking-widest md:hidden animate-pulse">
@@ -240,12 +246,22 @@ export function NebulaConsole({ onEnter }: NebulaConsoleProps) {
                                         {activeModule === 'MISSION' && <MissionLog onClose={() => setActiveModule('HOME')} />}
                                         {activeModule === 'MEDIA' && <MusicPlayer onClose={() => setActiveModule('HOME')} />}
                                         {activeModule === 'COMMS' && <CommsInterface onClose={() => setActiveModule('HOME')} />}
+                                        {activeModule === 'COSMOS' && <CosmosMap onClose={() => setActiveModule('HOME')} />}
                                     </>
                                 )}
                             </div>
 
                             {/* Quick Actions - Visible but Compact on Mobile */}
-                            <div className="grid grid-cols-3 gap-2 md:gap-3 shrink-0">
+                            <div className="grid grid-cols-4 gap-2 md:gap-3 shrink-0">
+                                <button
+                                    className="btn-console group"
+                                    onClick={() => { setActiveModule('COSMOS'); playClick(); }}
+                                    onMouseEnter={playHover}
+                                >
+                                    <span className="btn-dot bg-cyan-400" />
+                                    <span className="group-hover:text-cyan-200 transition-colors hidden md:inline">Map</span>
+                                    <span className="md:hidden text-[9px]"><Globe size={12} /></span>
+                                </button>
                                 <button
                                     className="btn-console group"
                                     onClick={() => { setActiveModule('MISSION'); playClick(); }}

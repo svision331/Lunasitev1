@@ -7,13 +7,13 @@ interface CommsInterfaceProps {
 }
 
 export function CommsInterface({ onClose }: CommsInterfaceProps) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { messages, append, isLoading } = useChat({
         api: '/api/chat',
         initialMessages: [
             { id: "init-1", role: "system", content: "Comms link established... Scanning frequencies...", createdAt: new Date() },
             { id: "init-2", role: "assistant", content: "Signal received. I am listening, Space Invader. 📡", createdAt: new Date() }
         ]
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any) as any;
 
     const [localInput, setLocalInput] = useState("");

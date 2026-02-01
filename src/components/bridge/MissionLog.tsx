@@ -10,7 +10,7 @@ interface MissionLogProps {
 export function MissionLog({ onClose }: MissionLogProps) {
     const [missions, setMissions] = useState<Mission[]>(MISSIONS);
     const [completedCount, setCompletedCount] = useState(0);
-    const { playHover, playClick, playSuccess } = useSoundEffects();
+    const { playClick, playSuccess } = useSoundEffects();
 
     const handleAction = (mission: Mission) => {
         if (mission.status === 'LOCKED') return;
@@ -34,30 +34,31 @@ export function MissionLog({ onClose }: MissionLogProps) {
     const progress = (completedCount / missions.filter(m => m.status !== 'LOCKED').length) * 100;
 
     return (
-        <div className="w-full h-full flex flex-col p-6 relative overflow-hidden bg-black/50 rounded-2xl">
+        <div className="w-full h-full flex flex-col p-6 relative overflow-hidden panel rounded-2xl">
             {/* Header */}
-            <div className="flex items-center justify-between mb-6 border-b border-white/10 pb-4">
+            <div className="flex items-center justify-between mb-6 border-b border-white/5 pb-4">
                 <div className="flex items-center gap-2 text-cyan-400">
-                    <ShieldCheck size={18} />
-                    <span className="text-sm tracking-[0.2em] font-bold uppercase">Mission Log</span>
+                    <ShieldCheck size={18} className="text-cyan-400 drop-shadow-[0_0_10px_rgba(34,211,238,0.5)]" />
+                    <span className="text-sm tracking-[0.2em] font-bold uppercase text-glow">Mission Log</span>
                 </div>
                 <div className="flex items-center gap-3 text-xs font-mono">
                     <span className="text-white/40">SYNC STATUS</span>
-                    <div className="w-24 h-1.5 bg-white/10 rounded-full overflow-hidden">
+                    <div className="w-24 h-1.5 bg-black/40 rounded-full overflow-hidden border border-white/10">
                         <div
-                            className="h-full bg-cyan-400 transition-all duration-1000 ease-out"
+                            className="h-full bg-cyan-400 shadow-[0_0_10px_cyan] transition-all duration-1000 ease-out"
                             style={{ width: `${progress}%` }}
                         />
                     </div>
-                    <span className="text-cyan-400">{Math.round(progress)}%</span>
-
-                    <button
-                        onClick={onClose}
-                        className="ml-4 p-1 hover:bg-white/10 rounded-full text-white/40 hover:text-white transition-colors"
-                    >
-                        <span className="sr-only">Close</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>
-                    </button>
+                    <div className="flex items-center gap-1">
+                        <span className="text-cyan-400">{Math.round(progress)}%</span>
+                        <div className="w-px h-3 bg-white/20 mx-2" />
+                        <button
+                            onClick={onClose}
+                            className="flex items-center gap-1 hover:text-red-400 transition-colors uppercase"
+                        >
+                            <span className="text-red-500/80">[ End Transmission ]</span>
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -67,11 +68,11 @@ export function MissionLog({ onClose }: MissionLogProps) {
                     <div
                         key={mission.id}
                         className={`
-                            relative group border rounded-xl p-4 transition-all duration-300
+                            relative group glass rounded-xl p-4 transition-all duration-300
                             ${mission.status === 'LOCKED'
-                                ? 'bg-white/5 border-white/5 opacity-50 cursor-not-allowed'
-                                : 'bg-white/5 border-white/10 hover:border-cyan-500/50 hover:bg-white/10'}
-                            ${mission.status === 'COMPLETED' ? 'border-emerald-500/30 bg-emerald-950/20' : ''}
+                                ? 'opacity-50 grayscale cursor-not-allowed'
+                                : 'hover:border-cyan-500/30 hover:shadow-[0_0_15px_rgba(34,211,238,0.1)]'}
+                            ${mission.status === 'COMPLETED' ? '!border-emerald-500/30 !bg-emerald-950/20' : ''}
                         `}
                     >
                         <div className="flex items-start justify-between gap-4">
@@ -96,7 +97,7 @@ export function MissionLog({ onClose }: MissionLogProps) {
                             </div>
 
                             <div className="flex flex-col items-end gap-2">
-                                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-white/5 text-white/40 border border-white/5">
+                                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-black/20 text-white/40 border border-white/5">
                                     {mission.reward}
                                 </span>
                                 {mission.status !== 'COMPLETED' && mission.status !== 'LOCKED' && (

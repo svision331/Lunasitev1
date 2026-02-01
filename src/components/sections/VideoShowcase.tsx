@@ -32,7 +32,7 @@ export function VideoShowcase({ videos }: VideoShowcaseProps) {
             opacity: Math.random(),
             delay: i * -1
         }));
-        setDataStream(stream);
+        setTimeout(() => setDataStream(stream), 0);
     }, []);
 
     const filteredVideos = videoFilter === 'All'

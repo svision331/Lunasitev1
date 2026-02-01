@@ -13,11 +13,12 @@ export function MusicPlayer({ onClose }: MusicPlayerProps) {
             </div>
 
             {/* Back Button */}
+            {/* End Transmission Button */}
             <button
                 onClick={onClose}
-                className="absolute top-4 right-4 p-2 text-white/30 hover:text-white transition-colors z-20"
+                className="absolute top-4 right-4 z-20 flex items-center gap-1 hover:text-red-400 transition-colors uppercase"
             >
-                <div className="text-[10px] font-mono border border-white/20 px-2 py-1 rounded hover:bg-white/10">ESC</div>
+                <span className="text-red-500/80 font-mono text-xs">[ End Transmission ]</span>
             </button>
 
             {/* Header Info */}

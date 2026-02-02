@@ -3,7 +3,7 @@
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { Users } from 'lucide-react';
 import { GlowButton } from '@/components/ui';
-import { NebulaGradient, HolographicText } from '@/components/effects';
+import { NebulaGradient, HolographicText, SpaceDebris } from '@/components/effects';
 import { communityStats } from '@/data/membership';
 
 export function Hero() {
@@ -21,6 +21,9 @@ export function Hero() {
                     scaleX: -1
                 }}
             />
+
+            {/* Zero-G Floating Debris */}
+            <SpaceDebris />
 
             {/* Video Background (Optional Override) */}
             <video

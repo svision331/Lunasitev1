@@ -249,6 +249,20 @@ body {
   animation-delay: var(--twinkle-delay, 0s);
 }
 
+@keyframes scan-slow {
+  0% {
+    transform: translateY(-100%);
+  }
+
+  100% {
+    transform: translateY(100%);
+  }
+}
+
+.animate-scan-slow {
+  animation: scan-slow 8s linear infinite;
+}
+
 /* ================================
    COUNTDOWN TIMER
    ================================ */

@@ -19,6 +19,7 @@ export function VideoShowcase({ videos }: VideoShowcaseProps) {
     const [videoFilter, setVideoFilter] = useState<VideoCategory>('All');
     const [autoPlayEnabled, setAutoPlayEnabled] = useState(true);
     const [isScanning, setIsScanning] = useState(false); // New Scanning State
+    const [isExpanded, setIsExpanded] = useState(false);
 
     const autoPlayTimerRef = useRef<NodeJS.Timeout | null>(null);
     const { playHover, playClick, playSuccess, playTyping } = useSoundEffects(); // Use Sound Hook
@@ -377,7 +378,7 @@ export function VideoShowcase({ videos }: VideoShowcaseProps) {
                         </div>
 
                         <div className="flex-1 overflow-y-auto p-4 space-y-2 custom-scrollbar relative z-10">
-                            {filteredVideos.map((video, idx) => (
+                            {filteredVideos.slice(0, isExpanded ? undefined : 4).map((video, idx) => (
                                 <motion.div
                                     key={idx}
                                     initial={{ opacity: 0, x: 20 }}
@@ -405,11 +406,27 @@ export function VideoShowcase({ videos }: VideoShowcaseProps) {
                                         </h4>
                                         <div className="flex items-center justify-between text-[10px] uppercase tracking-wider font-mono">
                                             <span className={`${idx === currentVideoIndex ? 'text-cyan-600' : 'text-zinc-600'}`}>{video.duration || '00:00'}</span>
-
                                         </div>
                                     </div>
                                 </motion.div>
                             ))}
+
+                            {/* Expansion Button */}
+                            {filteredVideos.length > 4 && (
+                                <button
+                                    onClick={() => {
+                                        playClick();
+                                        setIsExpanded(!isExpanded);
+                                    }}
+                                    onMouseEnter={playHover}
+                                    className="w-full py-3 mt-2 flex items-center justify-center gap-2 bg-black/40 border border-cyan-500/30 hover:bg-cyan-950/30 hover:border-cyan-400/60 rounded text-xs font-mono text-cyan-400 uppercase tracking-widest transition-all group"
+                                >
+                                    <span>{isExpanded ? 'Collapse_Log' : 'Expand_Database'}</span>
+                                    <div className={`transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`}>
+                                        <ChevronLeft className="-rotate-90" size={12} />
+                                    </div>
+                                </button>
+                            )}
                         </div>
                     </div>
 

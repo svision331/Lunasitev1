@@ -25,9 +25,9 @@ export function Footer() {
             <div className="max-w-7xl mx-auto">
                 <div className="grid md:grid-cols-3 gap-8 mb-8">
                     {/* Connect */}
-                    <div>
+                    <div className="text-center md:text-left">
                         <h3 className="font-bold mb-4 text-lg font-display">Connect</h3>
-                        <div className="flex gap-4">
+                        <div className="flex gap-4 justify-center md:justify-start">
                             {socialLinks.map((link) => (
                                 <motion.a
                                     key={link.href}
@@ -45,7 +45,7 @@ export function Footer() {
                     </div>
 
                     {/* Quick Links */}
-                    <div>
+                    <div className="text-center md:text-left">
                         <h3 className="font-bold mb-4 text-lg font-display">Quick Links</h3>
                         <div className="space-y-2 text-sm text-slate-400">
                             {quickLinks.map((link) => (
@@ -62,7 +62,7 @@ export function Footer() {
                     </div>
 
                     {/* Booking */}
-                    <div>
+                    <div className="text-center md:text-left">
                         <h3 className="font-bold mb-4 text-lg font-display">Booking</h3>
                         <a
                             href="mailto:booking@lunathelovegod.com"

@@ -132,7 +132,7 @@ export function Starfield({ warp = false }: StarfieldProps) {
                 const py = star.y * k + cy;
 
                 if (px >= 0 && px <= width && py >= 0 && py <= height) {
-                    const size = (1 - safeZ / width) * 2.5; // Bigger as it gets closer
+                    const size = Math.max(0, (1 - safeZ / width) * 2.5); // Bigger as it gets closer
                     const shade = parseInt(((1 - safeZ / width) * 255).toString());
 
                     // Twinkle (only when slow)

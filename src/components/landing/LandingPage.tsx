@@ -6,6 +6,8 @@ import { Navbar, MobileNav, Footer } from '@/components/layout';
 import { NebulaConsole } from '@/components/landing/NebulaConsole';
 import { Hero } from '@/components/sections';
 import { Starfield, IceGiantMode } from '@/components/effects';
+import { useSoundEffects } from '@/hooks/useSoundEffects';
+
 import { Video } from '@/data/videos';
 
 // Lazy load below-the-fold sections
@@ -25,30 +27,49 @@ interface LandingPageProps {
 export function LandingPage({ videos }: LandingPageProps) {
     const [hasEntered, setHasEntered] = useState(false);
     const [isWarping, setIsWarping] = useState(false);
+    const [isFading, setIsFading] = useState(false);
     const [startSequence, setStartSequence] = useState(false);
+    const { playWarp } = useSoundEffects();
 
     useEffect(() => {
         if (!startSequence) return;
 
-        // Sequence timers
-        const t1 = setTimeout(() => {
-            setHasEntered(true);
-        }, 1500);
+        // Trigger Sound
+        playWarp();
 
-        const t2 = setTimeout(() => {
+        // 1. Wait 2s before starting to fade out the console
+        const tFade = setTimeout(() => {
+            setIsFading(true);
+        }, 2000);
+
+        // 2. Reveal the main site after fade completes (2s + 1s fade)
+        const tEnter = setTimeout(() => {
+            setHasEntered(true);
+        }, 3000);
+
+        // 3. Stop the warp effect after everything settles
+        const tEndWarp = setTimeout(() => {
             setIsWarping(false);
-            setStartSequence(false); // Reset sequence trigger
-        }, 3500); // 1500 + 2000
+            setStartSequence(false);
+        }, 5000);
 
         return () => {
-            clearTimeout(t1);
-            clearTimeout(t2);
+            clearTimeout(tFade);
+            clearTimeout(tEnter);
+            clearTimeout(tEndWarp);
         };
-    }, [startSequence]);
+    }, [startSequence, playWarp]);
 
     const handleEnter = () => {
         setStartSequence(true);
-        setIsWarping(true);
+        setIsWarping(true); // Start star warp immediately
+    };
+
+    const handleReturnToBridge = () => {
+        setHasEntered(false);
+        setStartSequence(false);
+        setIsWarping(false);
+        setIsFading(false);
     };
 
     return (
@@ -62,14 +83,14 @@ export function LandingPage({ videos }: LandingPageProps) {
 
             {/* Entrance Console */}
             {!hasEntered && (
-                <div className={`fixed inset-0 z-50 transition-opacity duration-1000 ${isWarping ? 'opacity-0' : 'opacity-100'}`}>
+                <div className={`fixed inset-0 z-50 transition-opacity duration-1000 ${isFading ? 'opacity-0' : 'opacity-100'}`}>
                     <NebulaConsole onEnter={handleEnter} />
                 </div>
             )}
 
             <div className={hasEntered ? 'opacity-100 transition-opacity duration-2000 delay-500' : 'opacity-0 h-0 overflow-hidden'}>
                 {/* Navigation */}
-                <Navbar />
+                <Navbar onReturnToBridge={handleReturnToBridge} />
                 <MobileNav />
 
                 {/* Sections */}

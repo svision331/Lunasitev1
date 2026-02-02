@@ -80,12 +80,12 @@ export const StarSystemNode = React.memo(function StarSystemNode({ system, onHov
             onClick={() => onClick(system)}
         >
             {/* Tactical Target Container */}
-            <div className="relative flex items-center justify-center w-12 h-12">
+            <div className="relative flex items-center justify-center w-16 h-16">
 
                 {/* 1. Rotating Outer Bracket (Active/Hover) */}
                 <div className={`absolute inset-0 border border-dashed rounded-full border-white/20 opacity-0 group-hover/node:opacity-100 transition-all duration-500 group-hover/node:scale-100 scale-50 group-hover/node:animate-[spin_4s_linear_infinite] ${themeClass.replace('text-', 'border-')}`} />
 
-                {/* 2. Corner Brackets (The "Reticle" look) - Visible by default now (20%) */}
+                {/* 2. Corner Brackets (The "Reticle" look) */}
                 <div className="absolute inset-2 opacity-20 group-hover/node:opacity-100 transition-all duration-300 group-hover/node:scale-100 scale-90">
                     <div className={`absolute top-0 left-0 w-2 h-2 border-t border-l ${themeClass.replace('text-', 'border-')}`} />
                     <div className={`absolute top-0 right-0 w-2 h-2 border-t border-r ${themeClass.replace('text-', 'border-')}`} />
@@ -94,7 +94,19 @@ export const StarSystemNode = React.memo(function StarSystemNode({ system, onHov
                 </div>
 
                 {/* 3. The Core Object (Star/Planet) */}
-                <div className="relative">
+                <div className="relative flex items-center justify-center">
+
+                    {/* Atmospheric Glow (Outer) */}
+                    <div
+                        className={`absolute inset-[-8px] rounded-full opacity-30 blur-md transition-all duration-700 ${baseColor}`}
+                        style={{
+                            animation: `pulsate ${visuals.pulse_rate || '3s'} ease-in-out infinite alternate-reverse`
+                        }}
+                    />
+
+                    {/* Orbital Ring (Thin wireframe orbit) */}
+                    <div className={`absolute inset-[-4px] rounded-full border border-white/10 opacity-60 w-[140%] h-[140%] left-[-20%] top-[-20%] animate-[spin_8s_linear_infinite]`} />
+
                     {/* Inner Pulse */}
                     <div
                         className={`absolute inset-0 rounded-full core-pulse ${baseColor}`}
@@ -103,10 +115,22 @@ export const StarSystemNode = React.memo(function StarSystemNode({ system, onHov
                             animation: `pulsate ${visuals.pulse_rate || '3s'} ease-in-out infinite`
                         }}
                     />
-                    {/* Solid Core */}
+
+                    {/* Planetary Texture/Gradient Surface */}
                     <div
-                        className={`w-2 h-2 rounded-full ${baseColor} shadow-sm ring-1 ring-white/50 relative z-10 transition-all duration-300 group-hover/node:scale-125`}
-                    />
+                        className={`
+                            relative w-3 h-3 rounded-full shadow-inner ring-1 ring-white/20 z-10 
+                            transition-all duration-300 group-hover/node:scale-125
+                            ${baseColor}
+                        `}
+                        style={{
+                            background: `radial-gradient(circle at 30% 30%, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0) 20%), var(--tw-bg-opacity, 1)`,
+                            boxShadow: `inset -2px -2px 4px rgba(0,0,0,0.5), 0 0 10px ${themeClass.includes('cyan') ? 'rgba(34,211,238,0.5)' : 'rgba(255,255,255,0.3)'}`
+                        }}
+                    >
+                        {/* Surface Detail (Crater/Storm) */}
+                        <div className="absolute top-[20%] right-[30%] w-[40%] h-[40%] bg-black/10 rounded-full blur-[0.5px]" />
+                    </div>
                 </div>
             </div>
 

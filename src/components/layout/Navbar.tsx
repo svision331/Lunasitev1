@@ -14,7 +14,13 @@ const navLinks = [
     { href: '#press', label: 'Book/Press', secondary: true },
 ];
 
-export function Navbar() {
+// ... imports
+
+interface NavbarProps {
+    onReturnToBridge?: () => void;
+}
+
+export function Navbar({ onReturnToBridge }: NavbarProps) {
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const { playHover, playClick } = useSoundEffects();
@@ -91,18 +97,20 @@ export function Navbar() {
                                     </Link>
                                 </div>
                             ))}
-                        </div>
-
-                        {/* System Status Indicators (Desktop) */}
-                        <div className="hidden lg:flex items-center gap-4 pl-8 border-l border-white/10 ml-4">
-                            <div className="flex items-center gap-2 text-[9px] font-mono text-cyan-500/60 uppercase tracking-widest">
-                                <Wifi size={10} className="text-cyan-500" />
-                                <span>NET_ACTIVE</span>
-                            </div>
-                            <div className="flex items-center gap-2 text-[9px] font-mono text-emerald-500/60 uppercase tracking-widest">
-                                <Activity size={10} className="text-emerald-500" />
-                                <span>SYS_ONLINE</span>
-                            </div>
+                            {/* Return to Bridge Button */}
+                            {onReturnToBridge && (
+                                <button
+                                    onClick={() => {
+                                        playClick();
+                                        onReturnToBridge();
+                                    }}
+                                    onMouseEnter={playHover}
+                                    className="px-4 py-1.5 border border-cyan-500/30 rounded text-[10px] font-mono uppercase tracking-widest text-cyan-400 hover:bg-cyan-500/20 hover:border-cyan-400 transition-all flex items-center gap-2"
+                                >
+                                    <Activity size={12} className="animate-pulse" />
+                                    <span>Console</span>
+                                </button>
+                            )}
                         </div>
 
                         {/* Mobile Menu Button */}
@@ -176,10 +184,24 @@ export function Navbar() {
                                 </motion.div>
                             ))}
 
-                            <div className="mt-8 pt-8 border-t border-white/10 w-40 flex justify-center gap-4 opacity-50">
-                                <Activity size={16} className="text-cyan-500 animate-pulse" />
-                                <span className="text-xs font-mono tracking-widest text-cyan-500">SYSTEM READY</span>
-                            </div>
+                            {/* Mobile Bridge Button */}
+                            {onReturnToBridge && (
+                                <motion.button
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: 0.4 }}
+                                    onClick={() => {
+                                        setIsMobileMenuOpen(false);
+                                        playClick();
+                                        onReturnToBridge();
+                                    }}
+                                    className="px-6 py-3 mt-4 border border-cyan-500/50 rounded-lg text-lg font-mono tracking-widest uppercase text-cyan-400 hover:bg-cyan-500/20 transition-all flex items-center gap-3"
+                                >
+                                    <Activity size={18} className="animate-pulse" />
+                                    <span>Return to Console</span>
+                                </motion.button>
+                            )}
+
                         </motion.div>
                     </motion.div>
                 )}

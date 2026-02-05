@@ -11,7 +11,7 @@ export function Hero() {
     const y = useTransform(scrollY, [0, 500], [0, 100]); // Parallax effect
 
     return (
-        <section className="relative min-h-[100dvh] flex items-center justify-center overflow-hidden pt-16">
+        <section className="relative min-h-[100dvh] flex items-center justify-center overflow-hidden pt-16 pb-24 md:pb-0">
             {/* Base Background Image (Fallback) */}
             <motion.div
                 className="absolute inset-0 bg-cover bg-center"

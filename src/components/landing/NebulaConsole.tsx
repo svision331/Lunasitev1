@@ -16,6 +16,7 @@ import { useSoundEffects } from "@/hooks/useSoundEffects";
 import { ShipAmbience } from "@/components/effects/ShipAmbience";
 
 type Log = { level: "INFO" | "WARN" | "OK" | "CRIT"; msg: string };
+import { motion } from "framer-motion";
 
 const cx = (...c: Array<string | false | null | undefined>) => c.filter(Boolean).join(" ");
 
@@ -141,204 +142,221 @@ export function NebulaConsole({ onEnter }: NebulaConsoleProps) {
 
             <div className="relative h-full flex items-center justify-center p-2 md:p-4">
                 {/* Main Console Frame */}
-                <TechBorder className="w-full max-w-6xl h-full md:h-auto max-h-full" color="cyan" cornerSize={20}>
-                    <div className="w-full h-full bg-black/80 backdrop-blur-md p-2 md:p-4 flex flex-col">
-                        <GridBackground opacity={0.1} />
-                        <div className="cockpit-inner rounded-xl md:rounded-[22px] p-4 md:p-6 grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-6 flex-1 overflow-hidden">
+                <motion.div
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.8, ease: "circOut" }}
+                    className="w-full max-w-6xl h-full md:h-auto max-h-full flex flex-col pointer-events-auto"
+                >
+                    <TechBorder className="w-full h-full" color="cyan" cornerSize={20}>
+                        <div className="w-full h-full bg-black/80 backdrop-blur-md p-2 md:p-4 flex flex-col">
+                            <GridBackground opacity={0.1} />
+                            <div className="cockpit-inner rounded-xl md:rounded-[22px] p-4 md:p-6 grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-6 flex-1 overflow-hidden">
 
-                            {/* Left Sidebar - Hidden on Mobile */}
-                            <aside className="hidden md:flex col-span-12 md:col-span-3 flex-col gap-4">
-                                <TechBorder className="h-auto" color="emerald" cornerSize={12}>
-                                    <div className="p-5 bg-black/60 relative overflow-hidden">
-                                        <GridBackground opacity={0.05} color="rgba(52, 211, 153, 1)" />
-                                        <div className="relative z-10 space-y-4">
-                                            <div className="flex items-center justify-between border-b border-white/10 pb-3">
-                                                <span className="text-[10px] tracking-[0.2em] uppercase text-white/50">Sys_Mon</span>
-                                                <div className="h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)] animate-pulse" />
-                                            </div>
-                                            <SystemBar label="Network" value={signal} icon={Radio} />
-                                            <SystemBar label="Power" value={power} icon={Zap} />
-                                            <SystemBar label="Vibe" value={vibe} icon={Music} />
-                                            <SystemBar label="Sync" value={sync} icon={Activity} />
-                                        </div>
-                                    </div>
-                                </TechBorder>
-
-                                <TechBorder className="flex-1 flex flex-col min-h-0" color="cyan" cornerSize={12}>
-                                    <div className="p-4 bg-black/60 h-full flex flex-col relative overflow-hidden">
-                                        <div className="text-sm tracking-[0.2em] uppercase text-white/50 mb-3">Log_Stream</div>
-                                        <div ref={logContainerRef} className="flex-1 overflow-y-auto space-y-4 font-mono text-sm pr-2 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-white/10 relative z-10">
-                                            {logs.map((l, i) => (
-                                                <div key={i} className="flex gap-2 leading-tight opacity-80">
-                                                    <span className={cx("shrink-0",
-                                                        l.level === "OK" ? "text-emerald-400" :
-                                                            l.level === "WARN" ? "text-amber-400" :
-                                                                l.level === "CRIT" ? "text-red-400" : "text-cyan-400"
-                                                    )}>{`[${l.level}]`}</span>
-                                                    <span className={`text-white/70 ${i === 0 ? 'typing-cursor' : ''}`}>{l.msg}</span>
+                                {/* Left Sidebar - Hidden on Mobile */}
+                                <motion.aside
+                                    initial={{ x: -20, opacity: 0 }}
+                                    animate={{ x: 0, opacity: 1 }}
+                                    transition={{ delay: 0.2, duration: 0.5 }}
+                                    className="hidden md:flex col-span-12 md:col-span-3 flex-col gap-4"
+                                >
+                                    <TechBorder className="h-auto" color="emerald" cornerSize={12}>
+                                        <div className="p-5 bg-black/60 relative overflow-hidden">
+                                            <GridBackground opacity={0.05} color="rgba(52, 211, 153, 1)" />
+                                            <div className="relative z-10 space-y-4">
+                                                <div className="flex items-center justify-between border-b border-white/10 pb-3">
+                                                    <span className="text-[10px] tracking-[0.2em] uppercase text-white/50">Sys_Mon</span>
+                                                    <div className="h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)] animate-pulse" />
                                                 </div>
-                                            ))}
+                                                <SystemBar label="Network" value={signal} icon={Radio} />
+                                                <SystemBar label="Power" value={power} icon={Zap} />
+                                                <SystemBar label="Vibe" value={vibe} icon={Music} />
+                                                <SystemBar label="Sync" value={sync} icon={Activity} />
+                                            </div>
                                         </div>
-                                    </div>
-                                </TechBorder>
-                            </aside>
+                                    </TechBorder>
 
-                            {/* Center Main Module - Full Width on Mobile */}
-                            <main className="col-span-1 md:col-span-6 flex flex-col gap-3 md:gap-4 h-full">
-                                {/* Header Panel */}
-                                <TechBorder color="cyan" cornerSize={12}>
-                                    <header className="p-4 md:p-6 bg-black/60 flex items-center justify-between shrink-0 relative overflow-hidden">
-                                        <GridBackground opacity={0.1} />
-                                        <div className="relative z-10">
-                                            <div className="text-[10px] tracking-[0.3em] uppercase text-cyan-300/70 mb-1">Bridge Console</div>
-                                            <h1 className="text-2xl md:text-3xl font-display font-bold uppercase tracking-tight text-gradient glitch-text" data-text="LUNATHELOVEGOD">
-                                                LUNATHELOVEGOD
-                                            </h1>
-                                        </div>
-                                        <div className="text-right hidden sm:block relative z-10">
-                                            <div className="text-[10px] tracking-widest uppercase text-white/40">Local Time</div>
-                                            <div className="text-xl font-mono text-white/90">{now ? formatTime(now) : '00:00:00'}</div>
-                                        </div>
-                                    </header>
-                                </TechBorder>
-
-                                {/* Visualizer / Hero Area */}
-                                <div className="flex-1 panel rounded-2xl p-1 relative overflow-hidden group flex items-center justify-center bg-black/40 min-h-0">
-                                    {activeModule === 'HOME' ? (
-                                        <>
-                                            {/* Warp Speed Background */}
-                                            <div className="absolute inset-0 star-warp opacity-40 mix-blend-screen" />
-
-                                            {/* Hero Image with Fade */}
-                                            <div
-                                                className="absolute inset-0 bg-[url('/images/console-hero-v2.jpg')] bg-cover bg-center opacity-60 mix-blend-lighten"
-                                                style={{
-                                                    maskImage: 'linear-gradient(to bottom, black 50%, transparent 100%)',
-                                                    WebkitMaskImage: 'linear-gradient(to bottom, black 50%, transparent 100%)'
-                                                }}
-                                            />
-                                            <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-90" />
-
-                                            {/* CSS Audio Visualizer - Deterministic */}
-                                            <div className="absolute inset-0 flex items-center justify-center gap-1 opacity-20 pointer-events-none">
-                                                {Array.from({ length: 20 }).map((_, i) => (
-                                                    <div
-                                                        key={i}
-                                                        className="w-2 bg-cyan-500/50 rounded-full waveform-bar"
-                                                        style={{
-                                                            animationDelay: `${i * 0.05}s`,
-                                                            animationDuration: `${0.5 + ((i * 1337) % 100) / 100}s`,
-                                                            height: `${20 + ((i * 997) % 60)}%`
-                                                        }}
-                                                    />
+                                    <TechBorder className="flex-1 flex flex-col min-h-0" color="cyan" cornerSize={12}>
+                                        <div className="p-4 bg-black/60 h-full flex flex-col relative overflow-hidden">
+                                            <div className="text-sm tracking-[0.2em] uppercase text-white/50 mb-3">Log_Stream</div>
+                                            <div ref={logContainerRef} className="flex-1 overflow-y-auto space-y-4 font-mono text-sm pr-2 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-white/10 relative z-10">
+                                                {logs.map((l, i) => (
+                                                    <div key={i} className="flex gap-2 leading-tight opacity-80">
+                                                        <span className={cx("shrink-0",
+                                                            l.level === "OK" ? "text-emerald-400" :
+                                                                l.level === "WARN" ? "text-amber-400" :
+                                                                    l.level === "CRIT" ? "text-red-400" : "text-cyan-400"
+                                                        )}>{`[${l.level}]`}</span>
+                                                        <span className={`text-white/70 ${i === 0 ? 'typing-cursor' : ''}`}>{l.msg}</span>
+                                                    </div>
                                                 ))}
                                             </div>
+                                        </div>
+                                    </TechBorder>
+                                </motion.aside>
 
-                                            <div className="relative z-10 text-center space-y-6 md:space-y-8 p-4">
-                                                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-cyan-500/30 bg-cyan-500/10 backdrop-blur-md">
-                                                    <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
-                                                    <span className="text-[10px] tracking-widest uppercase text-cyan-200">System Ready</span>
-                                                </div>
-
-                                                <button
-                                                    onClick={handleEnter}
-                                                    onMouseEnter={playHover}
-                                                    disabled={isEntering}
-                                                    className={`btn-radioactive px-10 py-6 text-cyan-300 rounded-2xl transition-all duration-500 ${isEntering ? 'scale-110 brightness-150 border-cyan-400 bg-cyan-500/20' : ''}`}
-                                                >
-                                                    <span className="text-lg font-bold tracking-[0.2em] uppercase">
-                                                        {isEntering ? 'Engaging Warp...' : 'Enter Portal'}
-                                                    </span>
-                                                </button>
-
-                                                <div className="text-[10px] uppercase text-white/30 tracking-widest md:hidden animate-pulse">
-                                                    Tap to Initialize
-                                                </div>
+                                {/* Center Main Module - Full Width on Mobile */}
+                                <main className="col-span-1 md:col-span-6 flex flex-col gap-3 md:gap-4 h-full">
+                                    {/* Header Panel */}
+                                    <TechBorder color="cyan" cornerSize={12}>
+                                        <header className="p-4 md:p-6 bg-black/60 flex items-center justify-between shrink-0 relative overflow-hidden">
+                                            <GridBackground opacity={0.1} />
+                                            <div className="relative z-10">
+                                                <div className="text-[10px] tracking-[0.3em] uppercase text-cyan-300/70 mb-1">Bridge Console</div>
+                                                <h1 className="text-2xl md:text-3xl font-display font-bold uppercase tracking-tight text-gradient glitch-text" data-text="LUNATHELOVEGOD">
+                                                    LUNATHELOVEGOD
+                                                </h1>
                                             </div>
-                                        </>
-                                    ) : (
-                                        <>
-                                            {activeModule === 'MISSION' && <MissionLog onClose={() => setActiveModule('HOME')} />}
-                                            {activeModule === 'MEDIA' && <MusicPlayer onClose={() => setActiveModule('HOME')} />}
-                                            {activeModule === 'COMMS' && <CommsInterface onClose={() => setActiveModule('HOME')} />}
-                                            {activeModule === 'COSMOS' && <CosmosMap onClose={() => setActiveModule('HOME')} />}
-                                        </>
-                                    )}
-                                </div>
+                                            <div className="text-right hidden sm:block relative z-10">
+                                                <div className="text-[10px] tracking-widest uppercase text-white/40">Local Time</div>
+                                                <div className="text-xl font-mono text-white/90">{now ? formatTime(now) : '00:00:00'}</div>
+                                            </div>
+                                        </header>
+                                    </TechBorder>
 
-                                {/* Quick Actions - Visible but Compact on Mobile */}
-                                <div className="grid grid-cols-4 gap-2 md:gap-3 shrink-0">
-                                    <button
-                                        className="btn-console group"
-                                        onClick={() => { setActiveModule('COSMOS'); playClick(); }}
-                                        onMouseEnter={playHover}
-                                    >
-                                        <span className="btn-dot bg-cyan-400" />
-                                        <span className="group-hover:text-cyan-200 transition-colors hidden md:inline">Map</span>
-                                        <span className="md:hidden text-[9px]"><Globe size={12} /></span>
-                                    </button>
-                                    <button
-                                        className="btn-console group"
-                                        onClick={() => { setActiveModule('MISSION'); playClick(); }}
-                                        onMouseEnter={playHover}
-                                    >
-                                        <span className="btn-dot" />
-                                        <span className="group-hover:text-cyan-200 transition-colors hidden md:inline">Mission</span>
-                                        <span className="md:hidden text-[9px]">Mission</span>
-                                    </button>
-                                    <button
-                                        className="btn-console group"
-                                        onClick={() => { setActiveModule('MEDIA'); playClick(); }}
-                                        onMouseEnter={playHover}
-                                    >
-                                        <span className="btn-dot btn-dot-mag" />
-                                        <span className="group-hover:text-pink-200 transition-colors hidden md:inline">Media</span>
-                                        <span className="md:hidden text-[9px]">Media</span>
-                                    </button>
-                                    <button
-                                        className="btn-console group"
-                                        onClick={() => { setActiveModule('COMMS'); playClick(); }}
-                                        onMouseEnter={playHover}
-                                    >
-                                        <span className="btn-dot btn-dot-amb" />
-                                        <span className="group-hover:text-amber-200 transition-colors hidden md:inline">Comms</span>
-                                        <span className="md:hidden text-[9px]">Comms</span>
-                                    </button>
-                                </div>
-                            </main>
+                                    {/* Visualizer / Hero Area */}
+                                    <div className="flex-1 panel rounded-2xl p-1 relative overflow-hidden group flex items-center justify-center bg-black/40 min-h-0">
+                                        {activeModule === 'HOME' ? (
+                                            <>
+                                                {/* Warp Speed Background */}
+                                                <div className="absolute inset-0 star-warp opacity-40 mix-blend-screen" />
 
-                            {/* Right Sidebar - Hidden on Mobile */}
-                            <aside className="hidden md:flex col-span-12 md:col-span-3 flex-col gap-4">
-                                <div className="panel p-4 rounded-2xl">
-                                    <div className="text-[10px] tracking-[0.2em] uppercase text-white/50 mb-3 ml-1">Spatial_Nav</div>
-                                    <NebulaRadar />
-                                </div>
+                                                {/* Hero Image with Fade */}
+                                                <div
+                                                    className="absolute inset-0 bg-[url('/images/console-hero-v2.jpg')] bg-cover bg-center opacity-60 mix-blend-lighten"
+                                                    style={{
+                                                        maskImage: 'linear-gradient(to bottom, black 50%, transparent 100%)',
+                                                        WebkitMaskImage: 'linear-gradient(to bottom, black 50%, transparent 100%)'
+                                                    }}
+                                                />
+                                                <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-90" />
 
-                                <div className="grid grid-cols-1 gap-3">
-                                    <StatCard label="Next Show" value="FEB 14" icon={Calendar} trend="Selling Fast" />
-                                    <StatCard label="Location" value="NYC" icon={MapPin} />
-                                </div>
+                                                {/* CSS Audio Visualizer - Deterministic */}
+                                                <div className="absolute inset-0 flex items-center justify-center gap-1 opacity-20 pointer-events-none">
+                                                    {Array.from({ length: 20 }).map((_, i) => (
+                                                        <div
+                                                            key={i}
+                                                            className="w-2 bg-cyan-500/50 rounded-full waveform-bar"
+                                                            style={{
+                                                                animationDelay: `${i * 0.05}s`,
+                                                                animationDuration: `${0.5 + ((i * 1337) % 100) / 100}s`,
+                                                                height: `${20 + ((i * 997) % 60)}%`
+                                                            }}
+                                                        />
+                                                    ))}
+                                                </div>
 
-                                {/* Command Input */}
-                                <TechBorder color="amber" cornerSize={8}>
-                                    <div className="p-1 bg-black/60">
-                                        <form onSubmit={onRun} className="flex items-center bg-black/40 rounded-lg px-3 py-2 border border-white/5 focus-within:border-cyan-500/30 transition-colors">
-                                            <span className="text-cyan-500/70 mr-2">›</span>
-                                            <input
-                                                ref={inputRef}
-                                                value={cmd}
-                                                onChange={e => { setCmd(e.target.value); playTyping(); }}
-                                                className="bg-transparent border-none outline-none text-[11px] font-mono text-white/80 w-full placeholder:text-white/20 uppercase"
-                                                placeholder="Type command..."
-                                            />
-                                        </form>
+                                                <div className="relative z-10 text-center space-y-6 md:space-y-8 p-4">
+                                                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-cyan-500/30 bg-cyan-500/10 backdrop-blur-md">
+                                                        <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
+                                                        <span className="text-[10px] tracking-widest uppercase text-cyan-200">System Ready</span>
+                                                    </div>
+
+                                                    <button
+                                                        onClick={handleEnter}
+                                                        onMouseEnter={playHover}
+                                                        disabled={isEntering}
+                                                        className={`btn-radioactive px-10 py-6 text-cyan-300 rounded-2xl transition-all duration-500 ${isEntering ? 'scale-110 brightness-150 border-cyan-400 bg-cyan-500/20' : ''}`}
+                                                    >
+                                                        <span className="text-lg font-bold tracking-[0.2em] uppercase">
+                                                            {isEntering ? 'Engaging Warp...' : 'Enter Portal'}
+                                                        </span>
+                                                    </button>
+
+                                                    <div className="text-[10px] uppercase text-white/30 tracking-widest md:hidden animate-pulse">
+                                                        Tap to Initialize
+                                                    </div>
+                                                </div>
+                                            </>
+                                        ) : (
+                                            <>
+                                                {activeModule === 'MISSION' && <MissionLog onClose={() => setActiveModule('HOME')} />}
+                                                {activeModule === 'MEDIA' && <MusicPlayer onClose={() => setActiveModule('HOME')} />}
+                                                {activeModule === 'COMMS' && <CommsInterface onClose={() => setActiveModule('HOME')} />}
+                                                {activeModule === 'COSMOS' && <CosmosMap onClose={() => setActiveModule('HOME')} />}
+                                            </>
+                                        )}
                                     </div>
-                                </TechBorder>
-                            </aside>
 
+                                    {/* Quick Actions - Visible but Compact on Mobile */}
+                                    <div className="grid grid-cols-4 gap-2 md:gap-3 shrink-0">
+                                        <button
+                                            className="btn-console group"
+                                            onClick={() => { setActiveModule('COSMOS'); playClick(); }}
+                                            onMouseEnter={playHover}
+                                        >
+                                            <span className="btn-dot bg-cyan-400" />
+                                            <span className="group-hover:text-cyan-200 transition-colors hidden md:inline">Map</span>
+                                            <span className="md:hidden text-[9px]"><Globe size={12} /></span>
+                                        </button>
+                                        <button
+                                            className="btn-console group"
+                                            onClick={() => { setActiveModule('MISSION'); playClick(); }}
+                                            onMouseEnter={playHover}
+                                        >
+                                            <span className="btn-dot" />
+                                            <span className="group-hover:text-cyan-200 transition-colors hidden md:inline">Mission</span>
+                                            <span className="md:hidden text-[9px]">Mission</span>
+                                        </button>
+                                        <button
+                                            className="btn-console group"
+                                            onClick={() => { setActiveModule('MEDIA'); playClick(); }}
+                                            onMouseEnter={playHover}
+                                        >
+                                            <span className="btn-dot btn-dot-mag" />
+                                            <span className="group-hover:text-pink-200 transition-colors hidden md:inline">Media</span>
+                                            <span className="md:hidden text-[9px]">Media</span>
+                                        </button>
+                                        <button
+                                            className="btn-console group"
+                                            onClick={() => { setActiveModule('COMMS'); playClick(); }}
+                                            onMouseEnter={playHover}
+                                        >
+                                            <span className="btn-dot btn-dot-amb" />
+                                            <span className="group-hover:text-amber-200 transition-colors hidden md:inline">Comms</span>
+                                            <span className="md:hidden text-[9px]">Comms</span>
+                                        </button>
+                                    </div>
+                                </main>
+
+                                {/* Right Sidebar - Hidden on Mobile */}
+                                <motion.aside
+                                    initial={{ x: 20, opacity: 0 }}
+                                    animate={{ x: 0, opacity: 1 }}
+                                    transition={{ delay: 0.4, duration: 0.5 }}
+                                    className="hidden md:flex col-span-12 md:col-span-3 flex-col gap-4"
+                                >
+                                    <div className="panel p-4 rounded-2xl">
+                                        <div className="text-[10px] tracking-[0.2em] uppercase text-white/50 mb-3 ml-1">Spatial_Nav</div>
+                                        <NebulaRadar />
+                                    </div>
+
+                                    <div className="grid grid-cols-1 gap-3">
+                                        <StatCard label="Next Show" value="FEB 14" icon={Calendar} trend="Selling Fast" />
+                                        <StatCard label="Location" value="NYC" icon={MapPin} />
+                                    </div>
+
+                                    {/* Command Input */}
+                                    <TechBorder color="amber" cornerSize={8}>
+                                        <div className="p-1 bg-black/60">
+                                            <form onSubmit={onRun} className="flex items-center bg-black/40 rounded-lg px-3 py-2 border border-white/5 focus-within:border-cyan-500/30 transition-colors">
+                                                <span className="text-cyan-500/70 mr-2">›</span>
+                                                <input
+                                                    ref={inputRef}
+                                                    value={cmd}
+                                                    onChange={e => { setCmd(e.target.value); playTyping(); }}
+                                                    className="bg-transparent border-none outline-none text-[11px] font-mono text-white/80 w-full placeholder:text-white/20 uppercase"
+                                                    placeholder="Type command..."
+                                                />
+                                            </form>
+                                        </div>
+                                    </TechBorder>
+                                </motion.aside>
+
+                            </div>
                         </div>
-                    </div>
-                </TechBorder>
+                    </TechBorder>
+                </motion.div>
 
                 {/* Disclaimer / Footer */}
                 <div className="absolute bottom-2 md:bottom-4 left-0 right-0 text-[9px] text-white/20 tracking-wider uppercase text-center pointer-events-none">

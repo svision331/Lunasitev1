@@ -11,6 +11,7 @@ interface Star {
     opacity: number;
     twinkleSpeed: number;
     twinklePhase: number;
+    shouldTwinkle: boolean;
 }
 
 interface ShootingStar {
@@ -72,8 +73,9 @@ export function Starfield({ warp = false }: StarfieldProps) {
                     size: Math.random() * 0.8 + 0.2, // Base size (will scale by Z)
                     baseOpacity: Math.random() * 0.5 + 0.5,
                     opacity: 1,
-                    twinkleSpeed: Math.random() * 0.02 + 0.005,
+                    twinkleSpeed: Math.random() * 0.05 + 0.02, // Slightly faster twinkling
                     twinklePhase: Math.random() * Math.PI * 2,
+                    shouldTwinkle: Math.random() > 0.7, // 30% of stars twinkle
                 });
             }
         };
@@ -135,12 +137,13 @@ export function Starfield({ warp = false }: StarfieldProps) {
                     const size = Math.max(0, (1 - safeZ / width) * 2.5); // Bigger as it gets closer
                     const shade = parseInt(((1 - safeZ / width) * 255).toString());
 
-                    // Twinkle (only when slow)
-                    if (warpSpeedRef.current < 2) {
+                    // Twinkle (only when slow and if enabled for this star)
+                    if (warpSpeedRef.current < 2 && star.shouldTwinkle) {
                         star.twinklePhase += star.twinkleSpeed;
-                        star.opacity = star.baseOpacity + Math.sin(star.twinklePhase) * 0.3;
+                        // More pronounced twinkle for selected stars
+                        star.opacity = star.baseOpacity + Math.sin(star.twinklePhase) * 0.4;
                     } else {
-                        star.opacity = 1;
+                        star.opacity = star.baseOpacity;
                     }
 
                     ctx.beginPath();

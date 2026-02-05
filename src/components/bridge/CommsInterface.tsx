@@ -115,8 +115,23 @@ export function CommsInterface({ onClose }: CommsInterfaceProps) {
                     </div>
                     <div className="flex items-center gap-3 text-[10px] text-white/40 font-mono">
                         <span className="flex items-center gap-1">
-                            <Wifi size={10} /> {isTyping ? "INCOMING..." : "128.4 Mhz"}
+                            <Wifi size={10} /> {isTyping ? "INCOMING TRANSMISSION..." : "128.4 Mhz // CONNECTED"}
                         </span>
+                        {isTyping && (
+                            <div className="flex items-end gap-0.5 h-3 ml-2">
+                                {[...Array(5)].map((_, i) => (
+                                    <div
+                                        key={i}
+                                        className="w-0.5 bg-cyan-400/80 animate-pulse"
+                                        style={{
+                                            height: '100%',
+                                            animationDelay: `${i * 0.1}s`,
+                                            animationDuration: '0.4s'
+                                        }}
+                                    />
+                                ))}
+                            </div>
+                        )}
                         <button
                             onClick={onClose}
                             className="flex items-center gap-1 hover:text-red-400 transition-colors uppercase border border-white/5 hover:border-red-500/30 px-2 py-1 rounded bg-black/40"
@@ -164,8 +179,11 @@ export function CommsInterface({ onClose }: CommsInterfaceProps) {
                     ))}
                     {isTyping && (
                         <div className="flex flex-col items-start animate-in fade-in slide-in-from-left-2 duration-300">
-                            <div className="max-w-[85%] rounded px-3 py-2 text-xs font-mono border-l-2 border-cyan-500/50 text-cyan-200/50 bg-cyan-950/10">
-                                <span className="animate-pulse">Decoding signal...</span>
+                            <div className="max-w-[85%] rounded px-3 py-2 text-xs font-mono border-l-2 border-cyan-500/50 text-cyan-200/50 bg-cyan-950/10 backdrop-blur-sm">
+                                <span className="flex items-center gap-2">
+                                    <span className="animate-spin text-[10px]">◐</span>
+                                    <span className="animate-pulse tracking-widest">DECODING SIGNAL FRAGMENT...</span>
+                                </span>
                             </div>
                         </div>
                     )}

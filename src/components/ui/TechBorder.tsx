@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 
 interface TechBorderProps {
     children: React.ReactNode;
@@ -13,6 +13,21 @@ export function TechBorder({
     className = "",
     cornerSize = 12
 }: TechBorderProps) {
+    const containerRef = useRef<HTMLDivElement>(null);
+    const [dimensions, setDimensions] = useState({ width: 100, height: 100 });
+
+    useEffect(() => {
+        const updateDimensions = () => {
+            if (containerRef.current) {
+                const { width, height } = containerRef.current.getBoundingClientRect();
+                setDimensions({ width, height });
+            }
+        };
+
+        updateDimensions();
+        window.addEventListener('resize', updateDimensions);
+        return () => window.removeEventListener('resize', updateDimensions);
+    }, []);
 
     const colors = {
         cyan: "border-cyan-500/30 text-cyan-400 bg-cyan-950/10",
@@ -28,8 +43,10 @@ export function TechBorder({
         emerald: "#34d399"
     }[color];
 
+    const { width, height } = dimensions;
+
     return (
-        <div className={`relative group ${className}`}>
+        <div ref={containerRef} className={`relative group ${className}`}>
             {/* Outer Border with Gap */}
             <div className={`absolute inset-0 border ${colors[color]} opacity-40`}
                 style={{
@@ -63,25 +80,11 @@ export function TechBorder({
                     filter={`url(#glow-${color})`}
                 />
 
-                {/* Top Right Connector */}
-                <path d={`M calc(100% - ${cornerSize}) 0 L 100% ${cornerSize}`}
-                    fill="none" stroke={accentColor} strokeWidth="1" opacity="0.5"
-                />
-
-                {/* Bottom Left Connector */}
-                <path d={`M 0 calc(100% - ${cornerSize}) L ${cornerSize} 100%`}
-                    fill="none" stroke={accentColor} strokeWidth="1" opacity="0.5"
-                />
-
                 {/* Bottom Right */}
-                <path d={`M 100% calc(100% - ${cornerSize}) L 100% 100% L calc(100% - ${cornerSize}) 100%`}
+                <path d={`M ${width} ${height - cornerSize} L ${width} ${height} L ${width - cornerSize} ${height}`}
                     fill="none" stroke={accentColor} strokeWidth="2"
                     filter={`url(#glow-${color})`}
                 />
-
-                {/* Decorative Specs */}
-                <circle cx="4" cy="calc(100% - 4)" r="1" fill={accentColor} />
-                <circle cx="calc(100% - 4)" cy="4" r="1" fill={accentColor} />
             </svg>
 
             {/* Content Container */}

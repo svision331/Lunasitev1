@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { Inter, Space_Grotesk } from 'next/font/google';
 import './globals.css';
-import { CosmicCursor } from '@/components/effects';
+import { CosmicCursor, CustomCursor } from '@/components/effects';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 const spaceGrotesk = Space_Grotesk({ subsets: ['latin'], variable: '--font-space' });
@@ -47,6 +47,9 @@ export default function RootLayout({
       <body className={`${inter.variable} ${spaceGrotesk.variable} antialiased selection:bg-cyan-500/30 selection:text-cyan-200`} suppressHydrationWarning>
         {/* Global Cursor Effect */}
         <CosmicCursor />
+
+        {/* Custom Ice Heart Cursor */}
+        <CustomCursor />
 
         {/* Noise texture overlay */}
         <div className="noise-overlay" />

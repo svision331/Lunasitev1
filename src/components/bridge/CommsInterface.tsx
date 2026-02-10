@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Send, Radio, Wifi, ArrowUp } from "lucide-react";
+import { Send, Radio, Wifi, ArrowUp, Trash2 } from "lucide-react";
+import ReactMarkdown from 'react-markdown';
 import { TechBorder } from "@/components/ui/TechBorder";
 import { GridBackground } from "@/components/effects/GridBackground";
 
@@ -15,45 +16,29 @@ type Message = {
     content: string;
 };
 
-const LUNA_RESPONSES = [
-    "The stars are singing tonight... can you hear them? 🌟",
-    "Sending love from the Ice Giant. ❄️",
-    "Your frequency resonates with mine.",
-    "The universe has a plan for us, Space Invader.",
-    "Drifting through the cosmos, but I see you.",
-    "Stay cosmic. ✨",
-    "Signals are strong tonight.",
-    "Are you ready for the next transmission?",
-    "Gravity is just a suggestion.",
+const INITIAL_MESSAGES: Message[] = [
+    { id: "init-1", role: "system", content: "Comms link established... Scanning frequencies..." },
+    { id: "init-2", role: "assistant", content: "Signal received. I am listening, Space Invader. 📡" }
 ];
 
-const KEYWORDS: Record<string, string> = {
-    "hello": "Greetings, traveler. The void is warm tonight.",
-    "hi": "Hi there, Space Invader. 🛸",
-    "love": "Love is the only constant in the universe.",
-    "music": "Music is how we decode the chaos.",
-    "show": "The next show will be legendary. See you there?",
-    "tickets": "Secure your passage. The portal closes soon.",
-    "luna": "I am here. Always watching, always listening.",
-    "real": "What is real? We are all stardust dreaming.",
-};
-
 export function CommsInterface({ onClose }: CommsInterfaceProps) {
-    const { playTyping, playSuccess, playClick } = useSoundEffects();
-    const [messages, setMessages] = useState<Message[]>([
-        { id: "init-1", role: "system", content: "Comms link established... Scanning frequencies..." },
-        { id: "init-2", role: "assistant", content: "Signal received. I am listening, Space Invader. 📡" }
-    ]);
-    const [localInput, setLocalInput] = useState("");
-    const [isTyping, setIsTyping] = useState(false);
+    const { playTyping, playSuccess, playClick, playError } = useSoundEffects();
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
     const [showScrollTop, setShowScrollTop] = useState(false);
+    const [localInput, setLocalInput] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
+
+    const [messages, setMessages] = useState<Message[]>(INITIAL_MESSAGES);
 
     // Auto-scroll to bottom on new messages
-    useEffect(() => {
+    const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-    }, [messages, isTyping]);
+    };
+
+    useEffect(() => {
+        scrollToBottom();
+    }, [messages, isLoading]);
 
     // Monitor scroll position to show/hide "Back to Top"
     const handleScroll = () => {
@@ -69,37 +54,65 @@ export function CommsInterface({ onClose }: CommsInterfaceProps) {
         }
     };
 
-    const getLunaResponse = (input: string) => {
-        const lowerInput = input.toLowerCase();
-        for (const [key, response] of Object.entries(KEYWORDS)) {
-            if (lowerInput.includes(key)) return response;
-        }
-        return LUNA_RESPONSES[Math.floor(Math.random() * LUNA_RESPONSES.length)];
+    const clearHistory = () => {
+        playError(); // Use error sound as a "wipe" effect
+        setMessages(INITIAL_MESSAGES);
     };
 
     const handleSend = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!localInput.trim() || isTyping) return;
+        if (!localInput.trim() || isLoading) return;
 
         playClick();
         const content = localInput;
         setLocalInput("");
+        setIsLoading(true);
 
         // Add User Message
         const userMsg: Message = { id: Date.now().toString(), role: 'user', content };
-        setMessages(prev => [...prev, userMsg]);
+        const newMessages = [...messages, userMsg];
+        setMessages(newMessages);
 
-        // Simulate Typing Delay
-        setIsTyping(true);
-        const delay = 1000 + Math.random() * 2000; // 1-3s delay
+        // Immediate scroll after user sends
+        setTimeout(scrollToBottom, 100);
 
-        setTimeout(() => {
-            const responseText = getLunaResponse(content);
-            const lunaMsg: Message = { id: (Date.now() + 1).toString(), role: 'assistant', content: responseText };
-            setMessages(prev => [...prev, lunaMsg]);
-            setIsTyping(false);
+        try {
+            const response = await fetch('/api/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ messages: newMessages }),
+            });
+
+            if (!response.ok || !response.body) throw new Error("Connection failed");
+
+            // Add empty assistant message to stream into
+            const assistantId = (Date.now() + 1).toString();
+            setMessages(prev => [...prev, { id: assistantId, role: 'assistant', content: '' }]);
+
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder();
+            let assistantContent = '';
+
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+
+                const chunk = decoder.decode(value, { stream: true });
+                assistantContent += chunk;
+
+                setMessages(prev => prev.map(msg =>
+                    msg.id === assistantId ? { ...msg, content: assistantContent } : msg
+                ));
+            }
+
             playSuccess();
-        }, delay);
+        } catch (err) {
+            console.error("Transmission error details:", err);
+            setMessages(prev => [...prev, { id: `error-${Date.now()}`, role: "system", content: "⚠️ SIGNAL LOST. RETRY TRANSMISSION." }]);
+        } finally {
+            setIsLoading(false);
+            setTimeout(scrollToBottom, 100); // Final scroll
+        }
     };
 
     return (
@@ -113,30 +126,27 @@ export function CommsInterface({ onClose }: CommsInterfaceProps) {
                         <Radio size={16} className="animate-pulse" />
                         <span className="text-xs tracking-[0.2em] font-bold uppercase">Signal Decoder</span>
                     </div>
-                    <div className="flex items-center gap-3 text-[10px] text-white/40 font-mono">
-                        <span className="flex items-center gap-1">
-                            <Wifi size={10} /> {isTyping ? "INCOMING TRANSMISSION..." : "128.4 Mhz // CONNECTED"}
+                    <div className="flex items-center gap-2 text-[10px] text-white/40 font-mono">
+                        <span className="flex items-center gap-1 mr-2 hidden sm:flex">
+                            <Wifi size={10} /> {isLoading ? "INCOMING TRANSMISSION..." : "128.4 Mhz // CONNECTED"}
                         </span>
-                        {isTyping && (
-                            <div className="flex items-end gap-0.5 h-3 ml-2">
-                                {[...Array(5)].map((_, i) => (
-                                    <div
-                                        key={i}
-                                        className="w-0.5 bg-cyan-400/80 animate-pulse"
-                                        style={{
-                                            height: '100%',
-                                            animationDelay: `${i * 0.1}s`,
-                                            animationDuration: '0.4s'
-                                        }}
-                                    />
-                                ))}
-                            </div>
-                        )}
+
+                        {/* Clear Button */}
+                        <button
+                            onClick={clearHistory}
+                            className="flex items-center gap-1 hover:text-white transition-colors uppercase border border-white/5 hover:border-white/20 px-2 py-1 rounded bg-black/40 mr-1"
+                            title="Clear Signal History"
+                        >
+                            <Trash2 size={10} />
+                            <span className="hidden sm:inline">Clear</span>
+                        </button>
+
+                        {/* Close Button */}
                         <button
                             onClick={onClose}
                             className="flex items-center gap-1 hover:text-red-400 transition-colors uppercase border border-white/5 hover:border-red-500/30 px-2 py-1 rounded bg-black/40"
                         >
-                            <span className="text-red-500/80 font-bold">[ End Transmission ]</span>
+                            <span className="text-red-500/80 font-bold">[ End ]</span>
                         </button>
                     </div>
                 </div>
@@ -163,8 +173,23 @@ export function CommsInterface({ onClose }: CommsInterfaceProps) {
                                             {msg.role === 'user' ? 'YOU' : 'LUNA'}
                                         </span>
                                     </div>
-                                    <div className="leading-relaxed opacity-90 whitespace-pre-wrap">
-                                        {msg.content}
+                                    <div className="leading-relaxed opacity-90 start-markdown">
+                                        {msg.role === 'assistant' ? (
+                                            <ReactMarkdown
+                                                components={{
+                                                    ul: ({ node, ...props }) => <ul className="list-disc pl-4 space-y-1 my-1" {...props} />,
+                                                    ol: ({ node, ...props }) => <ol className="list-decimal pl-4 space-y-1 my-1" {...props} />,
+                                                    li: ({ node, ...props }) => <li className="pl-1" {...props} />,
+                                                    strong: ({ node, ...props }) => <strong className="text-cyan-100 font-bold" {...props} />,
+                                                    em: ({ node, ...props }) => <em className="text-cyan-300 not-italic" {...props} />,
+                                                    p: ({ node, ...props }) => <p className="mb-2 last:mb-0" {...props} />
+                                                }}
+                                            >
+                                                {msg.content}
+                                            </ReactMarkdown>
+                                        ) : (
+                                            <span className="whitespace-pre-wrap">{msg.content}</span>
+                                        )}
                                     </div>
                                 </div>
                             )}
@@ -177,7 +202,7 @@ export function CommsInterface({ onClose }: CommsInterfaceProps) {
                             )}
                         </div>
                     ))}
-                    {isTyping && (
+                    {isLoading && (
                         <div className="flex flex-col items-start animate-in fade-in slide-in-from-left-2 duration-300">
                             <div className="max-w-[85%] rounded px-3 py-2 text-xs font-mono border-l-2 border-cyan-500/50 text-cyan-200/50 bg-cyan-950/10 backdrop-blur-sm">
                                 <span className="flex items-center gap-2">
@@ -217,7 +242,7 @@ export function CommsInterface({ onClose }: CommsInterfaceProps) {
                     />
                     <button
                         type="submit"
-                        disabled={isTyping || !localInput.trim()}
+                        disabled={isLoading || !localInput.trim()}
                         className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 text-amber-400 hover:text-amber-200 transition-colors hover:bg-amber-500/10 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         <Send size={16} />

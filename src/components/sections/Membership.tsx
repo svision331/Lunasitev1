@@ -37,7 +37,7 @@ export function Membership() {
                     <span className="text-sm text-cyan-400 font-medium tracking-wider">
                         JOIN THE COMMUNITY
                     </span>
-                    <h2 className="text-3xl sm:text-4xl font-bold mt-2 mb-4 font-display">
+                    <h2 className="text-3xl sm:text-4xl font-bold mt-2 mb-4 font-display text-white hover:text-transparent hover:bg-clip-text hover:bg-gradient-to-r hover:from-cyan-300 hover:via-purple-300 hover:to-pink-300 transition-all duration-300 cursor-default">
                         ICE GIANTS
                     </h2>
                     <p className="text-lg text-slate-300">

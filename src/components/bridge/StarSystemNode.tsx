@@ -83,7 +83,7 @@ export const StarSystemNode = React.memo(function StarSystemNode({ system, onHov
             <div className="relative flex items-center justify-center w-16 h-16">
 
                 {/* 1. Rotating Outer Bracket (Active/Hover) */}
-                <div className={`absolute inset-0 border border-dashed rounded-full border-white/20 opacity-0 group-hover/node:opacity-100 transition-all duration-500 group-hover/node:scale-100 scale-50 group-hover/node:animate-[spin_4s_linear_infinite] ${themeClass.replace('text-', 'border-')}`} />
+                <div className={`absolute inset-[-4px] border border-dashed rounded-full border-white/20 opacity-0 group-hover/node:opacity-100 transition-all duration-500 group-hover/node:scale-100 scale-75 group-hover/node:animate-[spin_6s_linear_infinite] ${themeClass.replace('text-', 'border-')}`} />
 
                 {/* 2. Corner Brackets (The "Reticle" look) */}
                 <div className="absolute inset-2 opacity-20 group-hover/node:opacity-100 transition-all duration-300 group-hover/node:scale-100 scale-90">
@@ -136,12 +136,12 @@ export const StarSystemNode = React.memo(function StarSystemNode({ system, onHov
 
             {/* 4. Tactical Data Tag (Dynamic Positioning) */}
             <div
-                className={`absolute top-1/2 -translate-y-1/2 opacity-0 group-hover/node:opacity-100 transition-all duration-300 z-20 flex items-center
-                ${isRightSide ? 'right-full pr-3 flex-row-reverse' : 'left-full pl-3 flex-row'} 
+                className={`absolute top-1/2 -translate-y-1/2 opacity-0 group-hover/node:opacity-100 transition-all duration-300 z-50 flex items-center pointer-events-none
+                ${isRightSide ? 'right-full pr-4 flex-row-reverse' : 'left-full pl-4 flex-row'} 
                 `}
             >
-                {/* Connector Line */}
-                <div className={`w-4 h-[1px] bg-cyan-500/50 ${isRightSide ? 'mr-1' : 'ml-1'}`} />
+                {/* Connector Line - Animated */}
+                <div className={`w-8 h-[1px] bg-gradient-to-r from-transparent via-cyan-500 to-transparent opacity-0 group-hover/node:opacity-100 transition-all duration-500 delay-100 ${isRightSide ? 'mr-0' : 'ml-0'}`} />
 
                 <div className={`flex flex-col items-start bg-black/90 backdrop-blur-md border-cyan-500/50 px-3 py-2 min-w-[140px] shadow-xl
                     ${isRightSide ? 'border-r-2 rounded-l-md text-right items-end' : 'border-l-2 rounded-r-md text-left items-start'}

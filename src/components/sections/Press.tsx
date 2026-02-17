@@ -16,7 +16,7 @@ export function Press() {
                     <span className="text-sm text-slate-400 font-medium tracking-wider">
                         FOR VENUES & MEDIA
                     </span>
-                    <h2 className="text-3xl sm:text-4xl font-bold mt-2 mb-6 font-display">
+                    <h2 className="text-3xl sm:text-4xl font-bold mt-2 mb-6 font-display text-white hover:text-transparent hover:bg-clip-text hover:bg-gradient-to-r hover:from-cyan-300 hover:via-purple-300 hover:to-pink-300 transition-all duration-300 cursor-default">
                         BOOKING & PRESS
                     </h2>
                 </motion.div>

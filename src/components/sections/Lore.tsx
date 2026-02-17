@@ -25,7 +25,7 @@ export function Lore() {
                     <span className="text-sm text-purple-400 font-medium tracking-wider">
                         THE ORIGIN STORY
                     </span>
-                    <h2 className="text-3xl sm:text-4xl font-bold mt-2 mb-4 font-display">
+                    <h2 className="text-3xl sm:text-4xl font-bold mt-2 mb-4 font-display text-white hover:text-transparent hover:bg-clip-text hover:bg-gradient-to-r hover:from-cyan-300 hover:via-purple-300 hover:to-pink-300 transition-all duration-300 cursor-default">
                         COSMIC LORE
                     </h2>
                     <p className="text-lg text-slate-300">
@@ -65,7 +65,9 @@ export function Lore() {
                                     <div className="flex items-start justify-between mb-2">
                                         <div>
                                             <span className="text-xs text-cyan-400 font-medium">{chapter.year}</span>
-                                            <h3 className="font-bold text-lg font-display">{chapter.title}</h3>
+                                            <h3 className="font-bold text-xl font-display text-white group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-cyan-300 group-hover:via-purple-300 group-hover:to-pink-300 transition-all duration-300">
+                                                {chapter.title}
+                                            </h3>
                                         </div>
                                         <motion.div
                                             animate={{ rotate: expandedChapter === chapter.id ? 180 : 0 }}
@@ -92,7 +94,7 @@ export function Lore() {
                                     </AnimatePresence>
 
                                     {expandedChapter !== chapter.id && (
-                                        <p className="text-slate-500 text-sm line-clamp-2">
+                                        <p className="text-slate-300 text-sm line-clamp-2">
                                             {chapter.content}
                                         </p>
                                     )}

@@ -3,6 +3,7 @@ import { Send, Radio, Wifi, ArrowUp, Trash2 } from "lucide-react";
 import ReactMarkdown from 'react-markdown';
 import { TechBorder } from "@/components/ui/TechBorder";
 import { GridBackground } from "@/components/effects/GridBackground";
+import { HoloCard } from "@/components/ui/HoloCard"; // New import
 
 import { useSoundEffects } from "@/hooks/useSoundEffects";
 
@@ -31,19 +32,45 @@ export function CommsInterface({ onClose }: CommsInterfaceProps) {
 
     const [messages, setMessages] = useState<Message[]>(INITIAL_MESSAGES);
 
-    // Auto-scroll to bottom on new messages
+    // Track if user is at the bottom to determine auto-scroll behavior
+    const isAtBottomRef = useRef(true);
+
     const scrollToBottom = () => {
-        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+        if (isAtBottomRef.current) {
+            messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+        }
     };
 
     useEffect(() => {
         scrollToBottom();
     }, [messages, isLoading]);
 
-    // Monitor scroll position to show/hide "Back to Top"
+    // Monitor scroll position
     const handleScroll = () => {
         if (containerRef.current) {
-            setShowScrollTop(containerRef.current.scrollTop > 100);
+            const { scrollTop, scrollHeight, clientHeight } = containerRef.current;
+            // Show "Back to Top" if scrolled down significantly (wait, "Back to Top" suggests scroll UP to latest? No typically "Scroll to Top" means go UP to old messages.
+            // But usually chat apps have "Scroll to Recent/Bottom" button when you scroll up.
+            // The user asked "scroll back to the top". This usually means reading history.
+            // The existing button was an Up Arrow called scrollToTop.
+            // But typically, you want to scroll to BOTTOM to see new messages.
+            // If they mean "scroll to the beginning of conversation", then scrollToTop makes sense.
+
+            // Let's assume standard chat behavior:
+            // 1. User scrolls UP -> "Scroll to Top" button appears to go to bottom? No, arrow usually points down for "New Messages".
+            // 2. Or maybe they just want to be able to scroll up.
+
+            // The user said "abble to scroll back to the top". This means seeing old messages.
+            // So showScrollTop logic: if scrollTop > 0 (not at top) -> show button to go to top?
+            // Or if scrollTop < max (not at bottom) -> show button to go to bottom?
+
+            // Let's stick to enabling manual scrolling.
+            const isAtBottom = scrollHeight - scrollTop - clientHeight < 50;
+            isAtBottomRef.current = isAtBottom;
+
+            // Show "Scroll to Top" button only when we have scrolled down a bit?
+            // Actually, if they want to scroll back to the TOP (start of history), then the button should appear when they are NOT at the top.
+            setShowScrollTop(scrollTop > 100);
         }
     };
 
@@ -73,6 +100,8 @@ export function CommsInterface({ onClose }: CommsInterfaceProps) {
         const newMessages = [...messages, userMsg];
         setMessages(newMessages);
 
+        // Force auto-scroll to true when user sends
+        isAtBottomRef.current = true;
         // Immediate scroll after user sends
         setTimeout(scrollToBottom, 100);
 
@@ -117,7 +146,7 @@ export function CommsInterface({ onClose }: CommsInterfaceProps) {
 
     return (
         <TechBorder className="w-full h-full" color="amber" cornerSize={12}>
-            <div className="w-full h-full flex flex-col p-4 relative overflow-hidden bg-black/50">
+            <HoloCard variant="default" className="w-full h-full flex flex-col p-4 relative overflow-hidden bg-black/50">
                 <GridBackground opacity={0.1} color="rgba(251, 191, 36, 1)" />
 
                 {/* Header */}
@@ -177,12 +206,12 @@ export function CommsInterface({ onClose }: CommsInterfaceProps) {
                                         {msg.role === 'assistant' ? (
                                             <ReactMarkdown
                                                 components={{
-                                                    ul: ({ node, ...props }) => <ul className="list-disc pl-4 space-y-1 my-1" {...props} />,
-                                                    ol: ({ node, ...props }) => <ol className="list-decimal pl-4 space-y-1 my-1" {...props} />,
-                                                    li: ({ node, ...props }) => <li className="pl-1" {...props} />,
-                                                    strong: ({ node, ...props }) => <strong className="text-cyan-100 font-bold" {...props} />,
-                                                    em: ({ node, ...props }) => <em className="text-cyan-300 not-italic" {...props} />,
-                                                    p: ({ node, ...props }) => <p className="mb-2 last:mb-0" {...props} />
+                                                    ul: ({ ...props }) => <ul className="list-disc pl-4 space-y-1 my-1" {...props} />,
+                                                    ol: ({ ...props }) => <ol className="list-decimal pl-4 space-y-1 my-1" {...props} />,
+                                                    li: ({ ...props }) => <li className="pl-1" {...props} />,
+                                                    strong: ({ ...props }) => <strong className="text-cyan-100 font-bold" {...props} />,
+                                                    em: ({ ...props }) => <em className="text-cyan-300 not-italic" {...props} />,
+                                                    p: ({ ...props }) => <p className="mb-2 last:mb-0" {...props} />
                                                 }}
                                             >
                                                 {msg.content}
@@ -213,20 +242,21 @@ export function CommsInterface({ onClose }: CommsInterfaceProps) {
                         </div>
                     )}
                     <div ref={messagesEndRef} />
-
-                    {/* Scroll to Top Button */}
-                    <button
-                        onClick={scrollToTop}
-                        className={`
-                            absolute bottom-4 right-2 p-2 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400
-                            hover:bg-amber-500/20 hover:text-amber-200 transition-all duration-300 z-20 backdrop-blur-sm
-                            ${showScrollTop ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'}
-                        `}
-                        title="Return to Bridge Controls"
-                    >
-                        <ArrowUp size={16} />
-                    </button>
                 </div>
+
+                {/* Scroll to Top Button - Positioned absolutely relative to container but outside scroll flow */}
+                <button
+                    onClick={scrollToTop}
+                    className={`
+                        absolute bottom-20 right-6 p-2 rounded-full bg-amber-500/20 border border-amber-500/40 text-amber-400
+                        hover:bg-amber-500/30 hover:text-amber-200 transition-all duration-300 z-20 backdrop-blur-md shadow-lg
+                        ${showScrollTop ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'}
+                    `}
+                    title="Return to Latest Signal"
+                    aria-label="Return to Latest Signal"
+                >
+                    <ArrowUp size={16} />
+                </button>
 
                 {/* Input Area */}
                 <form onSubmit={handleSend} className="relative mt-auto z-10">
@@ -248,7 +278,7 @@ export function CommsInterface({ onClose }: CommsInterfaceProps) {
                         <Send size={16} />
                     </button>
                 </form>
-            </div>
+            </HoloCard>
         </TechBorder>
     );
 }

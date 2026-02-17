@@ -19,7 +19,7 @@ const authAudio = () => {
 
         audioCtx = new Ctx();
         masterGain = audioCtx!.createGain();
-        masterGain.gain.value = 0.7; // Boost Master volume
+        masterGain.gain.value = 0.6; // Slightly lower master to prevent clipping with layers
         masterGain.connect(audioCtx!.destination);
     }
     if (audioCtx?.state === 'suspended') {
@@ -31,7 +31,37 @@ const authAudio = () => {
 export const useSoundEffects = () => {
     const [isMuted, setIsMuted] = useState(false);
     const audioCache = useRef<Map<string, AudioBuffer>>(new Map());
-    const ambienceNodes = useRef<{ source: AudioBufferSourceNode | OscillatorNode, gain: GainNode } | null>(null);
+
+    // Track ambience nodes to allow crossfading/stopping
+    const ambienceNodes = useRef<{
+        rumble?: { source: OscillatorNode, gain: GainNode },
+        drone?: { source: OscillatorNode, gain: GainNode }
+    } | null>(null);
+
+    const stopAmbience = useCallback(() => {
+        if (!audioCtx || !ambienceNodes.current) return;
+
+        const now = audioCtx.currentTime;
+        const rampTime = 2;
+
+        if (ambienceNodes.current.rumble) {
+            const { source, gain } = ambienceNodes.current.rumble;
+            try {
+                gain.gain.exponentialRampToValueAtTime(0.001, now + rampTime);
+                source.stop(now + rampTime);
+            } catch (e) { console.warn(e); }
+        }
+
+        if (ambienceNodes.current.drone) {
+            const { source, gain } = ambienceNodes.current.drone;
+            try {
+                gain.gain.exponentialRampToValueAtTime(0.001, now + rampTime);
+                source.stop(now + rampTime);
+            } catch (e) { console.warn(e); }
+        }
+
+        ambienceNodes.current = null;
+    }, []);
 
     // Ensure audio context is ready on mount/interaction
     useEffect(() => {
@@ -48,13 +78,9 @@ export const useSoundEffects = () => {
             window.removeEventListener('click', handleInteract);
             window.removeEventListener('keydown', handleInteract);
             // Cleanup ambience on unmount
-            if (ambienceNodes.current) {
-                try {
-                    ambienceNodes.current.source.stop();
-                } catch (_e) { }
-            }
+            stopAmbience();
         };
-    }, []);
+    }, [stopAmbience]);
 
     const loadBuffer = async (url: string): Promise<AudioBuffer | null> => {
         if (!initAudio() || !audioCtx) return null;
@@ -89,6 +115,7 @@ export const useSoundEffects = () => {
         source.start();
     }, [isMuted]);
 
+    // Simple Tone Generator
     const playTone = useCallback((freq: number, type: OscillatorType, duration: number, vol: number = 1) => {
         if (isMuted || !initAudio() || !audioCtx || !masterGain) return;
 
@@ -98,19 +125,20 @@ export const useSoundEffects = () => {
         osc.type = type;
         osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
 
-        gain.gain.setValueAtTime(0, audioCtx.currentTime);
-        gain.gain.linearRampToValueAtTime(vol, audioCtx.currentTime + 0.01);
-        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+        const t = audioCtx.currentTime;
+        gain.gain.setValueAtTime(0, t);
+        gain.gain.linearRampToValueAtTime(vol, t + 0.02); // Faster attack
+        gain.gain.exponentialRampToValueAtTime(0.001, t + duration);
 
         osc.connect(gain);
         gain.connect(masterGain);
 
         osc.start();
-        osc.stop(audioCtx.currentTime + duration);
+        osc.stop(t + duration + 0.1);
     }, [isMuted]);
 
-    // FM Synthesis Helper for Sci-Fi Textures
-    const playFM = useCallback((carrierFreq: number, modFreq: number, modDepth: number, duration: number, vol: number) => {
+    // FM Synthesis Helper
+    const playFM = useCallback((carrierFreq: number, modFreq: number, modDepth: number, duration: number, vol: number, type: OscillatorType = 'sine') => {
         if (isMuted || !initAudio() || !audioCtx || !masterGain) return;
 
         const t = audioCtx.currentTime;
@@ -119,7 +147,10 @@ export const useSoundEffects = () => {
         const modGain = audioCtx.createGain();
         const masterOut = audioCtx.createGain();
 
+        carrier.type = type;
         carrier.frequency.setValueAtTime(carrierFreq, t);
+
+        modulator.type = 'sine';
         modulator.frequency.setValueAtTime(modFreq, t);
         modGain.gain.setValueAtTime(modDepth, t);
 
@@ -135,130 +166,197 @@ export const useSoundEffects = () => {
 
         carrier.start();
         modulator.start();
-        carrier.stop(t + duration);
-        modulator.stop(t + duration);
+        carrier.stop(t + duration + 0.1);
+        modulator.stop(t + duration + 0.1);
     }, [isMuted]);
 
-    const playAmbience = useCallback(async (url: string | 'synth', vol: number = 0.8) => {
+    // -------------------------------------------------------------------------
+    // AMBIENCE ENGINE
+    // -------------------------------------------------------------------------
+    const playAmbience = useCallback(async (url: string | 'synth', vol: number = 0.6) => {
         if (!initAudio() || !audioCtx || !masterGain) return;
 
-        // Stop previous ambience
-        if (ambienceNodes.current) {
-            const { source, gain } = ambienceNodes.current;
-            // Fade out
-            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 1);
-            source.stop(audioCtx.currentTime + 1);
-            ambienceNodes.current = null;
-        }
+        // Clean up checking is done inside the function, but good to be safe
+        if (ambienceNodes.current) stopAmbience();
 
         if (isMuted) return;
 
-        const gain = audioCtx.createGain();
-        gain.gain.value = 0;
-        gain.connect(masterGain);
+        const t = audioCtx.currentTime;
+        const fadeInDur = 3;
 
-        let source: AudioBufferSourceNode | OscillatorNode;
+        // LAYER 1: Low Engine Rumble (Brownian-ish texture)
+        const rumbleOsc = audioCtx.createOscillator();
+        const rumbleMod = audioCtx.createOscillator();
+        const rumbleModGain = audioCtx.createGain();
+        const rumbleGain = audioCtx.createGain();
 
-        if (url === 'synth') {
-            // Synthesized Spaceship Hum (Brownian Noise approx with low freq osc)
-            // Using FM synthesis for a "engine" thrum
-            const osc = audioCtx.createOscillator();
-            const mod = audioCtx.createOscillator();
-            const modGain = audioCtx.createGain();
+        rumbleOsc.type = 'sawtooth'; // Richer harmonics
+        rumbleOsc.frequency.value = 50; // Deep bass
 
-            osc.type = 'sawtooth';
-            osc.frequency.value = 60; // Low rumble
+        rumbleMod.type = 'sine';
+        rumbleMod.frequency.value = 0.5; // Very slow pulse
+        rumbleModGain.gain.value = 10; // Subtle pitch drift
 
-            mod.type = 'sine';
-            mod.frequency.value = 2; // Throbbing effect
+        rumbleMod.connect(rumbleModGain);
+        rumbleModGain.connect(rumbleOsc.frequency);
 
-            modGain.gain.value = 30;
+        // Lowpass filter to muffle the sawtooth harshness
+        const rumbleFilter = audioCtx.createBiquadFilter();
+        rumbleFilter.type = 'lowpass';
+        rumbleFilter.frequency.value = 120;
+        rumbleFilter.Q.value = 1;
 
-            mod.connect(modGain);
-            modGain.connect(osc.frequency);
-            osc.connect(gain);
+        rumbleOsc.connect(rumbleFilter);
+        rumbleFilter.connect(rumbleGain);
+        rumbleGain.connect(masterGain);
 
-            osc.start();
-            mod.start();
-            source = osc;
-        } else {
-            const buffer = await loadBuffer(url);
-            if (!buffer) return;
+        rumbleGain.gain.setValueAtTime(0, t);
+        rumbleGain.gain.linearRampToValueAtTime(vol * 0.4, t + fadeInDur);
 
-            source = audioCtx.createBufferSource();
-            (source as AudioBufferSourceNode).buffer = buffer;
-            (source as AudioBufferSourceNode).loop = true;
-            source.connect(gain);
-            source.start();
-        }
+        rumbleOsc.start();
+        rumbleMod.start();
 
-        // Fade in
-        gain.gain.linearRampToValueAtTime(vol, audioCtx.currentTime + 2);
-        ambienceNodes.current = { source, gain };
+        // LAYER 2: Ethereal Drone (High Space Wind)
+        const droneOsc = audioCtx.createOscillator();
+        const droneGain = audioCtx.createGain();
 
-    }, [isMuted]);
+        droneOsc.type = 'sine';
+        droneOsc.frequency.setValueAtTime(220, t); // A3
+        // Slight detune/drift
+        droneOsc.frequency.linearRampToValueAtTime(222, t + 10);
 
-    // 1. DATA FLUTTER (Hover)
-    // High-speed LFO on a carrier to simulate data processing
+        // Stereo widening (illusion via gain modulation)
+        const droneLFO = audioCtx.createOscillator();
+        droneLFO.frequency.value = 0.1; // 10s cycle
+        const droneLFOGain = audioCtx.createGain();
+        droneLFOGain.gain.value = 0.05;
+
+        droneLFO.connect(droneLFOGain);
+        droneLFOGain.connect(droneGain.gain);
+
+        droneOsc.connect(droneGain);
+        droneGain.connect(masterGain);
+
+        droneGain.gain.setValueAtTime(0, t);
+        droneGain.gain.linearRampToValueAtTime(vol * 0.15, t + fadeInDur); // Quieter than rumble
+
+        droneOsc.start();
+        droneLFO.start();
+
+        ambienceNodes.current = {
+            rumble: { source: rumbleOsc, gain: rumbleGain },
+            drone: { source: droneOsc, gain: droneGain }
+        };
+
+    }, [isMuted, stopAmbience]);
+
+    // -------------------------------------------------------------------------
+    // UI SOUNDS
+    // -------------------------------------------------------------------------
+
+    // 1. HOVER - Soft "Pip"
     const playHover = useCallback(() => {
-        // Carrier: 2000Hz, Modulator: 40Hz (flutter), Depth: 200
-        playFM(2000, 40, 200, 0.05, 0.05);
-    }, [playFM]);
+        // High frequency, very short shine
+        // Sine wave, 1200Hz, very short
+        playTone(1200, 'sine', 0.03, 0.03);
+    }, [playTone]);
 
-    // 2. SERVO CLICK (Interaction)
-    // Quick frequency sweep (chirp)
+    // 2. CLICK - Bi-tonal "Thud-Chirp"
     const playClick = useCallback(() => {
         if (isMuted || !initAudio() || !audioCtx || !masterGain) return;
         const t = audioCtx.currentTime;
 
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        const filter = audioCtx.createBiquadFilter();
+        // Part A: Mechanical Thud (Low Sine)
+        const thud = audioCtx.createOscillator();
+        const thudGain = audioCtx.createGain();
+        thud.frequency.setValueAtTime(150, t);
+        thud.frequency.exponentialRampToValueAtTime(50, t + 0.1);
+        thudGain.gain.setValueAtTime(0.5, t);
+        thudGain.gain.exponentialRampToValueAtTime(0.001, t + 0.1);
 
-        osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(800, t);
-        osc.frequency.exponentialRampToValueAtTime(100, t + 0.1); // Pitch Drop
+        thud.connect(thudGain);
+        thudGain.connect(masterGain);
+        thud.start();
+        thud.stop(t + 0.15);
 
-        filter.type = 'lowpass';
-        filter.frequency.setValueAtTime(3000, t);
-        filter.frequency.linearRampToValueAtTime(500, t + 0.1); // Filter Close
+        // Part B: Digital Chirp (High filtered noise or high sine)
+        // Using a high sine zap
+        const chirp = audioCtx.createOscillator();
+        const chirpGain = audioCtx.createGain();
+        chirp.frequency.setValueAtTime(2000, t);
+        chirp.frequency.exponentialRampToValueAtTime(4000, t + 0.05);
+        chirpGain.gain.setValueAtTime(0.05, t); // Quiet
+        chirpGain.gain.exponentialRampToValueAtTime(0.001, t + 0.05);
 
-        gain.gain.setValueAtTime(0.2, t);
-        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.1);
+        chirp.connect(chirpGain);
+        chirpGain.connect(masterGain);
+        chirp.start();
+        chirp.stop(t + 0.1);
 
-        osc.connect(filter);
-        filter.connect(gain);
-        gain.connect(masterGain);
-
-        osc.start();
-        osc.stop(t + 0.1);
     }, [isMuted]);
 
-    // 3. GLITCH (Error)
-    // Dissonant FM
+    // 3. ERROR - Power Down
     const playError = useCallback(() => {
-        // Carrier: 150Hz, Modulator: 25Hz (Roughness), Depth: 500
-        playFM(150, 25, 500, 0.3, 0.2);
-    }, [playFM]);
+        if (isMuted || !initAudio() || !audioCtx || !masterGain) return;
+        // Descending low tone
+        const t = audioCtx.currentTime;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
 
-    // 4. HARMONIC CHORD (Success)
-    // Major 7th Chord
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(150, t);
+        osc.frequency.exponentialRampToValueAtTime(40, t + 0.4);
+
+        gain.gain.setValueAtTime(0.3, t);
+        gain.gain.linearRampToValueAtTime(0, t + 0.4);
+
+        osc.connect(gain);
+        gain.connect(masterGain);
+        osc.start();
+        osc.stop(t + 0.5);
+    }, [isMuted]);
+
+    // 4. SUCCESS - Ethereal Wash
     const playSuccess = useCallback(() => {
-        const chord = [440, 554.37, 659.25, 830.61]; // A Major 7
-        chord.forEach((freq, i) => {
-            setTimeout(() => {
-                playTone(freq, 'sine', 0.4, 0.1);
-            }, i * 40);
-        });
-        // Add a high sparkle at the end
-        setTimeout(() => playFM(2000, 50, 500, 0.5, 0.05), 300);
-    }, [playTone, playFM]);
+        if (isMuted || !initAudio() || !audioCtx || !masterGain) return;
+        const t = audioCtx.currentTime;
 
-    // 5. DATA CHIRP (Typing)
-    // random high pitch blips
+        // C Major 9 chord: C4, E4, G4, B4, D5 (approx)
+        const freqs = [261.63, 329.63, 392.00, 493.88, 587.33];
+
+        freqs.forEach((f, i) => {
+            const osc = audioCtx!.createOscillator();
+            const gain = audioCtx!.createGain();
+
+            osc.type = 'sine';
+            osc.frequency.value = f;
+
+            // Staggered entry
+            const start = t + (i * 0.05);
+            gain.gain.setValueAtTime(0, start);
+            gain.gain.linearRampToValueAtTime(0.1, start + 0.1);
+            gain.gain.exponentialRampToValueAtTime(0.001, start + 1.5); // Long release
+
+            osc.connect(gain);
+            gain.connect(masterGain!);
+            osc.start(start);
+            osc.stop(start + 2);
+        });
+    }, [isMuted]);
+
+    // 5. TYPING - Organic Taps
     const playTyping = useCallback(() => {
-        const freq = 1500 + Math.random() * 2000;
-        playTone(freq, 'square', 0.03, 0.05);
+        // Random pitch variation to sound organic
+        // Base freq ~800Hz, +/- 100Hz
+        const base = 800;
+        const variance = (Math.random() * 200) - 100;
+        const freq = base + variance;
+
+        // Random volume variance
+        const vol = 0.05 + (Math.random() * 0.05);
+
+        // Very short blip, triangle wave for "body"
+        playTone(freq, 'triangle', 0.03, vol);
     }, [playTone]);
 
     // 6. WARP DRIVE (Transition)
@@ -326,8 +424,7 @@ export const useSoundEffects = () => {
     const toggleMute = useCallback(() => {
         setIsMuted(prev => !prev);
         if (masterGain && audioCtx) {
-            // Smooth mute
-            const target = isMuted ? 0.3 : 0; // Unmute to 0.3, Mute to 0
+            const target = isMuted ? 0.6 : 0;
             masterGain.gain.linearRampToValueAtTime(target, audioCtx.currentTime + 0.1);
         }
     }, [isMuted]);
@@ -338,7 +435,7 @@ export const useSoundEffects = () => {
         playError,
         playSuccess,
         playTyping,
-        playWarp, // Exported
+        playWarp,
         playSample,
         playAmbience,
         toggleMute,

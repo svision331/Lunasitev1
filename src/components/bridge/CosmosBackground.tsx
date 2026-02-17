@@ -63,6 +63,18 @@ export const CosmosBackground = React.memo(function CosmosBackground({ isPaused 
                     {/* Main Grid */}
                     <rect width="100%" height="100%" fill="url(#sector-grid)" />
 
+                    {/* Radar Sweep Effect */}
+                    <rect width="100%" height="100%" fill="url(#radar-gradient)" className="animate-[spin_4s_linear_infinite] origin-center opacity-30" style={{ mixBlendMode: 'overlay' }} />
+
+                    <defs>
+                        <radialGradient id="radar-gradient" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+                            <stop offset="0%" stopColor="transparent" />
+                            <stop offset="45%" stopColor="transparent" />
+                            <stop offset="50%" stopColor="cyan" stopOpacity="0.2" />
+                            <stop offset="100%" stopColor="transparent" />
+                        </radialGradient>
+                    </defs>
+
                     {/* Polar Coordinates / Radar Rings */}
                     <circle cx="50%" cy="50%" r="20%" fill="none" stroke="white" strokeOpacity="0.05" strokeWidth="1" strokeDasharray="4 4" />
                     <circle cx="50%" cy="50%" r="35%" fill="none" stroke="white" strokeOpacity="0.05" strokeWidth="1" strokeDasharray="8 4" />

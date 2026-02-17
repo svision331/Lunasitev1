@@ -1,13 +1,13 @@
 import type { Metadata } from 'next';
-import { Inter, Space_Grotesk } from 'next/font/google';
+import { Share_Tech_Mono, Fira_Code } from 'next/font/google';
 import './globals.css';
 import { CosmicCursor, CustomCursor } from '@/components/effects';
 
-const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
-const spaceGrotesk = Space_Grotesk({ subsets: ['latin'], variable: '--font-space' });
+const shareTechMono = Share_Tech_Mono({ weight: '400', subsets: ['latin'], variable: '--font-share-tech' });
+const firaCode = Fira_Code({ subsets: ['latin'], variable: '--font-fira-code' });
 
 export const viewport = {
-  themeColor: '#0f172a',
+  themeColor: '#050508',
   width: 'device-width',
   initialScale: 1,
   maximumScale: 5,
@@ -44,7 +44,9 @@ export default function RootLayout({
       <head>
         <link rel="icon" href="/favicon.ico" />
       </head>
-      <body className={`${inter.variable} ${spaceGrotesk.variable} antialiased selection:bg-cyan-500/30 selection:text-cyan-200`} suppressHydrationWarning>
+      <body className={`${shareTechMono.variable} ${firaCode.variable} antialiased selection:bg-cyan-500/30 selection:text-cyan-200`} suppressHydrationWarning>
+        {/* Global Background Effects */}
+
         {/* Global Cursor Effect */}
         <CosmicCursor />
 

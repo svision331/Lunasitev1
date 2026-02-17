@@ -5,9 +5,9 @@ import { motion } from 'framer-motion';
 import { Play, Calendar, Star } from 'lucide-react';
 
 const navItems = [
-    { href: '#watch', icon: Play, label: 'Watch' },
+    { href: '#music', icon: Play, label: 'Music' },
     { href: '#live', icon: Calendar, label: 'Shows' },
-    { href: '#join', icon: Star, label: 'Join', active: true },
+    { href: '#join', icon: Star, label: 'Join' },
 ];
 
 export function MobileNav() {

@@ -96,10 +96,10 @@ export function LandingPage({ videos }: LandingPageProps) {
                 {/* Sections */}
                 <div className="relative z-10">
                     <Hero />
-                    <VideoShowcase videos={videos} />
+                    <Lore />
                     <LiveShows />
                     <NebulaBash />
-                    <Lore />
+                    <VideoShowcase videos={videos} />
                     <Gallery />
                     <Community />
                     <Membership />

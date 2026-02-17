@@ -1,5 +1,8 @@
 import React from "react";
 import { Music, Volume2 } from "lucide-react";
+import { TechBorder } from "@/components/ui/TechBorder";
+import { HoloCard } from "@/components/ui/HoloCard";
+import { GridBackground } from "@/components/effects/GridBackground";
 
 interface MusicPlayerProps {
     onClose: () => void;
@@ -7,51 +10,53 @@ interface MusicPlayerProps {
 
 export function MusicPlayer({ onClose }: MusicPlayerProps) {
     return (
-        <div className="w-full h-full flex flex-col items-center justify-center p-6 relative overflow-hidden bg-black/50">
-            <div className="absolute inset-0 opacity-20 pointer-events-none">
-                <div className="absolute inset-0 bg-gradient-to-b from-cyan-900/20 to-purple-900/20" />
-            </div>
+        <TechBorder className="w-full h-full" color="pink" cornerSize={12}>
+            <HoloCard variant="active" className="w-full h-full flex flex-col relative overflow-hidden bg-black/50">
+                <GridBackground opacity={0.1} color="rgba(236, 72, 153, 1)" />
 
-            {/* Back Button */}
-            {/* End Transmission Button */}
-            <button
-                onClick={onClose}
-                className="absolute top-4 right-4 z-20 flex items-center gap-1 hover:text-red-400 transition-colors uppercase"
-            >
-                <span className="text-red-500/80 font-mono text-xs">[ End Transmission ]</span>
-            </button>
+                {/* Standard Header */}
+                <div className="flex items-center justify-between p-3 border-b border-white/10 bg-black/20 backdrop-blur-sm sticky top-0 z-20">
+                    <div className="flex items-center gap-2 text-pink-400">
+                        <Music size={16} className="animate-pulse" />
+                        <span className="text-xs tracking-[0.2em] font-bold uppercase">Sonic Array</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-[10px] text-white/40 font-mono">
+                        <span className="flex items-center gap-1 mr-2 hidden sm:flex">
+                            <Volume2 size={10} /> AUDIO_OUT // ACTIVE
+                        </span>
 
-            {/* Header Info */}
-            <div className="text-center space-y-2 mb-6 z-10 w-full max-w-2xl mx-auto">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-pink-500/30 bg-pink-500/10 backdrop-blur-md mb-2">
-                    <Music size={12} className="text-pink-400" />
-                    <span className="text-[10px] tracking-widest uppercase text-pink-200">System Audio</span>
+                        {/* Close Button */}
+                        <button
+                            onClick={onClose}
+                            className="flex items-center gap-1 hover:text-red-400 transition-colors uppercase border border-white/5 hover:border-red-500/30 px-2 py-1 rounded bg-black/40"
+                        >
+                            <span className="text-red-500/80 font-bold">[ End ]</span>
+                        </button>
+                    </div>
                 </div>
-                <h2 className="text-2xl font-bold text-white tracking-tight glitch-text relative">
-                    DISCOGRAPHY
-                </h2>
-            </div>
 
-            {/* Spotify Embed */}
-            <div className="w-full max-w-3xl h-[60vh] relative z-10 rounded-xl overflow-hidden shadow-2xl shadow-cyan-900/20">
-                <iframe
-                    style={{ borderRadius: '12px' }}
-                    src="https://open.spotify.com/embed/artist/3bf4MuySAAvfxhHNW4du3x?utm_source=generator&theme=0"
-                    width="100%"
-                    height="100%"
-                    frameBorder="0"
-                    allowFullScreen
-                    allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                    loading="lazy"
-                    className="bg-black/40"
-                />
-            </div>
+                {/* Spotify Embed Container */}
+                <div className="flex-1 p-4 overflow-hidden relative z-10">
+                    <div className="w-full h-full rounded-xl overflow-hidden border border-pink-500/20 shadow-[0_0_30px_rgba(236,72,153,0.1)] relative group">
+                        {/* Loading/Placeholder State (Behind iframe) */}
+                        <div className="absolute inset-0 bg-black/60 flex items-center justify-center pointer-events-none">
+                            <div className="animate-pulse text-pink-500/20 tracking-widest text-xs">INITIALIZING STREAM...</div>
+                        </div>
 
-            {/* Volume/Meta */}
-            <div className="absolute bottom-4 right-4 flex items-center gap-2 text-white/30">
-                <Volume2 size={14} />
-                <span className="text-[10px] font-mono">EXT_SOURCE</span>
-            </div>
-        </div>
+                        <iframe
+                            style={{ borderRadius: '12px' }}
+                            src="https://open.spotify.com/embed/artist/3bf4MuySAAvfxhHNW4du3x?utm_source=generator&theme=0"
+                            width="100%"
+                            height="100%"
+                            frameBorder="0"
+                            allowFullScreen
+                            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                            loading="lazy"
+                            className="bg-transparent relative z-10"
+                        />
+                    </div>
+                </div>
+            </HoloCard>
+        </TechBorder>
     );
 }

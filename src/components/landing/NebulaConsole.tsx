@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Zap, Radio, Calendar, MapPin, Music, Activity, Globe } from "lucide-react";
 import { SystemBar } from "@/components/bridge/SystemBar";
-import { NebulaRadar } from "@/components/bridge/NebulaRadar";
+
 import { StatCard } from "@/components/bridge/StatCard";
 import { MusicPlayer } from "@/components/bridge/MusicPlayer";
 import { CommsInterface } from "@/components/bridge/CommsInterface";
@@ -11,12 +11,16 @@ import { MissionLog } from "@/components/bridge/MissionLog";
 import { CosmosMap } from "@/components/bridge/CosmosMap";
 import { TechBorder } from "@/components/ui/TechBorder";
 import { GridBackground } from "@/components/effects/GridBackground";
+import { Vortex } from "@/components/ui/vortex";
+import { CyberButton } from "@/components/ui/CyberButton";
+import { HoloCard } from "@/components/ui/HoloCard";
+import { StarmapNav } from "@/components/ui/StarmapNav";
 
 import { useSoundEffects } from "@/hooks/useSoundEffects";
 import { ShipAmbience } from "@/components/effects/ShipAmbience";
 
 type Log = { level: "INFO" | "WARN" | "OK" | "CRIT"; msg: string };
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 const cx = (...c: Array<string | false | null | undefined>) => c.filter(Boolean).join(" ");
 
@@ -149,23 +153,23 @@ export function NebulaConsole({ onEnter }: NebulaConsoleProps) {
                     className="w-full max-w-6xl h-full md:h-auto max-h-full flex flex-col pointer-events-auto"
                 >
                     <TechBorder className="w-full h-full" color="cyan" cornerSize={20}>
-                        <div className="w-full h-full bg-black/80 backdrop-blur-md p-2 md:p-4 flex flex-col">
+                        <div className="w-full h-full bg-black/80 backdrop-blur-md p-2 md:p-6 flex flex-col gap-4 md:gap-6">
                             <GridBackground opacity={0.1} />
-                            <div className="cockpit-inner rounded-xl md:rounded-[22px] p-4 md:p-6 grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-6 flex-1 overflow-hidden">
+                            <div className="cockpit-inner rounded-xl md:rounded-[22px] p-4 md:p-6 grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-6 flex-1 overflow-hidden min-h-0">
 
                                 {/* Left Sidebar - Hidden on Mobile */}
                                 <motion.aside
                                     initial={{ x: -20, opacity: 0 }}
                                     animate={{ x: 0, opacity: 1 }}
                                     transition={{ delay: 0.2, duration: 0.5 }}
-                                    className="hidden md:flex col-span-12 md:col-span-3 flex-col gap-4"
+                                    className="hidden md:flex col-span-12 md:col-span-3 flex-col gap-6"
                                 >
-                                    <TechBorder className="h-auto" color="emerald" cornerSize={12}>
-                                        <div className="p-5 bg-black/60 relative overflow-hidden">
+                                    <TechBorder className="h-auto shrink-0" color="emerald" cornerSize={12}>
+                                        <HoloCard variant="default" className="p-5 bg-black/60 relative overflow-hidden h-full">
                                             <GridBackground opacity={0.05} color="rgba(52, 211, 153, 1)" />
                                             <div className="relative z-10 space-y-4">
                                                 <div className="flex items-center justify-between border-b border-white/10 pb-3">
-                                                    <span className="text-[10px] tracking-[0.2em] uppercase text-white/50">Sys_Mon</span>
+                                                    <span className="text-[10px] tracking-[0.2em] uppercase text-white/50 font-display hover:text-transparent hover:bg-clip-text hover:bg-gradient-to-r hover:from-cyan-300 hover:via-purple-300 hover:to-pink-300 transition-all duration-300 cursor-default">Sys_Mon</span>
                                                     <div className="h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)] animate-pulse" />
                                                 </div>
                                                 <SystemBar label="Network" value={signal} icon={Radio} />
@@ -173,16 +177,16 @@ export function NebulaConsole({ onEnter }: NebulaConsoleProps) {
                                                 <SystemBar label="Vibe" value={vibe} icon={Music} />
                                                 <SystemBar label="Sync" value={sync} icon={Activity} />
                                             </div>
-                                        </div>
+                                        </HoloCard>
                                     </TechBorder>
 
                                     <TechBorder className="flex-1 flex flex-col min-h-0" color="cyan" cornerSize={12}>
-                                        <div className="p-4 bg-black/60 h-full flex flex-col relative overflow-hidden">
-                                            <div className="text-sm tracking-[0.2em] uppercase text-white/50 mb-3">Log_Stream</div>
-                                            <div ref={logContainerRef} className="flex-1 overflow-y-auto space-y-4 font-mono text-sm pr-2 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-white/10 relative z-10">
+                                        <HoloCard variant="default" className="p-4 bg-black/60 h-full flex flex-col relative overflow-hidden">
+                                            <div className="text-sm tracking-[0.2em] uppercase text-white/50 mb-3 font-display hover:text-transparent hover:bg-clip-text hover:bg-gradient-to-r hover:from-cyan-300 hover:via-purple-300 hover:to-pink-300 transition-all duration-300 cursor-default">Log_Stream</div>
+                                            <div ref={logContainerRef} className="flex-1 overflow-y-auto space-y-4 font-mono text-xs md:text-sm pr-2 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-white/10 relative z-10">
                                                 {logs.map((l, i) => (
                                                     <div key={i} className="flex gap-2 leading-tight opacity-80">
-                                                        <span className={cx("shrink-0",
+                                                        <span className={cx("shrink-0 font-bold",
                                                             l.level === "OK" ? "text-emerald-400" :
                                                                 l.level === "WARN" ? "text-amber-400" :
                                                                     l.level === "CRIT" ? "text-red-400" : "text-cyan-400"
@@ -191,132 +195,152 @@ export function NebulaConsole({ onEnter }: NebulaConsoleProps) {
                                                     </div>
                                                 ))}
                                             </div>
-                                        </div>
+                                        </HoloCard>
                                     </TechBorder>
                                 </motion.aside>
 
                                 {/* Center Main Module - Full Width on Mobile */}
-                                <main className="col-span-1 md:col-span-6 flex flex-col gap-3 md:gap-4 h-full">
+                                <main className="col-span-1 md:col-span-6 flex flex-col gap-4 md:gap-6 h-full min-h-0">
                                     {/* Header Panel */}
-                                    <TechBorder color="cyan" cornerSize={12}>
-                                        <header className="p-4 md:p-6 bg-black/60 flex items-center justify-between shrink-0 relative overflow-hidden">
+                                    <TechBorder color="cyan" cornerSize={12} className="shrink-0">
+                                        <header className="p-4 md:p-6 bg-black/60 flex items-center justify-between relative overflow-hidden">
                                             <GridBackground opacity={0.1} />
                                             <div className="relative z-10">
-                                                <div className="text-[10px] tracking-[0.3em] uppercase text-cyan-300/70 mb-1">Bridge Console</div>
+                                                <div className="text-[10px] tracking-[0.3em] uppercase text-cyan-300/70 mb-1 font-display hover:text-transparent hover:bg-clip-text hover:bg-gradient-to-r hover:from-cyan-300 hover:via-purple-300 hover:to-pink-300 transition-all duration-300 cursor-default">Bridge Console</div>
                                                 <h1 className="text-2xl md:text-3xl font-display font-bold uppercase tracking-tight text-gradient glitch-text" data-text="LUNATHELOVEGOD">
                                                     LUNATHELOVEGOD
                                                 </h1>
                                             </div>
                                             <div className="text-right hidden sm:block relative z-10">
-                                                <div className="text-[10px] tracking-widest uppercase text-white/40">Local Time</div>
+                                                <div className="text-[10px] tracking-widest uppercase text-white/40 font-display hover:text-transparent hover:bg-clip-text hover:bg-gradient-to-r hover:from-cyan-300 hover:via-purple-300 hover:to-pink-300 transition-all duration-300 cursor-default">Local Time</div>
                                                 <div className="text-xl font-mono text-white/90">{now ? formatTime(now) : '00:00:00'}</div>
                                             </div>
                                         </header>
                                     </TechBorder>
 
                                     {/* Visualizer / Hero Area */}
-                                    <div className="flex-1 panel rounded-2xl p-1 relative overflow-hidden group flex items-center justify-center bg-black/40 min-h-0">
-                                        {activeModule === 'HOME' ? (
-                                            <>
-                                                {/* Warp Speed Background */}
-                                                <div className="absolute inset-0 star-warp opacity-40 mix-blend-screen" />
+                                    <div className="flex-1 panel rounded-2xl p-1 relative overflow-hidden group flex items-center justify-center bg-black/40 min-h-0 border border-white/5 shadow-[inset_0_0_20px_rgba(0,0,0,0.8)]">
+                                        <div className="absolute inset-0 pointer-events-none z-20 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.4)_100%)]" />
+                                        <div className="absolute inset-0 pointer-events-none z-10 bg-[linear-gradient(rgba(18,255,255,0.03)_1px,transparent_1px)] bg-[size:100%_4px]" />
+                                        <AnimatePresence mode="wait">
+                                            {activeModule === 'HOME' ? (
+                                                <motion.div
+                                                    key="HOME"
+                                                    initial={{ opacity: 0, scale: 0.95 }}
+                                                    animate={{ opacity: 1, scale: 1 }}
+                                                    exit={{ opacity: 0, scale: 1.05 }}
+                                                    transition={{ duration: 0.4 }}
+                                                    className="w-full h-full relative"
+                                                >
+                                                    {/* Warp Speed Background - Pro Max Enhanced */}
+                                                    <div className="absolute inset-0 star-warp opacity-50 mix-blend-screen" />
+                                                    <div className="absolute inset-0 bg-gradient-to-t from-cyan-900/10 via-transparent to-purple-900/10 mix-blend-overlay" />
 
-                                                {/* Hero Image with Fade */}
-                                                <div
-                                                    className="absolute inset-0 bg-[url('/images/console-hero-v2.jpg')] bg-cover bg-center opacity-60 mix-blend-lighten"
-                                                    style={{
-                                                        maskImage: 'linear-gradient(to bottom, black 50%, transparent 100%)',
-                                                        WebkitMaskImage: 'linear-gradient(to bottom, black 50%, transparent 100%)'
-                                                    }}
-                                                />
-                                                <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-90" />
+                                                    {/* Hero Image with Fade */}
+                                                    <div
+                                                        className="absolute inset-0 bg-[url('/images/console-hero-v2.png')] bg-cover bg-center opacity-70 mix-blend-lighten [mask-image:linear-gradient(to_bottom,black_40%,transparent_100%)]"
+                                                    />
+                                                    <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-90" />
 
-                                                {/* CSS Audio Visualizer - Deterministic */}
-                                                <div className="absolute inset-0 flex items-center justify-center gap-1 opacity-20 pointer-events-none">
-                                                    {Array.from({ length: 20 }).map((_, i) => (
-                                                        <div
-                                                            key={i}
-                                                            className="w-2 bg-cyan-500/50 rounded-full waveform-bar"
-                                                            style={{
-                                                                animationDelay: `${i * 0.05}s`,
-                                                                animationDuration: `${0.5 + ((i * 1337) % 100) / 100}s`,
-                                                                height: `${20 + ((i * 997) % 60)}%`
-                                                            }}
-                                                        />
-                                                    ))}
-                                                </div>
+                                                    {/* Vortex Effect */}
+                                                    <div className="absolute inset-0">
+                                                        <Vortex
+                                                            backgroundColor="transparent"
+                                                            rangeY={800}
+                                                            particleCount={600}
+                                                            baseHue={190} // Cyan/Blue range
+                                                            rangeSpeed={0.8}
+                                                            baseRadius={1}
+                                                            rangeRadius={2}
+                                                            containerClassName="w-full h-full"
+                                                            className="flex items-center flex-col justify-center px-2 md:px-10 py-4 w-full h-full"
+                                                        >
+                                                            <TechBorder className="w-full h-full" color="cyan" cornerSize={24} intensity="high">
+                                                                <div className="relative z-10 text-center space-y-6 md:space-y-8 p-4">
+                                                                    <HoloCard variant="active" className="inline-flex items-center gap-2 px-3 py-1 rounded-full cursor-default border-cyan-500/30">
+                                                                        <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_10px_cyan]" />
+                                                                        <span className="text-[10px] tracking-widest uppercase text-cyan-200 font-mono">System Ready</span>
+                                                                    </HoloCard>
 
-                                                <div className="relative z-10 text-center space-y-6 md:space-y-8 p-4">
-                                                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-cyan-500/30 bg-cyan-500/10 backdrop-blur-md">
-                                                        <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
-                                                        <span className="text-[10px] tracking-widest uppercase text-cyan-200">System Ready</span>
+                                                                    <CyberButton
+                                                                        variant="radioactive"
+                                                                        onClick={handleEnter}
+                                                                        onMouseEnter={playHover}
+                                                                        disabled={isEntering}
+                                                                        className={isEntering ? 'scale-110 brightness-150' : 'scale-125'}
+                                                                    >
+                                                                        {isEntering ? 'Engaging...' : 'Enter Portal'}
+                                                                    </CyberButton>
+
+                                                                    <div className="text-[10px] uppercase text-white/30 tracking-widest md:hidden animate-pulse font-mono">
+                                                                        Tap to Initialize
+                                                                    </div>
+                                                                </div>
+                                                            </TechBorder>
+                                                        </Vortex>
                                                     </div>
-
-                                                    <button
-                                                        onClick={handleEnter}
-                                                        onMouseEnter={playHover}
-                                                        disabled={isEntering}
-                                                        className={`btn-radioactive px-10 py-6 text-cyan-300 rounded-2xl transition-all duration-500 ${isEntering ? 'scale-110 brightness-150 border-cyan-400 bg-cyan-500/20' : ''}`}
-                                                    >
-                                                        <span className="text-lg font-bold tracking-[0.2em] uppercase">
-                                                            {isEntering ? 'Engaging Warp...' : 'Enter Portal'}
-                                                        </span>
-                                                    </button>
-
-                                                    <div className="text-[10px] uppercase text-white/30 tracking-widest md:hidden animate-pulse">
-                                                        Tap to Initialize
-                                                    </div>
-                                                </div>
-                                            </>
-                                        ) : (
-                                            <>
-                                                {activeModule === 'MISSION' && <MissionLog onClose={() => setActiveModule('HOME')} />}
-                                                {activeModule === 'MEDIA' && <MusicPlayer onClose={() => setActiveModule('HOME')} />}
-                                                {activeModule === 'COMMS' && <CommsInterface onClose={() => setActiveModule('HOME')} />}
-                                                {activeModule === 'COSMOS' && <CosmosMap onClose={() => setActiveModule('HOME')} />}
-                                            </>
-                                        )}
+                                                </motion.div>
+                                            ) : (
+                                                <motion.div
+                                                    key={activeModule}
+                                                    initial={{ opacity: 0, x: 20 }}
+                                                    animate={{ opacity: 1, x: 0 }}
+                                                    exit={{ opacity: 0, x: -20 }}
+                                                    transition={{ duration: 0.3 }}
+                                                    className="w-full h-full"
+                                                >
+                                                    {activeModule === 'MISSION' && <MissionLog onClose={() => setActiveModule('HOME')} />}
+                                                    {activeModule === 'MEDIA' && <MusicPlayer onClose={() => setActiveModule('HOME')} />}
+                                                    {activeModule === 'COMMS' && <CommsInterface onClose={() => setActiveModule('HOME')} />}
+                                                    {activeModule === 'COSMOS' && <CosmosMap onClose={() => setActiveModule('HOME')} />}
+                                                </motion.div>
+                                            )}
+                                        </AnimatePresence>
                                     </div>
 
-                                    {/* Quick Actions - Visible but Compact on Mobile */}
-                                    <div className="grid grid-cols-4 gap-2 md:gap-3 shrink-0">
-                                        <button
-                                            className="btn-console group"
-                                            onClick={() => { setActiveModule('COSMOS'); playClick(); }}
-                                            onMouseEnter={playHover}
-                                        >
-                                            <span className="btn-dot bg-cyan-400" />
-                                            <span className="group-hover:text-cyan-200 transition-colors hidden md:inline">Map</span>
-                                            <span className="md:hidden text-[9px]"><Globe size={12} /></span>
-                                        </button>
-                                        <button
-                                            className="btn-console group"
-                                            onClick={() => { setActiveModule('MISSION'); playClick(); }}
-                                            onMouseEnter={playHover}
-                                        >
-                                            <span className="btn-dot" />
-                                            <span className="group-hover:text-cyan-200 transition-colors hidden md:inline">Mission</span>
-                                            <span className="md:hidden text-[9px]">Mission</span>
-                                        </button>
-                                        <button
-                                            className="btn-console group"
-                                            onClick={() => { setActiveModule('MEDIA'); playClick(); }}
-                                            onMouseEnter={playHover}
-                                        >
-                                            <span className="btn-dot btn-dot-mag" />
-                                            <span className="group-hover:text-pink-200 transition-colors hidden md:inline">Media</span>
-                                            <span className="md:hidden text-[9px]">Media</span>
-                                        </button>
-                                        <button
-                                            className="btn-console group"
-                                            onClick={() => { setActiveModule('COMMS'); playClick(); }}
-                                            onMouseEnter={playHover}
-                                        >
-                                            <span className="btn-dot btn-dot-amb" />
-                                            <span className="group-hover:text-amber-200 transition-colors hidden md:inline">Comms</span>
-                                            <span className="md:hidden text-[9px]">Comms</span>
-                                        </button>
-                                    </div>
+                                    {/* Quick Actions Dock */}
+                                    <TechBorder color="cyan" cornerSize={8} className="shrink-0">
+                                        <div className="p-2 bg-black/60 flex items-center justify-between gap-2 overflow-x-auto">
+                                            <div className="flex gap-2 w-full">
+                                                <CyberButton
+                                                    variant={activeModule === 'COSMOS' ? 'primary' : 'ghost'}
+                                                    className="flex-1 text-[10px] md:text-xs py-3"
+                                                    onClick={() => { setActiveModule('COSMOS'); playClick(); }}
+                                                    onMouseEnter={playHover}
+                                                >
+                                                    <Globe size={14} className="mr-2" />
+                                                    <span className="hidden md:inline font-display">COSMOS</span>
+                                                </CyberButton>
+                                                <CyberButton
+                                                    variant={activeModule === 'MISSION' ? 'primary' : 'ghost'}
+                                                    className="flex-1 text-[10px] md:text-xs py-3"
+                                                    onClick={() => { setActiveModule('MISSION'); playClick(); }}
+                                                    onMouseEnter={playHover}
+                                                >
+                                                    <Activity size={14} className="mr-2" />
+                                                    <span className="hidden md:inline font-display">MISSION</span>
+                                                </CyberButton>
+                                                <CyberButton
+                                                    variant={activeModule === 'MEDIA' ? 'primary' : 'ghost'}
+                                                    className={`flex-1 text-[10px] md:text-xs py-3 ${activeModule === 'MEDIA' ? 'text-pink-400 border-pink-500/50' : 'text-pink-200/70 hover:text-pink-100'}`}
+                                                    onClick={() => { setActiveModule('MEDIA'); playClick(); }}
+                                                    onMouseEnter={playHover}
+                                                >
+                                                    <Music size={14} className="mr-2" />
+                                                    <span className="hidden md:inline font-display">AUDIO</span>
+                                                </CyberButton>
+                                                <CyberButton
+                                                    variant={activeModule === 'COMMS' ? 'primary' : 'ghost'}
+                                                    className={`flex-1 text-[10px] md:text-xs py-3 ${activeModule === 'COMMS' ? 'text-amber-400 border-amber-500/50' : 'text-amber-200/70 hover:text-amber-100'}`}
+                                                    onClick={() => { setActiveModule('COMMS'); playClick(); }}
+                                                    onMouseEnter={playHover}
+                                                >
+                                                    <Radio size={14} className="mr-2" />
+                                                    <span className="hidden md:inline font-display">COMMS</span>
+                                                </CyberButton>
+                                            </div>
+                                        </div>
+                                    </TechBorder>
                                 </main>
 
                                 {/* Right Sidebar - Hidden on Mobile */}
@@ -324,14 +348,16 @@ export function NebulaConsole({ onEnter }: NebulaConsoleProps) {
                                     initial={{ x: 20, opacity: 0 }}
                                     animate={{ x: 0, opacity: 1 }}
                                     transition={{ delay: 0.4, duration: 0.5 }}
-                                    className="hidden md:flex col-span-12 md:col-span-3 flex-col gap-4"
+                                    className="hidden md:flex col-span-12 md:col-span-3 flex-col gap-6"
                                 >
-                                    <div className="panel p-4 rounded-2xl">
-                                        <div className="text-[10px] tracking-[0.2em] uppercase text-white/50 mb-3 ml-1">Spatial_Nav</div>
-                                        <NebulaRadar />
-                                    </div>
+                                    <HoloCard variant="default" className="p-4 h-full relative overflow-hidden flex flex-col">
+                                        <div className="text-[10px] tracking-[0.2em] uppercase text-white/50 mb-3 ml-1 font-display hover:text-transparent hover:bg-clip-text hover:bg-gradient-to-r hover:from-cyan-300 hover:via-purple-300 hover:to-pink-300 transition-all duration-300 cursor-default">Spatial_Nav</div>
+                                        <div className="flex-1">
+                                            <StarmapNav activeId={activeModule} onNavigate={(id) => setActiveModule(id as 'HOME' | 'MISSION' | 'MEDIA' | 'COMMS' | 'COSMOS')} />
+                                        </div>
+                                    </HoloCard>
 
-                                    <div className="grid grid-cols-1 gap-3">
+                                    <div className="grid grid-cols-1 gap-4">
                                         <StatCard label="Next Show" value="FEB 14" icon={Calendar} trend="Selling Fast" />
                                         <StatCard label="Location" value="NYC" icon={MapPin} />
                                     </div>

@@ -16,8 +16,9 @@ export function GlowButton({
     size = 'md',
     fullWidth = false,
     className = '',
+    'aria-label': ariaLabel,
     ...props
-}: GlowButtonProps) {
+}: GlowButtonProps & { 'aria-label'?: string }) {
     const ref = useRef<HTMLButtonElement>(null);
 
     const x = useMotionValue(0);
@@ -78,6 +79,7 @@ export function GlowButton({
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             {...props}
+            aria-label={ariaLabel || (typeof children === 'string' ? children : undefined)}
         >
             {/* Gradient overlay on hover */}
             {variant === 'primary' && (

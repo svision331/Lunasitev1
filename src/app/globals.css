@@ -1,49 +1,65 @@
 @import "tailwindcss";
 
-/* ================================
-   LUNA NEBULA DESIGN SYSTEM
-   ================================ */
-
 :root {
-  /* Core Nebula Theme */
-  --nebula-cyan: oklch(0.75 0.15 195);
-  --nebula-pink: oklch(0.7 0.2 350);
-  --nebula-purple: oklch(0.5 0.2 280);
-  --nebula-orange: oklch(0.7 0.18 50);
+  /* ================================
+     LUNA OS V5.0 DESIGN TOKENS (PRO MAX)
+     ================================ */
 
-  /* Deep Space Palette */
-  --void-black: #050508;
-  --void-purple: #0a0510;
+  /* Typography Tokens - Syncopate (Headers) & Space Mono (Data) */
+  --font-display: 'Syncopate', sans-serif;
+  --font-mono: 'Space Mono', monospace;
+  --font-sans: 'Space Mono', system-ui, sans-serif;
+  /* Unifying look */
 
-  /* Background Shades */
-  --slate-950: var(--void-black);
-  --slate-900: var(--void-purple);
-  --slate-800: oklch(0.2 0.02 260);
-  --slate-700: oklch(0.3 0.02 260);
-  --slate-600: oklch(0.4 0.02 260);
-  --slate-500: oklch(0.5 0.02 260);
-  --slate-400: oklch(0.6 0.02 260);
-  --slate-300: oklch(0.7 0.02 260);
-  --slate-200: oklch(0.85 0.01 260);
-  --slate-100: oklch(0.95 0.01 260);
+  /* 1) Color Tokens (Palette - Vibrant Cosmic) */
+  --void: #020205;
+  /* Deepest black */
+  --void-deep: #000000;
+  --surface: rgba(10, 10, 15, 0.4);
 
-  /* Gradients */
-  --gradient-cosmic: linear-gradient(135deg, var(--nebula-cyan), var(--nebula-pink));
-  --gradient-glass: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
-  --gradient-glow: radial-gradient(ellipse at center, var(--nebula-cyan), transparent 70%);
-  --gradient-void: radial-gradient(circle at center, var(--void-purple) 0%, var(--void-black) 100%);
+  /* Brand Colors - High Vibe Oklch */
+  --primary: oklch(0.7 0.18 220);
+  /* Electric Cyan */
+  --primary-glow: oklch(0.8 0.15 210);
+  /* Soft Cyan Glow */
+  --secondary: oklch(0.65 0.22 320);
+  /* Neon Pink */
+  --accent: oklch(0.75 0.18 55);
+  /* Solar Amber */
 
-  /* Shadows */
-  --shadow-glow-cyan: 0 0 30px rgba(34, 211, 238, 0.4);
-  --shadow-glow-pink: 0 0 30px rgba(236, 72, 153, 0.4);
-  --shadow-card: 0 4px 30px rgba(0, 0, 0, 0.5);
+  /* Semantic Aliases */
+  --nebula-cyan: var(--primary);
+  --nebula-pink: var(--secondary);
+  --nebula-purple: oklch(0.45 0.18 280);
+  /* Deep Purple */
+  --void-black: var(--void);
+  --void-purple: #050308;
 
-  /* Timing */
-  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
-  --ease-in-out-expo: cubic-bezier(0.87, 0, 0.13, 1);
+  /* Text Colors */
+  --text-primary: #f8fafc;
+  --text-muted: #94a3b8;
+  --text-dim: #475569;
 
-  /* Spacing */
-  --section-padding: clamp(3rem, 8vw, 6rem);
+  /* 2) Gradients */
+  --gradient-cosmic: linear-gradient(135deg, var(--primary), var(--secondary));
+  --gradient-void: radial-gradient(circle at center, var(--void-purple) 0%, var(--void) 100%);
+  --gradient-glass: linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%);
+
+  /* 3) Shadows & Glows */
+  --shadow-glow-cyan: 0 0 25px rgba(6, 182, 212, 0.5);
+  --shadow-glow-pink: 0 0 25px rgba(236, 72, 153, 0.5);
+  --shadow-card: 0 10px 40px -10px rgba(0, 0, 0, 0.6);
+
+  /* 4) Animation Timing */
+  --ease-fluid: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --ease-snap: cubic-bezier(0.16, 1, 0.3, 1);
+  --duration-hover: 0.2s;
+  /* Snappier hover */
+  --duration-enter: 0.6s;
+
+  /* 5) Spacing */
+  --section-padding: clamp(4rem, 10vw, 8rem);
+  --header-height: 80px;
 }
 
 /* ================================
@@ -65,7 +81,7 @@ html {
 }
 
 body {
-  font-family: var(--font-inter), system-ui, -apple-system, sans-serif;
+  font-family: var(--font-sans);
 
   background: var(--void-black);
   color: var(--slate-100);
@@ -105,7 +121,7 @@ textarea {
    ================================ */
 
 .font-display {
-  font-family: var(--font-space), var(--font-inter), system-ui, sans-serif;
+  font-family: var(--font-display);
   font-weight: 700;
   letter-spacing: -0.02em;
 }
@@ -126,31 +142,32 @@ textarea {
    ================================ */
 
 .glass {
-  background: rgba(10, 10, 15, 0.6);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(148, 163, 184, 0.05);
+  background: rgba(5, 5, 10, 0.6);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .glass-card {
-  background: rgba(10, 10, 15, 0.7);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: rgba(5, 5, 10, 0.7);
+  -webkit-backdrop-filter: blur(24px);
+  backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.03);
   border-radius: 1rem;
-  transition: all 0.4s var(--ease-out-expo);
+  transition: all 0.3s var(--ease-fluid);
   position: relative;
   overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
 }
 
-/* Iridescent Border Effect */
+/* Iridescent Border Effect - Pro Max Upgrade */
 .glass-card::before {
   content: '';
   position: absolute;
   inset: 0;
   border-radius: inherit;
   padding: 1px;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0), rgba(6, 182, 212, 0.1));
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
@@ -159,9 +176,9 @@ textarea {
 }
 
 .glass-card:hover {
-  border-color: rgba(34, 211, 238, 0.3);
+  border-color: rgba(6, 182, 212, 0.2);
   box-shadow: var(--shadow-glow-cyan);
-  transform: translateY(-4px);
+  transform: translateY(-2px);
 }
 
 /* ================================
@@ -170,20 +187,25 @@ textarea {
 
 .glow-button {
   position: relative;
-  background: linear-gradient(135deg, var(--nebula-cyan), #0891b2);
+  background: var(--gradient-cosmic);
   border: none;
-  border-radius: 0.75rem;
+  border-radius: 0.5rem;
+  /* Sharper corners for tech feel */
   overflow: hidden;
-  transition: all 0.4s var(--ease-out-expo);
+  transition: all 0.2s var(--ease-snap);
+  font-family: var(--font-display);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: white;
 }
 
 .glow-button::before {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, var(--nebula-cyan), var(--nebula-pink));
+  background: linear-gradient(135deg, var(--secondary), var(--primary));
   opacity: 0;
-  transition: opacity 0.4s var(--ease-out-expo);
+  transition: opacity 0.2s ease;
 }
 
 .glow-button:hover::before {
@@ -192,7 +214,9 @@ textarea {
 
 .glow-button:hover {
   box-shadow: var(--shadow-glow-cyan);
-  transform: translateY(-2px);
+  transform: translateY(-1px);
+  letter-spacing: 0.1em;
+  /* Kinetic typography */
 }
 
 .glow-button span {
@@ -289,6 +313,7 @@ textarea {
 
 .countdown-digit {
   background: rgba(15, 23, 42, 0.9);
+  -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(34, 211, 238, 0.3);
   border-radius: 0.5rem;
@@ -438,6 +463,7 @@ textarea {
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.08),
     0 4px 20px rgba(0, 0, 0, 0.4);
+  -webkit-backdrop-filter: blur(12px);
   backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.06);
 }
@@ -496,57 +522,7 @@ textarea {
   background: radial-gradient(circle at center, transparent 30%, rgba(0, 10, 15, 0.8) 90%);
 }
 
-.radar-grid {
-  background-image:
-    radial-gradient(transparent 65%, rgba(0, 255, 255, 0.1) 66%, transparent 67%),
-    linear-gradient(0deg, rgba(0, 255, 255, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 255, 255, 0.05) 1px, transparent 1px);
-  background-size: 100% 100%, 25% 25%, 25% 25%;
-}
 
-.radar-rings {
-  border: 1px solid rgba(0, 255, 255, 0.15);
-  border-radius: 50%;
-  width: 80%;
-  height: 80%;
-  position: absolute;
-  top: 10%;
-  left: 10%;
-  box-shadow: 0 0 20px rgba(0, 255, 255, 0.1);
-}
-
-.radar-crosshair {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 100%;
-  height: 100%;
-  transform: translate(-50%, -50%);
-  background:
-    linear-gradient(rgba(0, 255, 255, 0.2) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 255, 255, 0.2) 1px, transparent 1px);
-  background-size: 100% 1px, 1px 100%;
-  background-position: center;
-  background-repeat: no-repeat;
-}
-
-.radar-sweep {
-  width: 100%;
-  height: 100%;
-  background: conic-gradient(from 0deg, transparent 70%, rgba(0, 255, 255, 0.25) 100%);
-  border-radius: 50%;
-  animation: radarSpin 4s linear infinite;
-}
-
-@keyframes radarSpin {
-  from {
-    transform: rotate(0deg);
-  }
-
-  to {
-    transform: rotate(360deg);
-  }
-}
 
 .space-backdrop {
   background: radial-gradient(circle at 50% 30%, #0c1a26 0%, #000 70%);

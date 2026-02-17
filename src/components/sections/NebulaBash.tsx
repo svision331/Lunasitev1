@@ -38,7 +38,7 @@ export function NebulaBash() {
                     <span className="text-sm text-pink-400 font-medium tracking-wider">
                         IMMERSIVE EXPERIENCES
                     </span>
-                    <h2 className="text-3xl sm:text-4xl font-bold mt-2 mb-6 font-display">
+                    <h2 className="text-3xl sm:text-4xl font-bold mt-2 mb-6 font-display text-white hover:text-transparent hover:bg-clip-text hover:bg-gradient-to-r hover:from-cyan-300 hover:via-purple-300 hover:to-pink-300 transition-all duration-300 cursor-default">
                         NEBULA BASH
                     </h2>
                     <p className="text-lg text-slate-300 mb-12 max-w-2xl mx-auto">
@@ -65,7 +65,7 @@ export function NebulaBash() {
                             >
                                 {theme.emoji}
                             </motion.div>
-                            <h3 className="font-bold text-lg font-display group-hover:text-gradient transition-all">
+                            <h3 className="font-bold text-xl font-display text-white group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-cyan-300 group-hover:via-purple-300 group-hover:to-pink-300 transition-all duration-300">
                                 {theme.name}
                             </h3>
                             <p className="text-sm text-cyan-400 mb-2">{theme.subtitle}</p>

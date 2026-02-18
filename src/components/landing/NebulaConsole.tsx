@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from "react";
-import { Zap, Radio, Calendar, MapPin, Music, Activity, Globe } from "lucide-react";
+import { Zap, Radio, Calendar, MapPin, Music, Activity, Globe, Volume2, VolumeX, Eye, EyeOff } from "lucide-react";
 import { SystemBar } from "@/components/bridge/SystemBar";
 
 import { StatCard } from "@/components/bridge/StatCard";
@@ -238,21 +238,23 @@ export function NebulaConsole({ onEnter }: NebulaConsoleProps) {
                                                     <div className="text-xl font-mono text-white mb-1">{now ? formatTime(now) : '00:00:00'}</div>
                                                 </div>
 
-                                                {/* Settings: Audio & Motion */}
+                                                {/* Settings: Audio & Motion (Icon Mode) */}
                                                 <div className="flex items-center gap-2 justify-end">
                                                     <button
                                                         onClick={toggleMute}
-                                                        className={`text-[9px] uppercase tracking-widest px-2 py-0.5 rounded border transition-colors ${isMuted ? 'bg-red-500/20 text-red-300 border-red-500/40' : 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40 hover:bg-emerald-500/30'}`}
-                                                        title="Toggle Audio"
+                                                        className={`p-2 rounded-full border transition-all duration-300 ${isMuted ? 'bg-red-500/10 text-red-400 border-red-500/30 hover:bg-red-500/20' : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/20 shadow-[0_0_10px_rgba(16,185,129,0.2)]'}`}
+                                                        title={isMuted ? "Unmute Audio" : "Mute Audio"}
+                                                        aria-label={isMuted ? "Unmute Audio" : "Mute Audio"}
                                                     >
-                                                        {isMuted ? 'AUDIO: OFF' : 'AUDIO: ON'}
+                                                        {isMuted ? <VolumeX size={14} /> : <Volume2 size={14} />}
                                                     </button>
                                                     <button
                                                         onClick={toggleReducedMotion}
-                                                        className={`text-[9px] uppercase tracking-widest px-2 py-0.5 rounded border transition-colors ${settings.reducedMotion ? 'bg-amber-500/20 text-amber-300 border-amber-500/40' : 'bg-transparent text-white/20 border-white/10 hover:text-white/50'}`}
-                                                        title="Toggle Reduced Motion"
+                                                        className={`p-2 rounded-full border transition-all duration-300 ${settings.reducedMotion ? 'bg-amber-500/10 text-amber-400 border-amber-500/30 hover:bg-amber-500/20' : 'bg-transparent text-white/20 border-white/10 hover:text-white/50 hover:bg-white/5'}`}
+                                                        title={settings.reducedMotion ? "Enable Motion" : "Reduce Motion"}
+                                                        aria-label={settings.reducedMotion ? "Enable Motion" : "Reduce Motion"}
                                                     >
-                                                        {settings.reducedMotion ? 'Motion: REDUCED' : 'Motion: FULL'}
+                                                        {settings.reducedMotion ? <EyeOff size={14} /> : <Eye size={14} />}
                                                     </button>
                                                 </div>
                                             </div>

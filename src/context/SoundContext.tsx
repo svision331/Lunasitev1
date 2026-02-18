@@ -65,9 +65,18 @@ export function SoundProvider({ children }: { children: React.ReactNode }) {
     const toggleMute = useCallback(() => {
         setIsMuted(prev => {
             const next = !prev;
+            console.log("🔊 Toggling Mute:", next ? "MUTED" : "UNMUTED");
             localStorage.setItem('luna_sound_muted', JSON.stringify(next));
+
+            // Ensure context is running
+            if (globalAudioCtx?.state === 'suspended') {
+                globalAudioCtx.resume();
+            }
+
             if (globalMasterGain && globalAudioCtx) {
                 const target = next ? 0 : 0.6;
+                // Cancel scheduled values to force immediate change if needed
+                globalMasterGain.gain.cancelScheduledValues(globalAudioCtx.currentTime);
                 globalMasterGain.gain.linearRampToValueAtTime(target, globalAudioCtx.currentTime + 0.1);
             }
             return next;

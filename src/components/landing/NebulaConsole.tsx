@@ -35,7 +35,7 @@ function randInt(min: number, max: number) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-import { useSettings } from "@/hooks/useSettings";
+import { useSettings } from "@/context/SettingsContext";
 
 interface NebulaConsoleProps {
     onEnter: () => void;

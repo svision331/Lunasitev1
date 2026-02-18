@@ -546,6 +546,7 @@ textarea {
 .cockpit-vignette {
   background: radial-gradient(circle at center, transparent 40%, black 100%);
   opacity: 0.8;
+  pointer-events: none;
 }
 
 .scanlines {

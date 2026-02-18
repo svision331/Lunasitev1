@@ -3,6 +3,7 @@ import { Share_Tech_Mono, Fira_Code } from 'next/font/google';
 import './globals.css';
 import { CosmicCursor, CustomCursor } from '@/components/effects';
 import { SoundProvider } from '@/context/SoundContext';
+import { SettingsProvider } from '@/context/SettingsContext';
 
 const shareTechMono = Share_Tech_Mono({ weight: '400', subsets: ['latin'], variable: '--font-share-tech' });
 const firaCode = Fira_Code({ subsets: ['latin'], variable: '--font-fira-code' });
@@ -46,19 +47,21 @@ export default function RootLayout({
         <link rel="icon" href="/favicon.ico" />
       </head>
       <body className={`${shareTechMono.variable} ${firaCode.variable} antialiased selection:bg-cyan-500/30 selection:text-cyan-200`} suppressHydrationWarning>
-        <SoundProvider>
-          {/* Global Background Effects */}
+        <SettingsProvider>
+          <SoundProvider>
+            {/* Global Background Effects */}
 
-          {/* Global Cursor Effect */}
-          <CosmicCursor />
+            {/* Global Cursor Effect */}
+            <CosmicCursor />
 
-          {/* Custom Ice Heart Cursor */}
-          <CustomCursor />
+            {/* Custom Ice Heart Cursor */}
+            <CustomCursor />
 
-          {/* Noise texture overlay */}
-          <div className="noise-overlay" />
-          {children}
-        </SoundProvider>
+            {/* Noise texture overlay */}
+            <div className="noise-overlay" />
+            {children}
+          </SoundProvider>
+        </SettingsProvider>
       </body>
     </html >
   );

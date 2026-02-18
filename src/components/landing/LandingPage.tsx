@@ -24,7 +24,7 @@ interface LandingPageProps {
     videos: Video[];
 }
 
-import { useSettings } from '@/hooks/useSettings';
+import { useSettings } from '@/context/SettingsContext';
 
 // ... imports
 

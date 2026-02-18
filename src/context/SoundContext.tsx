@@ -14,6 +14,8 @@ type SoundContextType = {
     playWarp: () => void;
     playSample: (url: string, vol?: number) => void;
     playAmbience: (url: string | 'synth', vol?: number) => void;
+    audioContext: AudioContext | null;
+    masterGain: GainNode | null;
 };
 
 const SoundContext = createContext<SoundContextType | null>(null);

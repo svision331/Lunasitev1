@@ -1,17 +1,23 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import { useSoundEffects } from '@/hooks/useSoundEffects';
 
 export function ShipAmbience() {
-    const contextRef = useRef<AudioContext | null>(null);
-    const masterGainRef = useRef<GainNode | null>(null);
+    const { audioContext, masterGain } = useSoundEffects();
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const nodesRef = useRef<any[]>([]);
 
     useEffect(() => {
-        const createNoiseBuffer = (ctx: AudioContext) => {
-            const bufferSize = ctx.sampleRate * 2; // 2 seconds
-            const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+        if (!audioContext || !masterGain) return;
+
+        const ctx = audioContext;
+        // Check if context is valid
+        if (ctx.state === 'closed') return;
+
+        const createNoiseBuffer = (c: AudioContext) => {
+            const bufferSize = c.sampleRate * 2; // 2 seconds
+            const buffer = c.createBuffer(1, bufferSize, c.sampleRate);
             const output = buffer.getChannelData(0);
             for (let i = 0; i < bufferSize; i++) {
                 output[i] = Math.random() * 2 - 1;
@@ -30,40 +36,44 @@ export function ShipAmbience() {
             nodesRef.current = [];
         };
 
-        const setupLayers = (ctx: AudioContext, dest: AudioNode) => {
+        // We need to store cleanup functions for timeouts
+        let cleanupBeep: (() => void) | undefined;
+        let cleanupCreak: (() => void) | undefined;
+
+        const setupLayers = (c: AudioContext, dest: AudioNode) => {
             // Clear old nodes
             stopLayers();
 
-            const noiseBuffer = createNoiseBuffer(ctx);
-            const t = ctx.currentTime;
+            const noiseBuffer = createNoiseBuffer(c);
+            const t = c.currentTime;
 
             // --- 1. Core Ship Ambience (Deep Brown/Pink Noise Bed) ---
-            const bedSrc = ctx.createBufferSource();
+            const bedSrc = c.createBufferSource();
             bedSrc.buffer = noiseBuffer;
             bedSrc.loop = true;
-            const bedFilter = ctx.createBiquadFilter();
+            const bedFilter = c.createBiquadFilter();
             bedFilter.type = 'lowpass';
             bedFilter.frequency.value = 120;
-            const bedGain = ctx.createGain();
+            const bedGain = c.createGain();
             bedGain.gain.value = 0.5;
             bedSrc.connect(bedFilter).connect(bedGain).connect(dest);
             bedSrc.start(t);
             nodesRef.current.push(bedSrc);
 
             // --- 2. Reactor Hum (Sub-bass pulse) ---
-            const reactOsc = ctx.createOscillator();
+            const reactOsc = c.createOscillator();
             reactOsc.type = 'sawtooth';
             reactOsc.frequency.value = 55;
-            const reactFilter = ctx.createBiquadFilter();
+            const reactFilter = c.createBiquadFilter();
             reactFilter.type = 'lowpass';
             reactFilter.frequency.value = 80;
-            const reactGain = ctx.createGain();
+            const reactGain = c.createGain();
             reactGain.gain.value = 0.15;
 
             // LFO for Reactor Pulse
-            const lfo = ctx.createOscillator();
+            const lfo = c.createOscillator();
             lfo.frequency.value = 0.5; // Slow pulse
-            const lfoGain = ctx.createGain();
+            const lfoGain = c.createGain();
             lfoGain.gain.value = 20; // Modulate filter freq
             lfo.connect(lfoGain).connect(reactFilter.frequency);
 
@@ -73,20 +83,20 @@ export function ShipAmbience() {
             nodesRef.current.push(reactOsc, lfo);
 
             // --- 3. Life Support (Hiss/Airflow) ---
-            const airSrc = ctx.createBufferSource();
+            const airSrc = c.createBufferSource();
             airSrc.buffer = noiseBuffer;
             airSrc.loop = true;
-            const airFilter = ctx.createBiquadFilter();
+            const airFilter = c.createBiquadFilter();
             airFilter.type = 'bandpass';
             airFilter.frequency.value = 800;
             airFilter.Q.value = 1;
-            const airGain = ctx.createGain();
+            const airGain = c.createGain();
             airGain.gain.value = 0.05;
 
             // Breathing LFO
-            const breathLfo = ctx.createOscillator();
+            const breathLfo = c.createOscillator();
             breathLfo.frequency.value = 0.1; // Very slow breath
-            const breathGain = ctx.createGain();
+            const breathGain = c.createGain();
             breathGain.gain.value = 0.02;
             breathLfo.connect(breathGain).connect(airGain.gain);
 
@@ -96,10 +106,10 @@ export function ShipAmbience() {
             nodesRef.current.push(airSrc, breathLfo);
 
             // --- 4. Artificial Gravity (Sub-bass stabilized) ---
-            const gravOsc = ctx.createOscillator();
+            const gravOsc = c.createOscillator();
             gravOsc.type = 'sine';
             gravOsc.frequency.value = 32; // Deep sub
-            const gravGain = ctx.createGain();
+            const gravGain = c.createGain();
             gravGain.gain.value = 0.3;
             gravOsc.connect(gravGain).connect(dest);
             gravOsc.start(t);
@@ -107,10 +117,10 @@ export function ShipAmbience() {
 
             // --- 5. Console Tones (Random Beeps) ---
             const scheduleBeep = () => {
-                if (!contextRef.current) return;
-                const osc = ctx.createOscillator();
-                const g = ctx.createGain();
-                const now = ctx.currentTime;
+                if (c.state === 'closed') return;
+                const osc = c.createOscillator();
+                const g = c.createGain();
+                const now = c.currentTime;
 
                 osc.frequency.value = 2000 + Math.random() * 1000;
                 osc.type = 'sine';
@@ -123,24 +133,23 @@ export function ShipAmbience() {
                 osc.start(now);
                 osc.stop(now + 0.3);
 
-                // Re-schedule
-                setTimeout(scheduleBeep, 2000 + Math.random() * 5000);
+                const id = setTimeout(scheduleBeep, 2000 + Math.random() * 5000);
+                cleanupBeep = () => clearTimeout(id);
             };
             scheduleBeep();
 
             // --- 6. Hull Creaks (Metal Groans) ---
             const scheduleCreak = () => {
-                if (!contextRef.current) return;
-                const creakSrc = ctx.createBufferSource();
+                if (c.state === 'closed') return;
+                const creakSrc = c.createBufferSource();
                 creakSrc.buffer = noiseBuffer;
-                const filter = ctx.createBiquadFilter();
+                const filter = c.createBiquadFilter();
                 filter.type = 'bandpass';
                 filter.frequency.value = 100 + Math.random() * 100;
                 filter.Q.value = 5;
-                const g = ctx.createGain();
-                const now = ctx.currentTime;
+                const g = c.createGain();
+                const now = c.currentTime;
 
-                // Long slow attack/decay
                 const duration = 1 + Math.random() * 2;
                 g.gain.setValueAtTime(0, now);
                 g.gain.linearRampToValueAtTime(0.05, now + duration * 0.2);
@@ -150,47 +159,20 @@ export function ShipAmbience() {
                 creakSrc.start(now);
                 creakSrc.stop(now + duration + 0.5);
 
-                setTimeout(scheduleCreak, 5000 + Math.random() * 10000);
+                const id = setTimeout(scheduleCreak, 5000 + Math.random() * 10000);
+                cleanupCreak = () => clearTimeout(id);
             };
             scheduleCreak();
         };
 
-        const init = () => {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const Ctx = window.AudioContext || (window as any).webkitAudioContext;
-            if (!Ctx) return;
-
-            if (!contextRef.current) {
-                contextRef.current = new Ctx();
-                masterGainRef.current = contextRef.current.createGain();
-                masterGainRef.current.gain.value = 0.3;
-                masterGainRef.current.connect(contextRef.current.destination);
-            }
-
-            if (contextRef.current.state === 'suspended') {
-                contextRef.current.resume();
-            }
-
-            setupLayers(contextRef.current, masterGainRef.current!);
-        };
-
-        const handleInteract = () => {
-            init();
-            window.removeEventListener('click', handleInteract);
-            window.removeEventListener('keydown', handleInteract);
-        };
-
-        window.addEventListener('click', handleInteract);
-        window.addEventListener('keydown', handleInteract);
+        setupLayers(ctx, masterGain);
 
         return () => {
-            window.removeEventListener('click', handleInteract);
-            window.removeEventListener('keydown', handleInteract);
             stopLayers();
-            contextRef.current?.close();
-            contextRef.current = null;
+            if (cleanupBeep) cleanupBeep();
+            if (cleanupCreak) cleanupCreak();
         };
-    }, []);
+    }, [audioContext, masterGain]); // Re-run when context becomes available
 
-    return null; // Visual-less component
+    return null;
 }

@@ -150,7 +150,7 @@ export function CommsInterface({ onClose }: CommsInterfaceProps) {
                 <GridBackground opacity={0.1} color="rgba(251, 191, 36, 1)" />
 
                 {/* Header */}
-                <div className="flex items-center justify-between mb-4 border-b border-white/10 pb-2 bg-black/20 backdrop-blur-sm sticky top-0 z-10 -mx-4 px-4 pt-2 -mt-2 relative">
+                <div className="flex-none flex items-center justify-between mb-4 border-b border-white/10 pb-2 bg-black/20 backdrop-blur-sm z-10 -mx-4 px-4 pt-2 -mt-2 relative">
                     <div className="flex items-center gap-2 text-amber-400">
                         <Radio size={16} className="animate-pulse" />
                         <span className="text-xs tracking-[0.2em] font-bold uppercase">Signal Decoder</span>
@@ -184,7 +184,7 @@ export function CommsInterface({ onClose }: CommsInterfaceProps) {
                 <div
                     ref={containerRef}
                     onScroll={handleScroll}
-                    className="flex-1 min-h-0 overflow-y-auto space-y-3 mb-4 pr-2 scrollbar-thin scrollbar-thumb-amber-500/50 scrollbar-track-transparent overscroll-contain touch-pan-y relative z-10"
+                    className="flex-1 min-h-0 overflow-y-auto space-y-3 mb-4 pr-2 scrollbar-thin scrollbar-thumb-amber-500/50 scrollbar-track-transparent overscroll-contain touch-pan-y relative z-0"
                 >
                     {messages.map((msg) => (
                         <div

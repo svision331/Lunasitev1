@@ -25,10 +25,7 @@ export function MobileNav() {
                         href={item.href}
                         className={`
               flex flex-col items-center gap-1 text-xs transition-colors
-              ${item.active
-                                ? 'text-cyan-400'
-                                : 'text-slate-400 hover:text-slate-200'
-                            }
+              text-slate-400 hover:text-cyan-400
             `}
                     >
                         <item.icon size={20} />

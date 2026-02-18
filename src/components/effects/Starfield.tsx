@@ -27,33 +27,38 @@ interface ShootingStar {
 
 interface StarfieldProps {
     warp?: boolean;
+    reducedMotion?: boolean;
 }
 
-export function Starfield({ warp = false }: StarfieldProps) {
+export function Starfield({ warp = false, reducedMotion = false }: StarfieldProps) {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const starsRef = useRef<Star[]>([]);
-    const warpSpeedRef = useRef(0); // Current speed factor
-
-    // Use a ref for warp to avoid re-running useEffect
+    const warpSpeedRef = useRef(0);
     const warpRef = useRef(warp);
+    const reducedMotionRef = useRef(reducedMotion);
+    const animationFrameRef = useRef<number>(0);
+
     useEffect(() => {
         warpRef.current = warp;
     }, [warp]);
 
     useEffect(() => {
+        reducedMotionRef.current = reducedMotion;
+    }, [reducedMotion]);
+
+    useEffect(() => {
         const canvas = canvasRef.current;
         if (!canvas) return;
 
-        const ctx = canvas.getContext('2d', { alpha: false }); // Optimization: alpha: false if not transparent
+        const ctx = canvas.getContext('2d', { alpha: false });
         if (!ctx) return;
 
-        let animationFrameId: number;
         let width = 0;
         let height = 0;
         let shootingStars: ShootingStar[] = [];
 
         // Configuration
-        const STAR_COUNT = 800;
+        const STAR_COUNT = reducedMotion ? 400 : 800; // Fewer stars in reduced motion
         const TARGET_WARP_SPEED = 50;
         const BASE_SPEED = 0.05;
 
@@ -79,13 +84,12 @@ export function Starfield({ warp = false }: StarfieldProps) {
             height = window.innerHeight;
             canvas.width = width;
             canvas.height = height;
-            // Re-init stars to fill new dimensions
             if (starsRef.current.length < STAR_COUNT) {
                 initStars();
             }
         };
 
-        // ... Shooting Star Logic (same as before) ...
+        // ... Shooting Star Logic ...
         const spawnShootingStar = () => {
             const angle = (35 + Math.random() * 25) * (Math.PI / 180);
             const speed = 15 + Math.random() * 10;
@@ -102,16 +106,47 @@ export function Starfield({ warp = false }: StarfieldProps) {
         };
 
         const render = () => {
-            // Use ref for current warp state
+            // STOP ANIMATION if reduced motion is ON
+            if (reducedMotionRef.current) {
+                // Just draw static stars once and return? 
+                // Better: Draw a slow, simple twinkle or static scene.
+                // For now, let's keep a very slow drift or just static.
+                ctx.fillStyle = 'black';
+                ctx.fillRect(0, 0, width, height);
+
+                const cx = width / 2;
+                const cy = height / 2;
+
+                starsRef.current.forEach((star) => {
+                    // No Z movement
+                    const safeZ = Math.max(0.1, star.z);
+                    const k = 128.0 / safeZ;
+                    const px = star.x * k + cx;
+                    const py = star.y * k + cy;
+
+                    if (px >= 0 && px <= width && py >= 0 && py <= height) {
+                        const shade = Math.floor((1 - safeZ / width) * 255);
+                        ctx.fillStyle = `rgb(${shade},${shade},${255})`;
+                        ctx.beginPath();
+                        ctx.arc(px, py, star.size, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                });
+
+                // Request next frame only to handle resize/updates, but logic is static
+                animationFrameRef.current = requestAnimationFrame(render);
+                return;
+            }
+
+            // ... NORMAL RENDER ...
             const target = warpRef.current ? TARGET_WARP_SPEED : BASE_SPEED;
             warpSpeedRef.current += (target - warpSpeedRef.current) * 0.05;
 
-            // Clear with trail effect
             if (warpSpeedRef.current > 1) {
                 ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
                 ctx.fillRect(0, 0, width, height);
             } else {
-                ctx.fillStyle = 'rgb(0, 0, 0)'; // Explicit black for alpha: false optimization
+                ctx.fillStyle = 'rgb(0, 0, 0)';
                 ctx.fillRect(0, 0, width, height);
             }
 
@@ -143,11 +178,9 @@ export function Starfield({ warp = false }: StarfieldProps) {
                         star.opacity = star.baseOpacity;
                     }
 
-                    ctx.beginPath();
-                    // Color calculation
                     const colorVal = `rgb(${shade},${shade},${255})`;
-                    ctx.fillStyle = colorVal; // For circles
-                    ctx.strokeStyle = colorVal; // For lines
+                    ctx.fillStyle = colorVal;
+                    ctx.strokeStyle = colorVal;
 
                     if (warpSpeedRef.current > 2) {
                         const oldK = 128.0 / (star.z + warpSpeedRef.current * 1.5);
@@ -155,17 +188,18 @@ export function Starfield({ warp = false }: StarfieldProps) {
                         const oldPy = star.y * oldK + cy;
 
                         ctx.lineWidth = size;
+                        ctx.beginPath();
                         ctx.moveTo(px, py);
                         ctx.lineTo(oldPx, oldPy);
                         ctx.stroke();
                     } else {
+                        ctx.beginPath();
                         ctx.arc(px, py, size, 0, Math.PI * 2);
                         ctx.fill();
                     }
                 }
             });
 
-            // Shooting stars only when calm and using the ref check
             if (warpSpeedRef.current < 5) {
                 shootingStars = shootingStars.filter(s => s.active);
                 shootingStars.forEach(star => {
@@ -196,7 +230,7 @@ export function Starfield({ warp = false }: StarfieldProps) {
                 }
             }
 
-            animationFrameId = requestAnimationFrame(render);
+            animationFrameRef.current = requestAnimationFrame(render);
         };
 
         handleResize();
@@ -205,33 +239,19 @@ export function Starfield({ warp = false }: StarfieldProps) {
 
         return () => {
             window.removeEventListener('resize', handleResize);
-            cancelAnimationFrame(animationFrameId);
+            cancelAnimationFrame(animationFrameRef.current);
         };
-    }, []); // Empty dependency array = mount only once
+    }, [reducedMotion]);
 
     return (
         <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
             <canvas ref={canvasRef} className="block w-full h-full" />
 
             {/* Nebula Glow Spots */}
-            {!warp && (
+            {!warp && !reducedMotion && (
                 <>
-                    <div
-                        className="absolute w-[800px] h-[800px] rounded-full opacity-[0.15] transition-opacity duration-1000 -z-10 blur-[100px]"
-                        style={{
-                            background: 'radial-gradient(circle, rgba(124, 58, 237, 0.4), transparent 70%)',
-                            left: '-20%',
-                            top: '10%',
-                        }}
-                    />
-                    <div
-                        className="absolute w-[600px] h-[600px] rounded-full opacity-[0.12] transition-opacity duration-1000 -z-10 blur-[90px]"
-                        style={{
-                            background: 'radial-gradient(circle, rgba(6, 182, 212, 0.4), transparent 70%)',
-                            right: '5%',
-                            bottom: '-10%',
-                        }}
-                    />
+                    <div className="absolute w-[800px] h-[800px] rounded-full opacity-[0.15] transition-opacity duration-1000 -z-10 blur-[100px] bg-[radial-gradient(circle,rgba(124,58,237,0.4),transparent_70%)] -left-[20%] top-[10%]" />
+                    <div className="absolute w-[600px] h-[600px] rounded-full opacity-[0.12] transition-opacity duration-1000 -z-10 blur-[90px] bg-[radial-gradient(circle,rgba(6,182,212,0.4),transparent_70%)] right-[5%] -bottom-[10%]" />
                 </>
             )}
         </div>

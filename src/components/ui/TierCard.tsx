@@ -42,8 +42,9 @@ export function TierCard({ tier, index }: TierCardProps) {
             </div>
 
             {/* Tier label */}
-            <div className={`text-xs font-mono tracking-[0.2em] mb-2 uppercase ${tier.color === 'cyan' ? 'text-cyan-400' : 'text-slate-500'}`}>
-                {tier.tier} <span className="opacity-50 mx-2">{'//'}</span> LEVEL {index + 1}
+            <div className={`flex items-center justify-between text-xs font-mono tracking-[0.2em] mb-2 uppercase ${tier.color === 'cyan' ? 'text-cyan-400' : 'text-slate-500'}`}>
+                <span>{tier.tier}</span>
+                <span>LEVEL {index + 1}</span>
             </div>
 
             {/* Name */}
@@ -61,9 +62,11 @@ export function TierCard({ tier, index }: TierCardProps) {
             {/* Decorative corner gradient */}
             <div
                 className="absolute top-0 right-0 w-32 h-32 opacity-0 group-hover:opacity-20 transition-opacity duration-500 pointer-events-none"
-                style={{
-                    background: `radial-gradient(circle at top right, var(--nebula-${tier.color === 'slate' ? 'cyan' : tier.color}), transparent 70%)`,
-                }}
+                style={
+                    {
+                        background: `radial-gradient(circle at top right, var(--nebula-${tier.color === 'slate' ? 'cyan' : tier.color}), transparent 70%)`,
+                    } as React.CSSProperties
+                }
             />
         </motion.div>
     );

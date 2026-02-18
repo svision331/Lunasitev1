@@ -35,12 +35,16 @@ function randInt(min: number, max: number) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
+import { useSettings } from "@/hooks/useSettings";
+
 interface NebulaConsoleProps {
     onEnter: () => void;
 }
 
 export function NebulaConsole({ onEnter }: NebulaConsoleProps) {
     const [mounted, setMounted] = useState(false);
+    const { settings, toggleReducedMotion } = useSettings();
+
     const [activeModule, setActiveModule] = useState<'HOME' | 'MISSION' | 'MEDIA' | 'COMMS' | 'COSMOS'>('HOME');
     const [now, setNow] = useState<Date | null>(null);
     const [signal, setSignal] = useState(0);
@@ -55,7 +59,7 @@ export function NebulaConsole({ onEnter }: NebulaConsoleProps) {
     ]);
     const [isEntering, setIsEntering] = useState(false);
 
-    const { playHover, playClick, playTyping, playSuccess, playError } = useSoundEffects();
+    const { playHover, playClick, playTyping, playSuccess, playError, toggleMute, isMuted } = useSoundEffects();
 
     const [cmd, setCmd] = useState("");
     const inputRef = useRef<HTMLInputElement | null>(null);
@@ -132,17 +136,34 @@ export function NebulaConsole({ onEnter }: NebulaConsoleProps) {
         setCmd("");
     }
 
-    if (!mounted) return null;
+    // SSR / Booting Fallback to prevent CLS
+    if (!mounted) {
+        return (
+            <div className="fixed inset-0 z-50 overflow-hidden bg-black text-white flex items-center justify-center">
+                <div className="flex flex-col items-center gap-4">
+                    <div className="w-12 h-12 rounded-full border-2 border-cyan-500/30 border-t-cyan-400 animate-spin" />
+                    <div className="font-mono text-xs uppercase tracking-widest text-cyan-400">System Booting...</div>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="fixed inset-0 z-50 overflow-hidden text-white">
             {/* Cinematic Backdrop - Reduced opacity to see Starfield */}
             <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
-            <div className="absolute inset-0 cockpit-vignette" />
-            <div className="absolute inset-0 scanlines pointer-events-none" />
-            <div className="absolute inset-0 filmgrain pointer-events-none" />
+
+            {/* Conditional Rendering based on Reduced Motion */}
+            {!settings.reducedMotion && (
+                <>
+                    <div className="absolute inset-0 cockpit-vignette" />
+                    <div className="absolute inset-0 scanlines pointer-events-none" />
+                    <div className="absolute inset-0 filmgrain pointer-events-none" />
+                </>
+            )}
 
             <ShipAmbience />
+
 
             <div className="relative h-full flex items-center justify-center p-2 md:p-4">
                 {/* Main Console Frame */}
@@ -169,7 +190,7 @@ export function NebulaConsole({ onEnter }: NebulaConsoleProps) {
                                             <GridBackground opacity={0.05} color="rgba(52, 211, 153, 1)" />
                                             <div className="relative z-10 space-y-4">
                                                 <div className="flex items-center justify-between border-b border-white/10 pb-3">
-                                                    <span className="text-[10px] tracking-[0.2em] uppercase text-white/50 font-display hover:text-transparent hover:bg-clip-text hover:bg-gradient-to-r hover:from-cyan-300 hover:via-purple-300 hover:to-pink-300 transition-all duration-300 cursor-default">Sys_Mon</span>
+                                                    <span className="text-[10px] tracking-[0.2em] uppercase text-white/70 font-display hover:text-transparent hover:bg-clip-text hover:bg-gradient-to-r hover:from-cyan-300 hover:via-purple-300 hover:to-pink-300 transition-all duration-300 cursor-default">Sys_Mon</span>
                                                     <div className="h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)] animate-pulse" />
                                                 </div>
                                                 <SystemBar label="Network" value={signal} icon={Radio} />
@@ -182,7 +203,7 @@ export function NebulaConsole({ onEnter }: NebulaConsoleProps) {
 
                                     <TechBorder className="flex-1 flex flex-col min-h-0" color="cyan" cornerSize={12}>
                                         <HoloCard variant="default" className="p-4 bg-black/60 h-full flex flex-col relative overflow-hidden">
-                                            <div className="text-sm tracking-[0.2em] uppercase text-white/50 mb-3 font-display hover:text-transparent hover:bg-clip-text hover:bg-gradient-to-r hover:from-cyan-300 hover:via-purple-300 hover:to-pink-300 transition-all duration-300 cursor-default">Log_Stream</div>
+                                            <div className="text-sm tracking-[0.2em] uppercase text-white/70 mb-3 font-display hover:text-transparent hover:bg-clip-text hover:bg-gradient-to-r hover:from-cyan-300 hover:via-purple-300 hover:to-pink-300 transition-all duration-300 cursor-default">Log_Stream</div>
                                             <div ref={logContainerRef} className="flex-1 overflow-y-auto space-y-4 font-mono text-xs md:text-sm pr-2 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-white/10 relative z-10">
                                                 {logs.map((l, i) => (
                                                     <div key={i} className="flex gap-2 leading-tight opacity-80">
@@ -206,14 +227,34 @@ export function NebulaConsole({ onEnter }: NebulaConsoleProps) {
                                         <header className="p-4 md:p-6 bg-black/60 flex items-center justify-between relative overflow-hidden">
                                             <GridBackground opacity={0.1} />
                                             <div className="relative z-10">
-                                                <div className="text-[10px] tracking-[0.3em] uppercase text-cyan-300/70 mb-1 font-display hover:text-transparent hover:bg-clip-text hover:bg-gradient-to-r hover:from-cyan-300 hover:via-purple-300 hover:to-pink-300 transition-all duration-300 cursor-default">Bridge Console</div>
+                                                <div className="text-[10px] tracking-[0.3em] uppercase text-cyan-300 mb-1 font-display hover:text-transparent hover:bg-clip-text hover:bg-gradient-to-r hover:from-cyan-300 hover:via-purple-300 hover:to-pink-300 transition-all duration-300 cursor-default">Bridge Console</div>
                                                 <h1 className="text-2xl md:text-3xl font-display font-bold uppercase tracking-tight text-gradient glitch-text" data-text="LUNATHELOVEGOD">
                                                     LUNATHELOVEGOD
                                                 </h1>
                                             </div>
-                                            <div className="text-right hidden sm:block relative z-10">
-                                                <div className="text-[10px] tracking-widest uppercase text-white/40 font-display hover:text-transparent hover:bg-clip-text hover:bg-gradient-to-r hover:from-cyan-300 hover:via-purple-300 hover:to-pink-300 transition-all duration-300 cursor-default">Local Time</div>
-                                                <div className="text-xl font-mono text-white/90">{now ? formatTime(now) : '00:00:00'}</div>
+                                            <div className="flex flex-col items-end gap-2 relative z-10">
+                                                <div className="text-right hidden sm:block">
+                                                    <div className="text-[10px] tracking-widest uppercase text-white/80 font-display hover:text-transparent hover:bg-clip-text hover:bg-gradient-to-r hover:from-cyan-300 hover:via-purple-300 hover:to-pink-300 transition-all duration-300 cursor-default">Local Time</div>
+                                                    <div className="text-xl font-mono text-white mb-1">{now ? formatTime(now) : '00:00:00'}</div>
+                                                </div>
+
+                                                {/* Settings: Audio & Motion */}
+                                                <div className="flex items-center gap-2 justify-end">
+                                                    <button
+                                                        onClick={toggleMute}
+                                                        className={`text-[9px] uppercase tracking-widest px-2 py-0.5 rounded border transition-colors ${isMuted ? 'bg-red-500/20 text-red-300 border-red-500/40' : 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40 hover:bg-emerald-500/30'}`}
+                                                        title="Toggle Audio"
+                                                    >
+                                                        {isMuted ? 'AUDIO: OFF' : 'AUDIO: ON'}
+                                                    </button>
+                                                    <button
+                                                        onClick={toggleReducedMotion}
+                                                        className={`text-[9px] uppercase tracking-widest px-2 py-0.5 rounded border transition-colors ${settings.reducedMotion ? 'bg-amber-500/20 text-amber-300 border-amber-500/40' : 'bg-transparent text-white/20 border-white/10 hover:text-white/50'}`}
+                                                        title="Toggle Reduced Motion"
+                                                    >
+                                                        {settings.reducedMotion ? 'Motion: REDUCED' : 'Motion: FULL'}
+                                                    </button>
+                                                </div>
                                             </div>
                                         </header>
                                     </TechBorder>
@@ -351,7 +392,7 @@ export function NebulaConsole({ onEnter }: NebulaConsoleProps) {
                                     className="hidden md:flex col-span-12 md:col-span-3 flex-col gap-6"
                                 >
                                     <HoloCard variant="default" className="p-4 h-full relative overflow-hidden flex flex-col">
-                                        <div className="text-[10px] tracking-[0.2em] uppercase text-white/50 mb-3 ml-1 font-display hover:text-transparent hover:bg-clip-text hover:bg-gradient-to-r hover:from-cyan-300 hover:via-purple-300 hover:to-pink-300 transition-all duration-300 cursor-default">Spatial_Nav</div>
+                                        <div className="text-[10px] tracking-[0.2em] uppercase text-white/70 mb-3 ml-1 font-display hover:text-transparent hover:bg-clip-text hover:bg-gradient-to-r hover:from-cyan-300 hover:via-purple-300 hover:to-pink-300 transition-all duration-300 cursor-default">Spatial_Nav</div>
                                         <div className="flex-1">
                                             <StarmapNav activeId={activeModule} onNavigate={(id) => setActiveModule(id as 'HOME' | 'MISSION' | 'MEDIA' | 'COMMS' | 'COSMOS')} />
                                         </div>

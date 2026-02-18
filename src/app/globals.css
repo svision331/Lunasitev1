@@ -142,10 +142,12 @@ textarea {
    ================================ */
 
 .glass {
-  background: rgba(5, 5, 10, 0.6);
+  background: rgba(5, 5, 10, 0.75);
+  /* Increased opacity for better contrast */
   -webkit-backdrop-filter: blur(16px);
   backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  /* Slightly brighter border */
 }
 
 .glass-card {
@@ -419,9 +421,22 @@ textarea {
     scroll-behavior: auto !important;
   }
 
-  html {
-    scroll-behavior: auto;
+  .star-warp,
+  .hyper-space,
+  .cockpit-vignette,
+  .scanlines,
+  .filmgrain {
+    display: none !important;
   }
+}
+
+/* ================================
+   ACCESSIBILITY: FOCUS STATES
+   ================================ */
+:focus-visible {
+  outline: 2px solid var(--nebula-cyan);
+  outline-offset: 4px;
+  border-radius: 4px;
 }
 
 /* ================================

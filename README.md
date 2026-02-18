@@ -6,19 +6,59 @@ Welcome to the digital realm of LUNA THE LOVE GOD. This project is the central h
 
 This website serves as an immersive "Operating System" for fans, allowing them to:
 
-- Browse and listen to music (Spotify integration).
-- View upcoming live shows and buy tickets.
-- Watch latest music videos and visualizers.
-- Interact with "LUNA" via the Comms Interface (AI Chat).
-- Explore the "Nebula" through a gamified dashboard.
+- **Command the Console**: A gamified dashboard (`NebulaConsole`) to navigate the universe.
+- **Listen to Music**: Integrated Spotify player ("Sonic Array") with holographic visualizers.
+- **Explore the Cosmos**: Interactive star system map (`CosmosMap`) for lore and content.
+- **Join the Mission**: "Mission Log" for community tasks and rewards.
+- **Connect**: AI-powered "Comms Interface" to chat with LUNA.
 
-## 🛠 Tech Stack
+## 🛠 Technology Stack
 
 - **Framework**: [Next.js 16](https://nextjs.org/) (App Router)
 - **Language**: TypeScript
-- **Styling**: Tailwind CSS v4, Framer Motion
-- **AI**: Vercel AI SDK (OpenAI gpt-4o)
+- **Styling**: Tailwind CSS v4, CSS Variables (Oklch gamut)
+- **Animation**: Framer Motion v12
 - **Icons**: Lucide React
+- **AI**: Vercel AI SDK (OpenAI gpt-4o)
+
+## 📂 Project Architecture
+
+```
+src/
+├── app/                 # App Router (Pages & Layouts)
+│   ├── layout.tsx       # Root layout (Fonts, Cursors, Global CSS)
+│   ├── page.tsx         # Root page (Nebula Console)
+│   ├── globals.css      # Design Tokens & Global Styles (Oklch Colors)
+│   └── bridge/          # Bridge Interface Routes
+├── components/
+│   ├── ui/              # Reusable UI Primitives (CyberButton, HoloCard, TechBorder)
+│   ├── landing/         # Landing Page Modules (NebulaConsole, Hero)
+│   ├── bridge/          # Bridge Specifics (MusicPlayer, CosmosMap, StatCard)
+│   └── effects/         # Visual Effects (Starfield, GridBackground)
+└── lib/                 # Utilities and Constants
+```
+
+## 🎨 Design System (Cosmic Editorial)
+
+defined in `src/app/globals.css`
+
+### Typography
+
+- **Headers**: `Syncopate` (Futuristic, Wide)
+- **Data/Code**: `Space Mono` (Terminal, Legible)
+- **Body**: `Space Mono`
+
+### Color Palette (Oklch High-Vibe)
+
+- **Primary (Cyan)**: `oklch(0.7 0.18 220)` - Electric energy
+- **Secondary (Pink)**: `oklch(0.65 0.22 320)` - Neon accents
+- **Background**: Deep Void Black (`#020205`) with stardust overlays
+
+### Visual Effects
+
+- **Glassmorphism**: `.glass-card` with iridescent borders and blur.
+- **Glows**: "Radioactive" variants for buttons and active states.
+- **Motion**: Fluid warp-speed transitions and snap-physics hover states.
 
 ## 🚀 Getting Started
 
@@ -42,25 +82,11 @@ This website serves as an immersive "Operating System" for fans, allowing them t
 
 ## 🔑 Environment Variables
 
-To enable the AI chat ("Comms Interface"), add the following to your `.env.local` (and Vercel Project Settings):
+To enable the AI chat ("Comms Interface"), add the following to your `.env.local`:
 
 ```bash
 OPENAI_API_KEY=sk-...
 ```
-
-## 📡 Key Components
-
-- **NebulaConsole (`src/components/landing/NebulaConsole.tsx`)**: The main dashboard interface, featuring a deterministic visualizer and "quick action" modules.
-- **CommsInterface (`src/components/bridge/CommsInterface.tsx`)**: An interactive chat interface powered by the Vercel AI SDK.
-- **VideoShowcase (`src/components/sections/VideoShowcase.tsx`)**: A responsive video gallery with category filtering.
-
-## 📱 Mobile Optimization
-
-The site is fully responsive, with dedicated adjustments for:
-
-- Typography scaling (preventing overflow on small screens).
-- Touch-friendly controls (swiping on video showcase).
-- Adaptive layouts for the Console and Music Player.
 
 ---
 *Transmission Ended* 🛸

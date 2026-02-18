@@ -24,12 +24,17 @@ interface LandingPageProps {
     videos: Video[];
 }
 
+import { useSettings } from '@/hooks/useSettings';
+
+// ... imports
+
 export function LandingPage({ videos }: LandingPageProps) {
     const [hasEntered, setHasEntered] = useState(false);
     const [isWarping, setIsWarping] = useState(false);
     const [isFading, setIsFading] = useState(false);
     const [startSequence, setStartSequence] = useState(false);
     const { playWarp } = useSoundEffects();
+    const { settings } = useSettings();
 
     useEffect(() => {
         if (!startSequence) return;
@@ -75,7 +80,7 @@ export function LandingPage({ videos }: LandingPageProps) {
     return (
         <main className="min-h-screen relative">
             {/* Global Background Effects - Always Visible */}
-            <Starfield warp={isWarping} />
+            <Starfield warp={isWarping} reducedMotion={settings.reducedMotion} />
 
             <div className={`transition-opacity duration-1000 ${hasEntered ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
                 <IceGiantMode />

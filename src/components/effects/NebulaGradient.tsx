@@ -66,8 +66,8 @@ export function NebulaGradient({ className }: NebulaGradientProps) {
                 <div
                     className="absolute -top-1/4 -left-1/4 w-3/4 h-3/4 opacity-30"
                     style={{
-                        background: 'radial-gradient(circle, rgba(139, 92, 246, 0.4), transparent 60%)',
-                        filter: 'blur(120px)',
+                        background: 'radial-gradient(circle, rgba(139, 92, 246, 0.4), transparent 70%)',
+                        willChange: 'transform'
                     }}
                 />
 
@@ -75,8 +75,8 @@ export function NebulaGradient({ className }: NebulaGradientProps) {
                 <div
                     className="absolute -bottom-1/4 -right-1/4 w-3/4 h-3/4 opacity-30"
                     style={{
-                        background: 'radial-gradient(circle, rgba(34, 211, 238, 0.4), transparent 60%)',
-                        filter: 'blur(120px)',
+                        background: 'radial-gradient(circle, rgba(34, 211, 238, 0.4), transparent 70%)',
+                        willChange: 'transform'
                     }}
                 />
             </motion.div>

@@ -39,21 +39,21 @@ export function LandingPage({ videos }: LandingPageProps) {
         // Trigger Sound
         playWarp();
 
-        // 1. Wait 2s before starting to fade out the console
+        // 1. Wait 500ms before starting to fade out the console
         const tFade = setTimeout(() => {
             setIsFading(true);
-        }, 2000);
+        }, 500);
 
-        // 2. Reveal the main site after fade completes (2s + 1s fade)
+        // 2. Reveal the main site after fade completes (500ms + 700ms fade)
         const tEnter = setTimeout(() => {
             setHasEntered(true);
-        }, 3000);
+        }, 1200);
 
         // 3. Stop the warp effect after everything settles
         const tEndWarp = setTimeout(() => {
             setIsWarping(false);
             setStartSequence(false);
-        }, 5000);
+        }, 2500);
 
         return () => {
             clearTimeout(tFade);

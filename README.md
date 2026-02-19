@@ -1,4 +1,4 @@
-# LUNA THE LOVE GOD - Nebula OS v4.5
+# Lunasitev1 - Nebula OS v4.5
 
 Welcome to the digital realm of LUNA THE LOVE GOD. This project is the central hub for the "Space Invaders" community, featuring music, live show dates, and a unique "Nebula Console" interface.
 

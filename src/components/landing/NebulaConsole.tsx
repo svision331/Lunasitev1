@@ -352,7 +352,7 @@ export function NebulaConsole({ onEnter }: NebulaConsoleProps) {
                                                     onMouseEnter={playHover}
                                                 >
                                                     <Globe size={14} className="mr-2" />
-                                                    <span className="font-display">MAP</span>
+                                                    <span className="font-display">COSMOS</span>
                                                 </CyberButton>
                                                 <CyberButton
                                                     variant={activeModule === 'MISSION' ? 'primary' : 'ghost'}
@@ -365,7 +365,7 @@ export function NebulaConsole({ onEnter }: NebulaConsoleProps) {
                                                 </CyberButton>
                                                 <CyberButton
                                                     variant={activeModule === 'MEDIA' ? 'primary' : 'ghost'}
-                                                    className={`flex-1 text-[8px] sm:text-[10px] md:text-xs py-2 md:py-3 flex flex-col md:flex-row items-center justify-center min-w-0 ${activeModule === 'MEDIA' ? 'text-pink-400 border-pink-500/50' : 'text-pink-200/70 hover:text-pink-100'}`}
+                                                    className={`flex-1 text-[8px] sm:text-[10px] md:text-xs py-2 md:py-3 flex flex-col md:flex-row items-center justify-center min-w-0 ${activeModule === 'MEDIA' ? 'text-pink-400 border-pink-500/50' : '!text-white hover:text-white/80'}`}
                                                     onClick={() => { setActiveModule('MEDIA'); playClick(); }}
                                                     onMouseEnter={playHover}
                                                 >
@@ -374,7 +374,7 @@ export function NebulaConsole({ onEnter }: NebulaConsoleProps) {
                                                 </CyberButton>
                                                 <CyberButton
                                                     variant={activeModule === 'COMMS' ? 'primary' : 'ghost'}
-                                                    className={`flex-1 text-[8px] sm:text-[10px] md:text-xs py-2 md:py-3 flex flex-col md:flex-row items-center justify-center min-w-0 ${activeModule === 'COMMS' ? 'text-amber-400 border-amber-500/50' : 'text-amber-200/70 hover:text-amber-100'}`}
+                                                    className={`flex-1 text-[8px] sm:text-[10px] md:text-xs py-2 md:py-3 flex flex-col md:flex-row items-center justify-center min-w-0 ${activeModule === 'COMMS' ? 'text-amber-400 border-amber-500/50' : '!text-white hover:text-white/80'}`}
                                                     onClick={() => { setActiveModule('COMMS'); playClick(); }}
                                                     onMouseEnter={playHover}
                                                 >

@@ -347,7 +347,7 @@ export function NebulaConsole({ onEnter }: NebulaConsoleProps) {
                                             <div className="flex gap-2 w-full">
                                                 <CyberButton
                                                     variant={activeModule === 'COSMOS' ? 'primary' : 'ghost'}
-                                                    className="flex-1 text-[8px] sm:text-[10px] md:text-xs py-2 md:py-3 flex flex-col md:flex-row items-center justify-center min-w-0"
+                                                    className="flex-1 text-[8px] sm:text-[10px] md:text-xs py-2 md:py-3 flex flex-col md:flex-row items-center justify-center min-w-0 !text-white"
                                                     onClick={() => { setActiveModule('COSMOS'); playClick(); }}
                                                     onMouseEnter={playHover}
                                                 >
@@ -356,7 +356,7 @@ export function NebulaConsole({ onEnter }: NebulaConsoleProps) {
                                                 </CyberButton>
                                                 <CyberButton
                                                     variant={activeModule === 'MISSION' ? 'primary' : 'ghost'}
-                                                    className="flex-1 text-[8px] sm:text-[10px] md:text-xs py-2 md:py-3 flex flex-col md:flex-row items-center justify-center min-w-0"
+                                                    className="flex-1 text-[8px] sm:text-[10px] md:text-xs py-2 md:py-3 flex flex-col md:flex-row items-center justify-center min-w-0 !text-white"
                                                     onClick={() => { setActiveModule('MISSION'); playClick(); }}
                                                     onMouseEnter={playHover}
                                                 >

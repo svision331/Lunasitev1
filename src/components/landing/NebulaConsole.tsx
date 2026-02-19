@@ -347,39 +347,39 @@ export function NebulaConsole({ onEnter }: NebulaConsoleProps) {
                                             <div className="flex gap-2 w-full">
                                                 <CyberButton
                                                     variant={activeModule === 'COSMOS' ? 'primary' : 'ghost'}
-                                                    className="flex-1 text-[10px] md:text-xs py-3"
+                                                    className="flex-1 text-[8px] sm:text-[10px] md:text-xs py-2 md:py-3 flex flex-col md:flex-row items-center justify-center min-w-0"
                                                     onClick={() => { setActiveModule('COSMOS'); playClick(); }}
                                                     onMouseEnter={playHover}
                                                 >
                                                     <Globe size={14} className="mr-2" />
-                                                    <span className="hidden md:inline font-display">COSMOS</span>
+                                                    <span className="font-display">MAP</span>
                                                 </CyberButton>
                                                 <CyberButton
                                                     variant={activeModule === 'MISSION' ? 'primary' : 'ghost'}
-                                                    className="flex-1 text-[10px] md:text-xs py-3"
+                                                    className="flex-1 text-[8px] sm:text-[10px] md:text-xs py-2 md:py-3 flex flex-col md:flex-row items-center justify-center min-w-0"
                                                     onClick={() => { setActiveModule('MISSION'); playClick(); }}
                                                     onMouseEnter={playHover}
                                                 >
                                                     <Activity size={14} className="mr-2" />
-                                                    <span className="hidden md:inline font-display">MISSION</span>
+                                                    <span className="font-display">MISSION</span>
                                                 </CyberButton>
                                                 <CyberButton
                                                     variant={activeModule === 'MEDIA' ? 'primary' : 'ghost'}
-                                                    className={`flex-1 text-[10px] md:text-xs py-3 ${activeModule === 'MEDIA' ? 'text-pink-400 border-pink-500/50' : 'text-pink-200/70 hover:text-pink-100'}`}
+                                                    className={`flex-1 text-[8px] sm:text-[10px] md:text-xs py-2 md:py-3 flex flex-col md:flex-row items-center justify-center min-w-0 ${activeModule === 'MEDIA' ? 'text-pink-400 border-pink-500/50' : 'text-pink-200/70 hover:text-pink-100'}`}
                                                     onClick={() => { setActiveModule('MEDIA'); playClick(); }}
                                                     onMouseEnter={playHover}
                                                 >
                                                     <Music size={14} className="mr-2" />
-                                                    <span className="hidden md:inline font-display">AUDIO</span>
+                                                    <span className="font-display">AUDIO</span>
                                                 </CyberButton>
                                                 <CyberButton
                                                     variant={activeModule === 'COMMS' ? 'primary' : 'ghost'}
-                                                    className={`flex-1 text-[10px] md:text-xs py-3 ${activeModule === 'COMMS' ? 'text-amber-400 border-amber-500/50' : 'text-amber-200/70 hover:text-amber-100'}`}
+                                                    className={`flex-1 text-[8px] sm:text-[10px] md:text-xs py-2 md:py-3 flex flex-col md:flex-row items-center justify-center min-w-0 ${activeModule === 'COMMS' ? 'text-amber-400 border-amber-500/50' : 'text-amber-200/70 hover:text-amber-100'}`}
                                                     onClick={() => { setActiveModule('COMMS'); playClick(); }}
                                                     onMouseEnter={playHover}
                                                 >
                                                     <Radio size={14} className="mr-2" />
-                                                    <span className="hidden md:inline font-display">COMMS</span>
+                                                    <span className="font-display">COMMS</span>
                                                 </CyberButton>
                                             </div>
                                         </div>

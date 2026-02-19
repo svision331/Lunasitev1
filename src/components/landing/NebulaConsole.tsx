@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { Zap, Radio, Calendar, MapPin, Music, Activity, Globe, Volume2, VolumeX, Eye, EyeOff } from "lucide-react";
+import { useSettings } from "@/context/SettingsContext";
 import { SystemBar } from "@/components/bridge/SystemBar";
 
 import { StatCard } from "@/components/bridge/StatCard";
@@ -35,7 +36,6 @@ function randInt(min: number, max: number) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-import { useSettings } from "@/context/SettingsContext";
 
 interface NebulaConsoleProps {
     onEnter: () => void;

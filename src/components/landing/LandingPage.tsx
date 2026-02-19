@@ -7,7 +7,7 @@ import { NebulaConsole } from '@/components/landing/NebulaConsole';
 import { Hero } from '@/components/sections';
 import { Starfield, IceGiantMode } from '@/components/effects';
 import { useSoundEffects } from '@/hooks/useSoundEffects';
-
+import { useSettings } from '@/context/SettingsContext';
 import { Video } from '@/data/videos';
 
 // Lazy load below-the-fold sections
@@ -24,9 +24,6 @@ interface LandingPageProps {
     videos: Video[];
 }
 
-import { useSettings } from '@/context/SettingsContext';
-
-// ... imports
 
 export function LandingPage({ videos }: LandingPageProps) {
     const [hasEntered, setHasEntered] = useState(false);

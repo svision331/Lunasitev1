@@ -57,8 +57,10 @@ export function Starfield({ warp = false, reducedMotion = false }: StarfieldProp
         let height = 0;
         let shootingStars: ShootingStar[] = [];
 
+        const isMobile = window.innerWidth < 768;
         // Configuration
-        const STAR_COUNT = reducedMotion ? 400 : 800; // Fewer stars in reduced motion
+        const BASE_STAR_COUNT = reducedMotion ? 400 : 800;
+        const STAR_COUNT = isMobile ? Math.floor(BASE_STAR_COUNT / 2) : BASE_STAR_COUNT;
         const TARGET_WARP_SPEED = 50;
         const BASE_SPEED = 0.05;
 
@@ -193,9 +195,14 @@ export function Starfield({ warp = false, reducedMotion = false }: StarfieldProp
                         ctx.lineTo(oldPx, oldPy);
                         ctx.stroke();
                     } else {
-                        ctx.beginPath();
-                        ctx.arc(px, py, size, 0, Math.PI * 2);
-                        ctx.fill();
+                        // Optimization: Use fillRect for small stars instead of arc
+                        if (size < 1.5) {
+                            ctx.fillRect(px - size / 2, py - size / 2, size, size);
+                        } else {
+                            ctx.beginPath();
+                            ctx.arc(px, py, size, 0, Math.PI * 2);
+                            ctx.fill();
+                        }
                     }
                 }
             });

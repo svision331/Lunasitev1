@@ -62,7 +62,8 @@ export function SpaceDebris() {
     const [debris, setDebris] = useState<ShardData[]>([]);
 
     useEffect(() => {
-        setDebris(generateDebris(20));
+        const isMobile = window.innerWidth < 768;
+        setDebris(generateDebris(isMobile ? 8 : 20));
     }, []);
 
     return (

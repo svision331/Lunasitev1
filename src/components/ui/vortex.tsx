@@ -20,7 +20,8 @@ interface VortexProps {
 export const Vortex = (props: VortexProps) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const containerRef = useRef(null);
-    const particleCount = props.particleCount || 700;
+    const [isMobile, setIsMobile] = React.useState(false);
+    const particleCount = isMobile ? (props.particleCount ? Math.floor(props.particleCount / 3) : 200) : (props.particleCount || 700);
     const particlePropCount = 9;
     const particlePropsLength = particleCount * particlePropCount;
     const rangeY = props.rangeY || 100;
@@ -100,14 +101,18 @@ export const Vortex = (props: VortexProps) => {
     const draw = (canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) => {
         tick++;
 
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        ctx.fillStyle = backgroundColor;
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        if (props.backgroundColor === "transparent") {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        } else {
+            ctx.fillStyle = backgroundColor;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
 
         drawParticles(ctx);
-        renderGlow(canvas, ctx);
-        renderToScreen(canvas, ctx);
+        if (!isMobile) {
+            renderGlow(canvas, ctx);
+            renderToScreen(canvas, ctx);
+        }
 
         window.requestAnimationFrame(() => draw(canvas, ctx));
     };
@@ -169,7 +174,6 @@ export const Vortex = (props: VortexProps) => {
         hue: number,
         ctx: CanvasRenderingContext2D
     ) => {
-        ctx.save();
         ctx.lineCap = "round";
         ctx.lineWidth = radius;
         ctx.strokeStyle = `hsla(${hue},100%,60%,${fadeInOut(life, ttl)})`;
@@ -177,8 +181,6 @@ export const Vortex = (props: VortexProps) => {
         ctx.moveTo(x, y);
         ctx.lineTo(x2, y2);
         ctx.stroke();
-        ctx.closePath();
-        ctx.restore();
     };
 
     const checkBounds = (x: number, y: number, canvas: HTMLCanvasElement) => {
@@ -226,8 +228,13 @@ export const Vortex = (props: VortexProps) => {
     };
 
     useEffect(() => {
+        const checkMobile = () => {
+            setIsMobile(window.innerWidth < 768);
+        };
+        checkMobile();
         setup();
         window.addEventListener("resize", () => {
+            checkMobile();
             const canvas = canvasRef.current;
             const ctx = canvas?.getContext("2d");
             if (canvas && ctx) {

@@ -150,6 +150,13 @@ textarea {
   /* Slightly brighter border */
 }
 
+@media (max-width: 768px) {
+  .glass {
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+  }
+}
+
 .glass-card {
   background: rgba(5, 5, 10, 0.7);
   -webkit-backdrop-filter: blur(24px);
@@ -160,6 +167,14 @@ textarea {
   position: relative;
   overflow: hidden;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  will-change: transform, opacity;
+}
+
+@media (max-width: 768px) {
+  .glass-card {
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+  }
 }
 
 /* Iridescent Border Effect - Pro Max Upgrade */

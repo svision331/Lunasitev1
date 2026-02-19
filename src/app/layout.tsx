@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { Share_Tech_Mono, Fira_Code } from 'next/font/google';
 import './globals.css';
-import { CosmicCursor, CustomCursor } from '@/components/effects';
+import { CustomCursor } from '@/components/effects';
 import { SoundProvider } from '@/context/SoundContext';
 import { SettingsProvider } from '@/context/SettingsContext';
 
@@ -50,9 +50,6 @@ export default function RootLayout({
         <SettingsProvider>
           <SoundProvider>
             {/* Global Background Effects */}
-
-            {/* Global Cursor Effect */}
-            <CosmicCursor />
 
             {/* Custom Ice Heart Cursor */}
             <CustomCursor />

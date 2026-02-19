@@ -290,7 +290,7 @@ export function NebulaConsole({ onEnter }: NebulaConsoleProps) {
                                                         <Vortex
                                                             backgroundColor="transparent"
                                                             rangeY={800}
-                                                            particleCount={600}
+                                                            particleCount={150} // Heavy trim: 600 -> 150
                                                             baseHue={190} // Cyan/Blue range
                                                             rangeSpeed={0.8}
                                                             baseRadius={1}

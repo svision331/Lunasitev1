@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 interface Star {
     x: number;
@@ -37,6 +37,11 @@ export function Starfield({ warp = false, reducedMotion = false }: StarfieldProp
     const warpRef = useRef(warp);
     const reducedMotionRef = useRef(reducedMotion);
     const animationFrameRef = useRef<number>(0);
+    const [isMobile, setIsMobile] = useState(false);
+
+    useEffect(() => {
+        setIsMobile(window.innerWidth < 768);
+    }, []);
 
     useEffect(() => {
         warpRef.current = warp;
@@ -57,7 +62,6 @@ export function Starfield({ warp = false, reducedMotion = false }: StarfieldProp
         let height = 0;
         let shootingStars: ShootingStar[] = [];
 
-        const isMobile = window.innerWidth < 768;
         // Configuration
         const BASE_STAR_COUNT = reducedMotion ? 400 : 800;
         const STAR_COUNT = isMobile ? Math.floor(BASE_STAR_COUNT / 2) : BASE_STAR_COUNT;
@@ -248,14 +252,14 @@ export function Starfield({ warp = false, reducedMotion = false }: StarfieldProp
             window.removeEventListener('resize', handleResize);
             cancelAnimationFrame(animationFrameRef.current);
         };
-    }, [reducedMotion]);
+    }, [reducedMotion, isMobile]);
 
     return (
         <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
             <canvas ref={canvasRef} className="block w-full h-full" />
 
-            {/* Nebula Glow Spots */}
-            {!warp && !reducedMotion && (
+            {/* Nebula Glow Spots - Only on Desktop */}
+            {!warp && !reducedMotion && !isMobile && (
                 <>
                     <div className="absolute w-[800px] h-[800px] rounded-full opacity-[0.15] transition-opacity duration-1000 -z-10 blur-[100px] bg-[radial-gradient(circle,rgba(124,58,237,0.4),transparent_70%)] -left-[20%] top-[10%]" />
                     <div className="absolute w-[600px] h-[600px] rounded-full opacity-[0.12] transition-opacity duration-1000 -z-10 blur-[90px] bg-[radial-gradient(circle,rgba(6,182,212,0.4),transparent_70%)] right-[5%] -bottom-[10%]" />

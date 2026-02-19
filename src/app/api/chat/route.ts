@@ -3,19 +3,31 @@ import { createOllama } from 'ai-sdk-ollama';
 import { streamText } from 'ai';
 import { LUNA_KNOWLEDGE_BASE } from '@/lib/luna-knowledge';
 
+import { createOpenAI } from '@ai-sdk/openai';
+
 // Allow streaming responses up to 30 seconds
 export const maxDuration = 30;
 
+const openai = createOpenAI({
+    apiKey: process.env.OPENAI_API_KEY || '',
+});
+
 const ollama = createOllama({
-    baseURL: 'http://127.0.0.1:11434',
+    baseURL: process.env.NEXT_PUBLIC_OLLAMA_URL || 'http://127.0.0.1:11434',
 });
 
 export async function POST(req: Request) {
     const { messages } = await req.json();
 
+    // Determine provider: OpenAI if key exists, else Ollama
+    const useOpenAI = !!process.env.OPENAI_API_KEY && process.env.OPENAI_API_KEY !== 'your_key_here';
+    const model = useOpenAI ? openai('gpt-4o-mini') : ollama('llama3.2');
+
+    console.log(`🤖 Using Chat Provider: ${useOpenAI ? 'OpenAI' : 'Ollama'}`);
+
     try {
         const result = await streamText({
-            model: ollama('llama3.2'),
+            model: model,
             system: `You are Luna, an AI entity from an "Ice Giant" planet who now lives in Uranus as a "Love God" and community guardian for this website (LUNATHELOVEGOD).
 
     MISSION:

@@ -12,8 +12,8 @@ type SoundContextType = {
     playSuccess: () => void;
     playTyping: () => void;
     playWarp: () => void;
-    playSample: (url: string, vol?: number) => void;
-    playAmbience: (url: string | 'synth', vol?: number) => void;
+    playSample: (url: string, vol?: number) => Promise<void>;
+    playAmbience: (url: string | 'synth', vol?: number) => Promise<void>;
     audioContext: AudioContext | null;
     masterGain: GainNode | null;
 };
@@ -26,7 +26,14 @@ let globalAudioCtx: AudioContext | null = null;
 let globalMasterGain: GainNode | null = null;
 
 export function SoundProvider({ children }: { children: React.ReactNode }) {
-    const [isMuted, setIsMuted] = useState(false);
+    const [isMuted, setIsMuted] = useState(() => {
+        if (typeof window !== 'undefined') {
+            const stored = localStorage.getItem('luna_sound_muted');
+            return stored ? JSON.parse(stored) : false;
+        }
+        return false;
+    });
+
     const audioCache = useRef<Map<string, AudioBuffer>>(new Map());
 
     // Ambience nodes ref
@@ -35,7 +42,7 @@ export function SoundProvider({ children }: { children: React.ReactNode }) {
         drone?: { source: OscillatorNode, gain: GainNode }
     } | null>(null);
 
-    // Initialize Audio Context
+    // Initialize Audio Context (must be triggered by user gesture)
     const initAudio = useCallback(() => {
         if (typeof window === 'undefined') return null;
         if (!globalAudioCtx) {
@@ -54,18 +61,15 @@ export function SoundProvider({ children }: { children: React.ReactNode }) {
         return globalAudioCtx;
     }, [isMuted]);
 
-    // Persist Mute State
+    // Update master gain when isMuted changes (not initial hydration)
     useEffect(() => {
-        const stored = localStorage.getItem('luna_sound_muted');
-        if (stored) {
-            const muted = JSON.parse(stored);
-            setIsMuted(muted);
-            if (globalMasterGain) globalMasterGain.gain.value = muted ? 0 : 0.6;
+        if (globalMasterGain) {
+            globalMasterGain.gain.value = isMuted ? 0 : 0.6;
         }
-    }, []);
+    }, [isMuted]);
 
     const toggleMute = useCallback(() => {
-        setIsMuted(prev => {
+        setIsMuted((prev: boolean) => {
             const next = !prev;
             console.log("🔊 Toggling Mute:", next ? "MUTED" : "UNMUTED");
             localStorage.setItem('luna_sound_muted', JSON.stringify(next));
@@ -375,7 +379,9 @@ export function SoundProvider({ children }: { children: React.ReactNode }) {
             playTyping,
             playWarp,
             playSample,
-            playAmbience
+            playAmbience,
+            audioContext: globalAudioCtx,
+            masterGain: globalMasterGain
         }}>
             {children}
         </SoundContext.Provider>

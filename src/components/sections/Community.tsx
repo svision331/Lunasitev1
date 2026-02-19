@@ -51,7 +51,7 @@ export function Community() {
                         ICE GIANT GALLERY
                     </h2>
                     <p className="text-lg text-slate-400 font-mono text-xs tracking-wider uppercase">
-                        Shot by the community // Uploading...
+                        Shot by the community {"//"} Uploading...
                     </p>
                 </motion.div>
 
@@ -115,7 +115,7 @@ export function Community() {
                                 <div className="flex justify-between items-end">
                                     <div>
                                         <p className="text-white font-mono text-[10px] uppercase tracking-wider mb-1">
-                                            <span className="text-cyan-400">IMG_0{photo.id}</span> {'// UPLOADED'}
+                                            <span className="text-cyan-400">IMG_0{photo.id}</span> {" // UPLOADED"}
                                         </p>
                                         <p className="text-slate-400 text-xs">@space_invader</p>
                                     </div>
@@ -159,7 +159,7 @@ export function Community() {
 
                     <h4 className="font-bold text-2xl font-display text-white mb-2">{featuredInvader.name}</h4>
                     <p className="text-xs font-mono text-cyan-400 mb-6 tracking-wider uppercase">
-                        Access Level: {featuredInvader.showsAttended} Shows // VETERAN status
+                        Access Level: {featuredInvader.showsAttended} Shows {"//"} VETERAN status
                     </p>
 
                     <blockquote className="text-slate-300 italic max-w-lg mx-auto leading-relaxed">

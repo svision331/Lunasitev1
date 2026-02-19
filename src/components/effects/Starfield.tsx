@@ -40,7 +40,10 @@ export function Starfield({ warp = false, reducedMotion = false }: StarfieldProp
     const [isMobile, setIsMobile] = useState(false);
 
     useEffect(() => {
-        setIsMobile(window.innerWidth < 768);
+        const handleResize = () => setIsMobile(window.innerWidth < 768);
+        handleResize();
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
     }, []);
 
     useEffect(() => {

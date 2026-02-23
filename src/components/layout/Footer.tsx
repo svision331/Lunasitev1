@@ -14,6 +14,7 @@ const socialLinks = [
 const quickLinks = [
     { href: '/privacy', label: 'Privacy Policy' },
     { href: '/terms', label: 'Terms of Service' },
+    { href: '/refund', label: 'Refund Policy' },
     { href: '/accessibility', label: 'Accessibility' },
 ];
 

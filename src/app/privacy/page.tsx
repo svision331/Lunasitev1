@@ -29,6 +29,22 @@ export default function PrivacyPolicy() {
                     <li>Generated signal fragments and outputs from the AI</li>
                     <li>Usage patterns specifically related to conversational features</li>
                 </ul>
+
+                <h4 className="text-cyan-400 mt-6 mb-2 uppercase tracking-widest text-sm">AI Specific Disclosures</h4>
+                <div className="bg-cyan-950/20 border border-cyan-500/30 p-4 rounded-lg space-y-4 text-sm">
+                    <p>
+                        <strong>AI Accuracy Disclaimer:</strong> While we strive for cosmic precision, AI outputs are generated through probabilistic models and may be inaccurate, incomplete, or hallucinated. We do not guarantee the correctness of any AI-generated transmission.
+                    </p>
+                    <p>
+                        <strong>No Professional Advice:</strong> AI outputs are for entertainment and creative purposes only. They do not constitute professional, legal, medical, or financial advice.
+                    </p>
+                    <p>
+                        <strong>User Responsibility:</strong> You are solely responsible for your use of AI outputs. Any decisions or actions taken based on AI fragments are at your own risk.
+                    </p>
+                    <p>
+                        <strong>Model Limitations:</strong> Our AI systems have finite knowledge cutoffs and technical limitations. They may exhibit biases inherent in the training data and are not a substitute for human judgement.
+                    </p>
+                </div>
             </section>
 
             <section>

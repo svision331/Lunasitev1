@@ -12,8 +12,8 @@ interface Node {
 }
 
 interface StarmapNavProps {
-    activeId: string;
-    onNavigate: (id: string) => void;
+    activeId?: string;
+    onNavigate?: (id: string) => void;
 }
 
 export function StarmapNav({ activeId, onNavigate }: StarmapNavProps) {
@@ -63,7 +63,7 @@ export function StarmapNav({ activeId, onNavigate }: StarmapNavProps) {
                         key={node.id}
                         className="absolute -translate-x-1/2 -translate-y-1/2 group z-10 p-4" // Added padding for touch target
                         style={{ left: `${node.x}%`, top: `${node.y}%` }}
-                        onClick={() => onNavigate(node.id)}
+                        onClick={() => onNavigate?.(node.id)}
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.95 }}
                         aria-label={`Navigate to ${node.label}`}

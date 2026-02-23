@@ -1,4 +1,7 @@
+'use client';
+
 import React from 'react';
+import { useRouter } from 'next/navigation';
 import { SpaceDebris, NebulaGradient } from '@/components/effects';
 import { Footer } from '@/components/layout/Footer';
 import { StarmapNav } from '@/components/ui/StarmapNav';
@@ -10,6 +13,14 @@ interface LegalLayoutProps {
 }
 
 export function LegalLayout({ title, lastUpdated, children }: LegalLayoutProps) {
+    const router = useRouter();
+
+    const handleNavigate = (id: string) => {
+        // Redirect to home with a possible hash or just back to the main console
+        // For now, redirecting to home is the safest way to "get back to the bridge"
+        router.push('/');
+    };
+
     return (
         <main className="min-h-screen bg-[#050508] text-slate-300 flex flex-col relative overflow-hidden font-mono">
             {/* Background Effects */}
@@ -19,9 +30,13 @@ export function LegalLayout({ title, lastUpdated, children }: LegalLayoutProps) 
             </div>
 
             <div className="relative z-10 flex flex-col min-h-screen">
-                <StarmapNav />
+                <div className="pt-6 px-4 md:px-8 max-w-7xl mx-auto w-full">
+                    <div className="h-32 md:h-48">
+                        <StarmapNav onNavigate={handleNavigate} />
+                    </div>
+                </div>
 
-                <div className="flex-grow pt-32 pb-24 px-4 md:px-8 max-w-4xl mx-auto w-full">
+                <div className="flex-grow pt-12 pb-24 px-4 md:px-8 max-w-4xl mx-auto w-full">
                     <header className="mb-16">
                         <h1 className="text-4xl md:text-5xl font-bold text-white tracking-widest uppercase mb-4 opacity-90 drop-shadow-[0_0_15px_rgba(34,211,238,0.3)]">
                             {title}

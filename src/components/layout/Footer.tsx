@@ -22,12 +22,12 @@ export function Footer() {
     const currentYear = new Date().getFullYear();
 
     return (
-        <footer className="border-t border-slate-800 pt-12 pb-24 md:pb-12 px-4">
+        <footer className="border-t border-slate-700 pt-12 pb-24 md:pb-12 px-4 bg-black relative z-10">
             <div className="max-w-7xl mx-auto">
                 <div className="grid md:grid-cols-3 gap-8 mb-8">
                     {/* Connect */}
                     <div className="text-center md:text-left">
-                        <h3 className="font-bold mb-4 text-lg font-display">Connect</h3>
+                        <h3 className="font-bold mb-4 text-lg font-display text-white">Connect</h3>
                         <div className="flex gap-4 justify-center md:justify-start">
                             {socialLinks.map((link) => (
                                 <motion.a
@@ -35,7 +35,7 @@ export function Footer() {
                                     href={link.href}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="text-slate-400 hover:text-cyan-400 transition-colors"
+                                    className="text-slate-300 hover:text-cyan-400 transition-colors"
                                     whileHover={{ scale: 1.1, y: -2 }}
                                     aria-label={link.label}
                                 >
@@ -47,8 +47,8 @@ export function Footer() {
 
                     {/* Quick Links */}
                     <div className="text-center md:text-left">
-                        <h3 className="font-bold mb-4 text-lg font-display">Quick Links</h3>
-                        <div className="space-y-2 text-sm text-slate-400">
+                        <h3 className="font-bold mb-4 text-lg font-display text-white">Quick Links</h3>
+                        <div className="space-y-2 text-sm text-slate-300">
                             {quickLinks.map((link) => (
                                 <div key={link.href}>
                                     <Link
@@ -64,23 +64,23 @@ export function Footer() {
 
                     {/* Booking */}
                     <div className="text-center md:text-left">
-                        <h3 className="font-bold mb-4 text-lg font-display">Booking</h3>
+                        <h3 className="font-bold mb-4 text-lg font-display text-white">Booking</h3>
                         <a
                             href="mailto:booking@lunathelovegod.com"
-                            className="text-sm text-slate-400 hover:text-cyan-400 transition-colors"
+                            className="text-sm text-slate-300 hover:text-cyan-400 transition-colors"
                         >
                             booking@lunathelovegod.com
                         </a>
-                        <p className="text-xs text-slate-600 mt-2">
+                        <p className="text-xs text-slate-400 mt-2">
                             For press inquiries and collaborations
                         </p>
                     </div>
                 </div>
 
                 {/* Bottom bar */}
-                <div className="text-center text-sm text-slate-500 pt-8 border-t border-slate-800/50">
+                <div className="text-center text-sm text-slate-400 pt-8 border-t border-slate-700/50">
                     <p>© {currentYear} LUNATHELOVEGOD • Nebula Enterprises</p>
-                    <p className="text-xs mt-2 text-slate-600">
+                    <p className="text-xs mt-2 text-slate-500">
                         Built with cosmic energy in NYC
                     </p>
                 </div>

@@ -140,18 +140,25 @@ export default function TermsOfService() {
                     If you believe that any content on the Platform infringes your copyright, please send a notice to our designated agent at: <a href="mailto:copyright@lunathelovegod.com">copyright@lunathelovegod.com</a>. Your notice must include:
                 </p>
                 <ul>
-                    <li>A description of the copyrighted work.</li>
-                    <li>The location of the infringing material on our Platform.</li>
-                    <li>Your contact information.</li>
-                    <li>A statement that you have a good faith belief the use is unauthorized.</li>
-                    <li>A statement, under penalty of perjury, that the info is accurate and you are authorized to act.</li>
+                    <li>A physical or electronic signature of the copyright owner or authorized agent.</li>
+                    <li>A description of the copyrighted work you claim has been infringed.</li>
+                    <li>The location of the infringing material on our Platform (URL or specific description).</li>
+                    <li>Your name, address, telephone number, and email address.</li>
+                    <li>A statement that you have a good faith belief that the use is not authorized by the copyright owner, its agent, or the law.</li>
+                    <li>A statement, under penalty of perjury, that the info in your notice is accurate and you are the copyright owner or authorized to act on their behalf.</li>
                 </ul>
+                <p>
+                    <strong>Repeat Infringer Policy:</strong> We will terminate the accounts of users determined to be repeat infringers in appropriate circumstances.
+                </p>
+                <p>
+                    <strong>Counter-Notification Procedure:</strong> If content you posted was removed due to a DMCA notice and you believe this was an error, you may send a counter-notice to our agent containing: (1) your signature; (2) identification of the removed material; (3) a statement under penalty of perjury that you have a good faith belief the material was removed by mistake; and (4) your contact info and consent to the jurisdiction of the Federal District Court for the judicial district in which your address is located.
+                </p>
             </section>
 
             <section>
                 <h2>12. Force Majeure</h2>
                 <p>
-                    LUNATHELOVEGOD shall not be liable for any delay or failure to perform resulting from causes outside its reasonable control, including, but not limited to, acts of God, war, terrorism, riots, embargos, acts of civil or military authorities, fire, floods, accidents, strikes or shortages of transportation facilities, fuel, energy, labor, or materials.
+                    LUNATHELOVEGOD shall not be liable for any delay or failure to perform resulting from causes outside its reasonable control, including, but not limited to, acts of God, war, terrorism, riots, embargos, acts of civil or military authorities, fire, floods, accidents, strikes, shortages of transportation facilities, fuel, energy, labor, or materials, or **pandemics, epidemics, or public health emergencies**.
                 </p>
             </section>
 
@@ -165,7 +172,7 @@ export default function TermsOfService() {
             <section>
                 <h2>14. Changes to Terms</h2>
                 <p>
-                    We reserve the right to update these Terms at any time. We will indicate the &quot;Last Updated&quot; date at the top of this page. For material changes, we will attempt to provide notice via email to registered users. Continued use of the Platform after changes constitutes your acceptance of the new Terms.
+                    We reserve the right to update these Terms at any time. We will indicate the &quot;Last Updated&quot; date at the top of this page. For <strong>material changes</strong> (e.g., updates to pricing, dispute resolution/arbitration, or significant changes to data usage/AI training), we will attempt to provide notice via email to registered users. Continued use of the Platform after changes constitutes your acceptance of the new Terms.
                 </p>
             </section>
         </LegalLayout>

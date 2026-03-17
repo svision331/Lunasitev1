@@ -240,8 +240,7 @@ p, h1, h2, h3, h4, h5, h6, span {
 .glow-button:hover {
   box-shadow: var(--shadow-glow-cyan), inset 0 0 0 1px rgba(255, 255, 255, 0.4);
   transform: translateY(-2px) scale(1.02);
-  letter-spacing: 0.15em;
-  /* Kinetic typography */
+  /* Kinetic typography removed to prevent hover bounce jitter on edges */
 }
 
 .glow-button span {
@@ -776,7 +775,7 @@ p, h1, h2, h3, h4, h5, h6, span {
     inset 0 0 20px rgba(0, 255, 255, 0.2);
   border-color: rgba(0, 255, 255, 0.8);
   background: rgba(0, 255, 255, 0.1);
-  letter-spacing: 0.25em;
+  /* letter-spacing removed to prevent hover jitter from width shifting */
 }
 
 .btn-radioactive::after {

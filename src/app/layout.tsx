@@ -3,6 +3,7 @@ import { Share_Tech_Mono, Fira_Code } from 'next/font/google';
 import './globals.css';
 import { SoundProvider } from '@/context/SoundContext';
 import { SettingsProvider } from '@/context/SettingsContext';
+import { CustomCursor } from '@/components/effects/CustomCursor';
 
 const shareTechMono = Share_Tech_Mono({ weight: '400', subsets: ['latin'], variable: '--font-share-tech' });
 const firaCode = Fira_Code({ subsets: ['latin'], variable: '--font-fira-code' });
@@ -49,6 +50,7 @@ export default function RootLayout({
         <SettingsProvider>
           <SoundProvider>
             {/* Global Background Effects */}
+            <CustomCursor />
 
             {/* Noise texture overlay */}
             <div className="noise-overlay" />

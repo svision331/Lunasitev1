@@ -300,19 +300,22 @@ export function NebulaConsole({ onEnter }: NebulaConsoleProps) {
                                                         >
                                                             <TechBorder className="w-full h-full" color="cyan" cornerSize={24} intensity="high">
                                                                 <div className="relative z-10 text-center space-y-4 md:space-y-8 p-2 md:p-4">
-                                                                    <HoloCard variant="active" className="inline-flex items-center gap-2 px-3 py-1 rounded-full cursor-default border-cyan-500/30">
+                                                                    <HoloCard variant="active" className="inline-flex items-center gap-2 px-3 py-1 rounded-full cursor-default border-cyan-500/30 pointer-events-none relative z-10">
                                                                         <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_10px_cyan]" />
                                                                         <span className="text-[10px] tracking-widest uppercase text-cyan-200 font-mono">System Ready</span>
                                                                     </HoloCard>
 
                                                                     <CyberButton
                                                                         variant="radioactive"
+                                                                        glitch={false}
                                                                         onClick={handleEnter}
                                                                         onMouseEnter={playHover}
                                                                         disabled={isEntering}
-                                                                        className={isEntering ? 'scale-[1.5] brightness-200 blur-[2px] opacity-0 transition-all duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)] p-4 sm:p-6 text-sm sm:text-base' : 'scale-[1.15] sm:scale-125 hover:scale-[1.25] sm:hover:scale-[1.35] transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] p-4 sm:p-6 text-sm sm:text-base'}
+                                                                        className={isEntering 
+                                                                            ? 'relative z-20 scale-[1.5] brightness-200 blur-[2px] opacity-0 transition-all duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)]' 
+                                                                            : 'relative z-20 !px-8 !py-5 sm:!px-12 sm:!py-6 text-base sm:text-lg uppercase tracking-[0.2em] transition-all duration-300'}
                                                                     >
-                                                                        {isEntering ? 'Tuning Frequencies...' : 'Secure Coordinates'}
+                                                                        {isEntering ? 'ENGAGED' : 'SECURE COORDINATES'}
                                                                     </CyberButton>
 
                                                                     <div className="text-[10px] uppercase text-white/30 tracking-widest md:hidden animate-pulse font-mono">

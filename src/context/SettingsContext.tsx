@@ -24,14 +24,17 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
         if (typeof window !== 'undefined') {
             try {
                 const stored = localStorage.getItem('luna_settings');
+                let newSettings = null;
                 if (stored) {
-                    const parsed = JSON.parse(stored);
-                    setSettings(prev => ({ ...prev, ...parsed }));
+                    newSettings = JSON.parse(stored);
                 } else {
                     // Fallback to system preference
                     const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-                    setSettings({ reducedMotion: mediaQuery.matches });
+                    newSettings = { reducedMotion: mediaQuery.matches };
                 }
+                setTimeout(() => {
+                    setSettings(prev => ({ ...prev, ...newSettings }));
+                }, 0);
             } catch (e) {
                 console.warn('Failed to parse settings', e);
             }

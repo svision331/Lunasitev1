@@ -5,6 +5,7 @@ import dynamic from 'next/dynamic';
 import { Navbar, MobileNav, Footer } from '@/components/layout';
 import { NebulaConsole } from '@/components/landing/NebulaConsole';
 import { Hero } from '@/components/sections';
+import { ParallaxWrapper } from '@/components/ui';
 import { Starfield, IceGiantMode } from '@/components/effects';
 import { useSoundEffects } from '@/hooks/useSoundEffects';
 import { useSettings } from '@/context/SettingsContext';
@@ -98,14 +99,30 @@ export function LandingPage({ videos }: LandingPageProps) {
                 {/* Sections */}
                 <div className="relative z-10">
                     <Hero />
-                    <Lore />
-                    <LiveShows />
-                    <NebulaBash />
-                    <VideoShowcase videos={videos} />
-                    <Gallery />
-                    <Community />
-                    <Membership />
-                    <Press />
+                    <ParallaxWrapper offset={30}>
+                        <Lore />
+                    </ParallaxWrapper>
+                    <ParallaxWrapper offset={-20}>
+                        <LiveShows />
+                    </ParallaxWrapper>
+                    <ParallaxWrapper offset={40}>
+                        <NebulaBash />
+                    </ParallaxWrapper>
+                    <ParallaxWrapper offset={-30}>
+                        <VideoShowcase videos={videos} />
+                    </ParallaxWrapper>
+                    <ParallaxWrapper offset={20}>
+                        <Gallery />
+                    </ParallaxWrapper>
+                    <ParallaxWrapper offset={-10}>
+                        <Community />
+                    </ParallaxWrapper>
+                    <ParallaxWrapper offset={30}>
+                        <Membership />
+                    </ParallaxWrapper>
+                    <ParallaxWrapper offset={-20}>
+                        <Press />
+                    </ParallaxWrapper>
                 </div>
 
                 {/* Footer */}

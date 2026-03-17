@@ -52,7 +52,7 @@ export async function uploadVideoAction(formData: FormData) {
         const newVideo: Video = {
             id,
             title,
-            category: category as any,
+            category: category === 'All' ? 'Live Shows' : category,
             thumb: thumbnailUrl,
             description,
             isLocal,

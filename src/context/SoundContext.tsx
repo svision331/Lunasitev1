@@ -34,8 +34,6 @@ export function SoundProvider({ children }: { children: React.ReactNode }) {
         return false;
     });
 
-    const audioCache = useRef<Map<string, AudioBuffer>>(new Map());
-
     // Ambience nodes ref
     const ambienceNodes = useRef<{
         rumble?: { source: OscillatorNode, gain: GainNode },
@@ -344,7 +342,7 @@ export function SoundProvider({ children }: { children: React.ReactNode }) {
         };
     }, [isMuted, stopAmbience, initAudio]);
 
-    const playSample = useCallback(async (url: string, vol: number = 0.5) => {
+    const playSample = useCallback(async (url: string) => {
         if (isMuted || !initAudio() || !globalAudioCtx || !globalMasterGain) return;
         // Implementation for sample playing if needed, similar to original hook
         // For now, focusing on the synth sounds used in the app

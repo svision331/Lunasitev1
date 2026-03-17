@@ -4,7 +4,7 @@ export default function manifest(): MetadataRoute.Manifest {
     return {
         name: 'LUNATHELOVEGOD',
         short_name: 'LUNA',
-        description: 'Ice Giant Lover Girl — Live from NYC. Turn up the volume.',
+        description: 'Enter The Void. LUNATHELOVEGOD — Ice Giant Lover Girl. Tune your frequencies and join the Space Invaders.',
         start_url: '/',
         display: 'standalone',
         background_color: '#0f172a',

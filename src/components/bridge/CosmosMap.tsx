@@ -106,7 +106,7 @@ export function CosmosMap({ onClose }: CosmosMapProps) {
                                                     <div className="text-lg md:text-xl text-cyan-300 font-bold tracking-widest uppercase truncate px-4">{activeSystem.spotifyData.trackTitle}</div>
                                                     <div className="flex items-center justify-center gap-3 text-[10px] uppercase tracking-widest text-white/40">
                                                         <span>{activeSystem.spotifyData.album}</span>
-                                                        <span>//</span>
+                                                        <span>{'//'}</span>
                                                         <span>{activeSystem.spotifyData.duration}</span>
                                                     </div>
                                                 </div>

@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import { Share_Tech_Mono, Fira_Code } from 'next/font/google';
 import './globals.css';
-import { CustomCursor } from '@/components/effects';
 import { SoundProvider } from '@/context/SoundContext';
 import { SettingsProvider } from '@/context/SettingsContext';
 
@@ -16,12 +15,12 @@ export const viewport = {
 };
 
 export const metadata: Metadata = {
-  title: 'LUNATHELOVEGOD | Ice Giant Lover Girl',
-  description: 'Official website of LUNATHELOVEGOD. Listen to the latest tracks, see live show dates, and join the Space Invaders community.',
-  keywords: ['LUNATHELOVEGOD', 'Ice Giant Lover Girl', 'Music', 'Artist', 'NYC', 'Nebula Bash'],
+  title: 'LUNATHELOVEGOD | Enter The Void',
+  description: 'Enter The Void. LUNATHELOVEGOD — Ice Giant Lover Girl. Tune your frequencies and join the Space Invaders.',
+  keywords: ['LUNATHELOVEGOD', 'Ice Giant Lover Girl', 'Music', 'Artist', 'NYC', 'Nebula Bash', 'Space Invaders'],
   openGraph: {
-    title: 'LUNATHELOVEGOD | Ice Giant Lover Girl',
-    description: 'Ice Giant Lover Girl — Live from NYC. Join the Space Invaders.',
+    title: 'LUNATHELOVEGOD | Enter The Void',
+    description: 'Enter The Void. LUNATHELOVEGOD — Ice Giant Lover Girl. Tune your frequencies and join the Space Invaders.',
     type: 'website',
     locale: 'en_US',
     siteName: 'LUNATHELOVEGOD',
@@ -29,7 +28,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'LUNATHELOVEGOD',
-    description: 'Ice Giant Lover Girl — Live from NYC',
+    description: 'Enter The Void. LUNATHELOVEGOD — Ice Giant Lover Girl. Tune your frequencies and join the Space Invaders.',
   },
 };
 
@@ -50,9 +49,6 @@ export default function RootLayout({
         <SettingsProvider>
           <SoundProvider>
             {/* Global Background Effects */}
-
-            {/* Custom Ice Heart Cursor */}
-            <CustomCursor />
 
             {/* Noise texture overlay */}
             <div className="noise-overlay" />

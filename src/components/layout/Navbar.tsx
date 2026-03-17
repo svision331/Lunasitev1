@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
-import { Menu, X, Activity, Wifi } from 'lucide-react';
+import { Menu, X, Activity } from 'lucide-react';
 import { useSoundEffects } from '@/hooks/useSoundEffects';
 
 const navLinks = [

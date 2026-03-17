@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { motion } from 'framer-motion';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { Play, ChevronLeft, ChevronRight, Music } from 'lucide-react';
 import Image from 'next/image';
 import { useSwipe } from '@/hooks';
@@ -25,6 +25,15 @@ export function VideoShowcase({ videos }: VideoShowcaseProps) {
     const { playHover, playClick, playSuccess, playTyping } = useSoundEffects(); // Use Sound Hook
 
     const [dataStream, setDataStream] = useState<{ text: string; opacity: number; delay: number }[]>([]);
+
+    // Parallax background hooks
+    const containerRef = useRef<HTMLElement>(null);
+    const { scrollYProgress } = useScroll({
+        target: containerRef,
+        offset: ['start end', 'end start']
+    });
+    const bgY = useTransform(scrollYProgress, [0, 1], [-100, 100]);
+    const gridY = useTransform(scrollYProgress, [0, 1], [-50, 50]);
 
     // Generate random data stream only on client to avoid hydration mismatch
     useEffect(() => {
@@ -103,6 +112,7 @@ export function VideoShowcase({ videos }: VideoShowcaseProps) {
 
     return (
         <section
+            ref={containerRef}
             id="watch"
             className="section relative overflow-hidden min-h-screen flex flex-col justify-center"
             {...swipeHandlers}
@@ -110,11 +120,17 @@ export function VideoShowcase({ videos }: VideoShowcaseProps) {
             {/* Background Layers */}
             <div className="absolute inset-0 pointer-events-none">
                 {/* Space & Atmosphere */}
-                <div className="absolute inset-0 bg-[url('/images/hero-bg-v2.jpg')] bg-cover bg-center opacity-20 blur-3xl mix-blend-color-dodge transition-all duration-1000 transform scale-110" />
+                <motion.div 
+                    style={{ y: bgY }}
+                    className="absolute inset-[-20%] bg-[url('/images/hero-bg-v2.jpg')] bg-cover bg-center opacity-20 blur-3xl mix-blend-color-dodge" 
+                />
                 <div className="absolute inset-0 bg-gradient-to-t from-black via-slate-950/90 to-transparent" />
 
                 {/* Tech Grid & Scanlines */}
-                <div className="absolute inset-0 bg-[linear-gradient(rgba(0,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(0,255,255,0.03)_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_at_center,black_40%,transparent_100%)] opacity-50" />
+                <motion.div 
+                    style={{ y: gridY }}
+                    className="absolute inset-[-10%] bg-[linear-gradient(rgba(0,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(0,255,255,0.03)_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_at_center,black_40%,transparent_100%)] opacity-50" 
+                />
                 <div className="absolute inset-0 bg-[url('/images/grid.png')] opacity-[0.05]" />
 
                 {/* Ambient Video Blowout */}
@@ -149,8 +165,8 @@ export function VideoShowcase({ videos }: VideoShowcaseProps) {
                     viewport={{ once: true }}
                 >
                     <div className="inline-block relative group cursor-default" onMouseEnter={playHover}>
-                        <h2 className="text-4xl sm:text-6xl md:text-9xl font-bold font-display tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-cyan-100 via-white to-cyan-900 mb-4 relative z-10 glitch-text drop-shadow-[0_0_30px_rgba(34,211,238,0.5)]" data-text="VISUAL LOGS">
-                            VISUAL LOGS
+                        <h2 className="text-4xl sm:text-6xl md:text-9xl font-bold font-display tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-cyan-100 via-white to-cyan-900 mb-4 relative z-10 glitch-text drop-shadow-[0_0_30px_rgba(34,211,238,0.5)]" data-text="LUNAVERSE">
+                            LUNAVERSE
                         </h2>
                         {/* Decorative Lines */}
                         <div className="absolute -left-4 md:-left-20 top-1/2 w-8 md:w-16 h-[2px] bg-gradient-to-r from-transparent to-cyan-500 hidden md:block group-hover:w-24 transition-all duration-500" />
@@ -337,6 +353,7 @@ export function VideoShowcase({ videos }: VideoShowcaseProps) {
                                         allowFullScreen
                                         allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
                                         loading="lazy"
+                                        title="Spotify Audio Player: Ice Giant Lover Girl"
                                         className="h-full w-full opacity-80"
                                         style={{ maskImage: 'linear-gradient(to right, transparent, black 20%, black 80%, transparent)' }}
                                     />

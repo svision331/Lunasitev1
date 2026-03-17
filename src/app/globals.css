@@ -12,19 +12,19 @@
   /* Unifying look */
 
   /* 1) Color Tokens (Palette - Vibrant Cosmic) */
-  --void: #020205;
+  --void: #010103;
   /* Deepest black */
   --void-deep: #000000;
   --surface: rgba(10, 10, 15, 0.4);
 
   /* Brand Colors - High Vibe Oklch */
-  --primary: oklch(0.7 0.18 220);
+  --primary: oklch(0.7 0.22 220);
   /* Electric Cyan */
-  --primary-glow: oklch(0.8 0.15 210);
+  --primary-glow: oklch(0.85 0.2 210);
   /* Soft Cyan Glow */
-  --secondary: oklch(0.65 0.22 320);
+  --secondary: oklch(0.65 0.26 320);
   /* Neon Pink */
-  --accent: oklch(0.75 0.18 55);
+  --accent: oklch(0.75 0.2 55);
   /* Solar Amber */
 
   /* Semantic Aliases */
@@ -46,16 +46,16 @@
   --gradient-glass: linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%);
 
   /* 3) Shadows & Glows */
-  --shadow-glow-cyan: 0 0 25px rgba(6, 182, 212, 0.5);
-  --shadow-glow-pink: 0 0 25px rgba(236, 72, 153, 0.5);
-  --shadow-card: 0 10px 40px -10px rgba(0, 0, 0, 0.6);
+  --shadow-glow-cyan: 0 0 30px rgba(6, 182, 212, 0.6);
+  --shadow-glow-pink: 0 0 30px rgba(236, 72, 153, 0.6);
+  --shadow-card: 0 10px 40px -10px rgba(0, 0, 0, 0.8);
 
   /* 4) Animation Timing */
-  --ease-fluid: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --ease-fluid: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-snap: cubic-bezier(0.16, 1, 0.3, 1);
-  --duration-hover: 0.2s;
+  --duration-hover: 0.3s;
   /* Snappier hover */
-  --duration-enter: 0.6s;
+  --duration-enter: 0.8s;
 
   /* 5) Spacing */
   --section-padding: clamp(4rem, 10vw, 8rem);
@@ -96,22 +96,19 @@ body {
   color: black;
 }
 
-/* Custom Ice Heart Cursor */
-html,
-body,
-* {
-  cursor: url('/images/ice-heart-cursor.png') 16 16, auto !important;
+/* Custom Cursor Base */
+body {
+  cursor: none !important;
 }
 
-button,
-a,
-[role="button"] {
-  cursor: url('/images/ice-heart-cursor.png') 16 16, pointer !important;
+/* Interactive elements */
+a, button, [role="button"], input, select, textarea {
+  cursor: none !important;
 }
 
-input,
-textarea {
-  cursor: url('/images/ice-heart-cursor.png') 16 16, text !important;
+/* Text elements */
+p, h1, h2, h3, h4, h5, h6, span {
+  cursor: none !important;
 }
 
 
@@ -123,14 +120,23 @@ textarea {
 .font-display {
   font-family: var(--font-display);
   font-weight: 700;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.04em;
+  line-height: 1.1;
 }
 
 .text-gradient {
   background: var(--gradient-cosmic);
+  background-size: 200% 200%;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  animation: cosmic-flow 8s ease infinite;
+}
+
+@keyframes cosmic-flow {
+    0% { background-position: 0% 50% }
+    50% { background-position: 100% 50% }
+    100% { background-position: 0% 50% }
 }
 
 .text-glow {
@@ -142,38 +148,39 @@ textarea {
    ================================ */
 
 .glass {
-  background: rgba(5, 5, 10, 0.75);
+  background: rgba(5, 5, 10, 0.8);
   /* Increased opacity for better contrast */
-  -webkit-backdrop-filter: blur(16px);
-  backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  -webkit-backdrop-filter: blur(24px);
+  backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   /* Slightly brighter border */
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
 }
 
 @media (max-width: 768px) {
   .glass {
-    -webkit-backdrop-filter: blur(8px);
-    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
   }
 }
 
 .glass-card {
   background: rgba(5, 5, 10, 0.7);
-  -webkit-backdrop-filter: blur(24px);
-  backdrop-filter: blur(24px);
-  border: 1px solid rgba(255, 255, 255, 0.03);
+  -webkit-backdrop-filter: blur(32px);
+  backdrop-filter: blur(32px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
   border-radius: 1rem;
-  transition: all 0.3s var(--ease-fluid);
+  transition: all 0.4s var(--ease-fluid);
   position: relative;
   overflow: hidden;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
   will-change: transform, opacity;
 }
 
 @media (max-width: 768px) {
   .glass-card {
-    -webkit-backdrop-filter: blur(12px);
-    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(16px);
   }
 }
 
@@ -184,7 +191,7 @@ textarea {
   inset: 0;
   border-radius: inherit;
   padding: 1px;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0), rgba(6, 182, 212, 0.1));
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.05) 30%, rgba(255, 255, 255, 0) 50%, rgba(6, 182, 212, 0.2));
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
@@ -193,9 +200,9 @@ textarea {
 }
 
 .glass-card:hover {
-  border-color: rgba(6, 182, 212, 0.2);
+  border-color: rgba(6, 182, 212, 0.3);
   box-shadow: var(--shadow-glow-cyan);
-  transform: translateY(-2px);
+  transform: translateY(-4px);
 }
 
 /* ================================
@@ -209,11 +216,12 @@ textarea {
   border-radius: 0.5rem;
   /* Sharper corners for tech feel */
   overflow: hidden;
-  transition: all 0.2s var(--ease-snap);
+  transition: all 0.3s var(--ease-fluid);
   font-family: var(--font-display);
-  letter-spacing: 0.05em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: white;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.2), 0 4px 15px rgba(0, 0, 0, 0.4);
 }
 
 .glow-button::before {
@@ -222,7 +230,7 @@ textarea {
   inset: 0;
   background: linear-gradient(135deg, var(--secondary), var(--primary));
   opacity: 0;
-  transition: opacity 0.2s ease;
+  transition: opacity 0.3s var(--ease-fluid);
 }
 
 .glow-button:hover::before {
@@ -230,9 +238,9 @@ textarea {
 }
 
 .glow-button:hover {
-  box-shadow: var(--shadow-glow-cyan);
-  transform: translateY(-1px);
-  letter-spacing: 0.1em;
+  box-shadow: var(--shadow-glow-cyan), inset 0 0 0 1px rgba(255, 255, 255, 0.4);
+  transform: translateY(-2px) scale(1.02);
+  letter-spacing: 0.15em;
   /* Kinetic typography */
 }
 

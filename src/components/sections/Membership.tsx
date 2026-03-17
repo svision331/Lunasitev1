@@ -103,8 +103,8 @@ export function Membership() {
                                         type="email"
                                         value={email}
                                         onChange={(e) => setEmail(e.target.value)}
-                                        placeholder="ENTER_COMM_LINK_ID (EMAIL)"
-                                        className="relative w-full px-4 py-4 bg-black border border-slate-800 text-white placeholder:text-slate-600 font-mono text-sm focus:border-cyan-500 focus:outline-none focus:ring-1 focus:ring-cyan-500 transition-all uppercase tracking-wider"
+                                        placeholder="ENTER_COMM_LINK_ID"
+                                        className="relative w-full px-4 py-4 bg-black border border-slate-800 text-white placeholder:text-slate-600 font-mono text-xs sm:text-sm focus:border-cyan-500 focus:outline-none focus:ring-1 focus:ring-cyan-500 transition-all uppercase tracking-wider"
                                         required
                                         disabled={isSubmitting}
                                     />

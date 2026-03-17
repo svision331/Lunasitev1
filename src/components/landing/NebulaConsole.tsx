@@ -176,7 +176,7 @@ export function NebulaConsole({ onEnter }: NebulaConsoleProps) {
                     <TechBorder className="w-full h-full" color="cyan" cornerSize={20}>
                         <div className="w-full h-full bg-black/80 backdrop-blur-md p-2 md:p-6 flex flex-col gap-4 md:gap-6">
                             <GridBackground opacity={0.1} />
-                            <div className="cockpit-inner rounded-xl md:rounded-[22px] p-4 md:p-6 grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-6 flex-1 overflow-hidden min-h-0">
+                            <div className="cockpit-inner rounded-xl md:rounded-[22px] p-2 sm:p-4 md:p-6 grid grid-cols-1 md:grid-cols-12 gap-2 sm:gap-4 md:gap-6 flex-1 overflow-y-auto md:overflow-hidden min-h-0">
 
                                 {/* Left Sidebar - Hidden on Mobile */}
                                 <motion.aside
@@ -228,7 +228,7 @@ export function NebulaConsole({ onEnter }: NebulaConsoleProps) {
                                             <GridBackground opacity={0.1} />
                                             <div className="relative z-10">
                                                 <div className="text-[10px] tracking-[0.3em] uppercase text-cyan-300 mb-1 font-display hover:text-transparent hover:bg-clip-text hover:bg-gradient-to-r hover:from-cyan-300 hover:via-purple-300 hover:to-pink-300 transition-all duration-300 cursor-default">Bridge Console</div>
-                                                <h1 className="text-2xl md:text-3xl font-display font-bold uppercase tracking-tight text-gradient glitch-text" data-text="LUNATHELOVEGOD">
+                                                <h1 className="text-xl sm:text-2xl md:text-3xl font-display font-bold uppercase tracking-tight text-gradient glitch-text" data-text="LUNATHELOVEGOD">
                                                     LUNATHELOVEGOD
                                                 </h1>
                                             </div>
@@ -299,7 +299,7 @@ export function NebulaConsole({ onEnter }: NebulaConsoleProps) {
                                                             className="flex items-center flex-col justify-center px-2 md:px-10 py-4 w-full h-full"
                                                         >
                                                             <TechBorder className="w-full h-full" color="cyan" cornerSize={24} intensity="high">
-                                                                <div className="relative z-10 text-center space-y-6 md:space-y-8 p-4">
+                                                                <div className="relative z-10 text-center space-y-4 md:space-y-8 p-2 md:p-4">
                                                                     <HoloCard variant="active" className="inline-flex items-center gap-2 px-3 py-1 rounded-full cursor-default border-cyan-500/30">
                                                                         <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_10px_cyan]" />
                                                                         <span className="text-[10px] tracking-widest uppercase text-cyan-200 font-mono">System Ready</span>
@@ -310,9 +310,9 @@ export function NebulaConsole({ onEnter }: NebulaConsoleProps) {
                                                                         onClick={handleEnter}
                                                                         onMouseEnter={playHover}
                                                                         disabled={isEntering}
-                                                                        className={isEntering ? 'scale-110 brightness-150' : 'scale-125'}
+                                                                        className={isEntering ? 'scale-[1.5] brightness-200 blur-[2px] opacity-0 transition-all duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)] p-4 sm:p-6 text-sm sm:text-base' : 'scale-[1.15] sm:scale-125 hover:scale-[1.25] sm:hover:scale-[1.35] transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] p-4 sm:p-6 text-sm sm:text-base'}
                                                                     >
-                                                                        {isEntering ? 'Engaging...' : 'Enter Portal'}
+                                                                        {isEntering ? 'Tuning Frequencies...' : 'Secure Coordinates'}
                                                                     </CyberButton>
 
                                                                     <div className="text-[10px] uppercase text-white/30 tracking-widest md:hidden animate-pulse font-mono">

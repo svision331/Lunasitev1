@@ -8,7 +8,7 @@ import { communityStats } from '@/data/membership';
 
 export function Hero() {
     const { scrollY } = useScroll();
-    const y = useTransform(scrollY, [0, 500], [0, 100]); // Parallax effect
+    const y = useTransform(scrollY, [0, 1000], [0, 300]); // Deeper Parallax effect
 
     return (
         <section className="relative min-h-[100dvh] flex items-center justify-center overflow-hidden pt-16 pb-24 md:pb-0">
@@ -31,8 +31,7 @@ export function Hero() {
                 muted
                 loop
                 playsInline
-                className="absolute inset-0 w-full h-full object-cover opacity-60 mix-blend-lighten"
-                style={{ zIndex: 1 }}
+                className="absolute inset-0 w-full h-full object-cover opacity-60 mix-blend-lighten z-[1]"
             >
                 <source src="/videos/hero-loop.mp4" type="video/mp4" />
             </video>
@@ -57,23 +56,23 @@ export function Hero() {
 
                 {/* Title */}
                 <motion.div
-                    className="mb-4"
-                    initial={{ opacity: 0, y: 30 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.3 }}
+                    className="mb-4 relative"
+                    initial={{ opacity: 0, y: 40, filter: 'blur(10px)' }}
+                    animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                    transition={{ delay: 0.4, duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
                 >
-                    <h1 className="text-4xl sm:text-6xl md:text-7xl font-bold tracking-tight font-display">
+                    <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight font-display leading-[1.1] sm:leading-none">
                         <HolographicText text="LUNA" />
-                        <span className="text-gradient">THELOVEGOD</span>
+                        <span className="text-gradient inline-block hover:scale-105 transition-transform duration-500">THELOVEGOD</span>
                     </h1>
                 </motion.div>
 
                 {/* Subtitle */}
                 <motion.p
-                    className="text-xl sm:text-2xl text-slate-300 mb-2"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.4 }}
+                    className="text-lg sm:text-xl md:text-2xl text-slate-300 mb-2 font-mono tracking-wide"
+                    initial={{ opacity: 0, y: 20, filter: 'blur(5px)' }}
+                    animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                    transition={{ delay: 0.6, duration: 1, ease: [0.16, 1, 0.3, 1] }}
                 >
                     Ice Giant Lover Girl — Live from NYC
                 </motion.p>
@@ -104,18 +103,18 @@ export function Hero() {
 
                 {/* CTAs */}
                 <motion.div
-                    className="flex flex-col sm:flex-row gap-4 justify-center"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.7 }}
+                    className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center mt-8 px-4 sm:px-0"
+                    initial={{ opacity: 0, y: 20, filter: 'blur(5px)' }}
+                    animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                    transition={{ delay: 0.8, duration: 1, ease: [0.16, 1, 0.3, 1] }}
                 >
-                    <a href="#live">
-                        <GlowButton size="lg">
-                            Get Tickets — From $25
+                    <a href="#live" className="w-full sm:w-auto">
+                        <GlowButton size="lg" className="w-full sm:w-auto">
+                            Enter Nebula Bash
                         </GlowButton>
                     </a>
-                    <a href="#join">
-                        <GlowButton variant="outline" size="lg">
+                    <a href="#join" className="w-full sm:w-auto">
+                        <GlowButton variant="outline" size="lg" className="w-full sm:w-auto">
                             <div className="text-center">
                                 <span>Join Space Invaders</span>
                                 <div className="text-xs text-slate-400 mt-1">Early tickets + secret sets</div>

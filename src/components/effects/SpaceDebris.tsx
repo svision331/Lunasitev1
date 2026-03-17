@@ -63,7 +63,10 @@ export function SpaceDebris() {
 
     useEffect(() => {
         const isMobile = window.innerWidth < 768;
-        setDebris(generateDebris(isMobile ? 8 : 20));
+        const timer = setTimeout(() => {
+            setDebris(generateDebris(isMobile ? 8 : 20));
+        }, 0);
+        return () => clearTimeout(timer);
     }, []);
 
     return (

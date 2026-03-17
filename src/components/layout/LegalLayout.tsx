@@ -15,7 +15,7 @@ interface LegalLayoutProps {
 export function LegalLayout({ title, lastUpdated, children }: LegalLayoutProps) {
     const router = useRouter();
 
-    const handleNavigate = (id: string) => {
+    const handleNavigate = () => {
         // Redirect to home with a possible hash or just back to the main console
         // For now, redirecting to home is the safest way to "get back to the bridge"
         router.push('/');

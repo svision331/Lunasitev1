@@ -133,13 +133,13 @@ export const Vortex = (props: VortexProps) => {
             i7 = 6 + i,
             i8 = 7 + i,
             i9 = 8 + i;
-        let vx, vy, life;
+        let life;
 
         const x = particleProps[i];
         const y = particleProps[i2];
         const n = noise3D(x * xOff, y * yOff, tick * zOff) * noiseSteps * TAU;
-        vx = lerp(particleProps[i3], Math.cos(n), 0.5);
-        vy = lerp(particleProps[i4], Math.sin(n), 0.5);
+        const vx = lerp(particleProps[i3], Math.cos(n), 0.5);
+        const vy = lerp(particleProps[i4], Math.sin(n), 0.5);
         life = particleProps[i5];
         const ttl = particleProps[i6];
         const speed = particleProps[i7];
@@ -239,6 +239,7 @@ export const Vortex = (props: VortexProps) => {
                 resize(canvas);
             }
         });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     return (

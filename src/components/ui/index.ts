@@ -4,3 +4,4 @@ export { ShowCard } from './ShowCard';
 export { TierCard } from './TierCard';
 export { CountdownTimer } from './CountdownTimer';
 export { AudioVisualizer } from './AudioVisualizer';
+export { ParallaxWrapper } from './ParallaxWrapper';

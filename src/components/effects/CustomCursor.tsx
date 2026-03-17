@@ -8,15 +8,13 @@ export function CustomCursor() {
         const style = document.createElement('style');
         style.innerHTML = `
       html, body, * {
-        cursor: url('/images/ice-heart-cursor.png') 16 16, auto !important;
+        cursor: none !important;
       }
-      
-      button, a, [role="button"] {
-        cursor: url('/images/ice-heart-cursor.png') 16 16, pointer !important;
+      a, button, [role="button"], input, select, textarea {
+        cursor: none !important;
       }
-      
-      input, textarea {
-        cursor: url('/images/ice-heart-cursor.png') 16 16, text !important;
+      p, h1, h2, h3, h4, h5, h6, span {
+        cursor: none !important;
       }
     `;
         document.head.appendChild(style);

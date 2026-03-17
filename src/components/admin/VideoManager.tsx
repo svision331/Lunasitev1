@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { uploadVideoAction, updateVideoAction, deleteVideoAction } from '@/app/actions/video';
-import { Video, videoCategories, VideoCategory } from '@/data/videos';
+import { Video, videoCategories } from '@/data/videos';
 import { Trash, Edit, Plus, X, Loader2, Check } from 'lucide-react';
 import Image from 'next/image';
 
@@ -54,7 +54,7 @@ interface VideoManagerProps {
 }
 
 export function VideoManager({ initialVideos }: VideoManagerProps) {
-    const [videos, setVideos] = useState<Video[]>(initialVideos);
+    const [videos] = useState<Video[]>(initialVideos);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingVideo, setEditingVideo] = useState<Video | null>(null);
 
@@ -64,7 +64,7 @@ export function VideoManager({ initialVideos }: VideoManagerProps) {
         try {
             await deleteVideoAction(id);
             window.location.reload();
-        } catch (error) {
+        } catch {
             alert('Failed to delete video');
         }
     }
@@ -184,7 +184,7 @@ function VideoFormModal({ video, onClose, onSuccess }: { video: Video | null, on
     return (
         <div className="fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50">
             <div className="bg-slate-900 border border-cyan-500/20 p-6 rounded-2xl w-full max-w-lg relative animate-in fade-in zoom-in duration-200">
-                <button onClick={onClose} className="absolute top-4 right-4 text-slate-400 hover:text-white"><X /></button>
+                <button onClick={onClose} className="absolute top-4 right-4 text-slate-400 hover:text-white" title="Close"><X /></button>
                 <h2 className="text-xl font-bold mb-6 text-cyan-400">{video ? 'Edit Video' : 'Add New Video'}</h2>
 
                 {error && <div className="bg-red-500/10 text-red-500 p-3 rounded mb-4 text-sm">{error}</div>}
@@ -237,6 +237,7 @@ function VideoFormModal({ video, onClose, onSuccess }: { video: Video | null, on
                                 <input
                                     type="file"
                                     name="file"
+                                    title="Upload Video File"
                                     accept="video/*"
                                     onChange={handleFileChange}
                                     className="w-full text-slate-400 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-cyan-900/50 file:text-cyan-400 hover:file:bg-cyan-900/80"
@@ -255,7 +256,7 @@ function VideoFormModal({ video, onClose, onSuccess }: { video: Video | null, on
                                                 onClick={() => setSelectedThumbnail(thumb)}
                                                 className={`relative aspect-video rounded overflow-hidden border-2 transition-all ${selectedThumbnail === thumb ? 'border-cyan-400 ring-2 ring-cyan-500/50' : 'border-transparent opacity-60 hover:opacity-100'}`}
                                             >
-                                                <img src={thumb} alt={`Thumbnail option ${idx + 1}`} className="w-full h-full object-cover" />
+                                                <Image src={thumb} alt={`Thumbnail option ${idx + 1}`} fill className="object-cover" unoptimized />
                                                 {selectedThumbnail === thumb && (
                                                     <div className="absolute inset-0 bg-cyan-500/20 flex items-center justify-center">
                                                         <div className="bg-cyan-500 p-1 rounded-full"><Check size={12} className="text-white" /></div>
@@ -270,7 +271,7 @@ function VideoFormModal({ video, onClose, onSuccess }: { video: Video | null, on
 
                             <div>
                                 <label className="block text-xs uppercase tracking-wider text-slate-400 mb-1">Custom Thumbnail</label>
-                                <input type="file" name="thumbnail" accept="image/*" className="w-full text-slate-400 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-cyan-900/50 file:text-cyan-400 hover:file:bg-cyan-900/80" />
+                                <input type="file" name="thumbnail" accept="image/*" title="Custom Thumbnail" className="w-full text-slate-400 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-cyan-900/50 file:text-cyan-400 hover:file:bg-cyan-900/80" />
                             </div>
                         </>
                     )}

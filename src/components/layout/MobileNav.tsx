@@ -5,9 +5,9 @@ import { motion } from 'framer-motion';
 import { Play, Calendar, Star } from 'lucide-react';
 
 const navItems = [
-    { href: '#music', icon: Play, label: 'Music' },
-    { href: '#live', icon: Calendar, label: 'Shows' },
-    { href: '#join', icon: Star, label: 'Join' },
+    { href: '#music', icon: Play, label: 'Missions' },
+    { href: '#live', icon: Calendar, label: 'Nebula Bash' },
+    { href: '#join', icon: Star, label: 'Space Invaders' },
 ];
 
 export function MobileNav() {
@@ -35,7 +35,7 @@ export function MobileNav() {
             </div>
 
             {/* Safe area spacer for iOS */}
-            <div className="h-[env(safe-area-inset-bottom)]" />
+            <div className="pb-[env(safe-area-inset-bottom)] pb-safe" />
         </motion.div>
     );
 }

@@ -62,8 +62,7 @@ export function Hero() {
                     transition={{ delay: 0.4, duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
                 >
                     <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight font-display leading-[1.1] sm:leading-none">
-                        <HolographicText text="LUNA" />
-                        <span className="text-gradient inline-block hover:scale-105 transition-transform duration-500">THELOVEGOD</span>
+                        <HolographicText text="LUNA" /><span className="text-gradient inline-block hover:scale-105 transition-transform duration-500">THELOVEGOD</span>
                     </h1>
                 </motion.div>
 

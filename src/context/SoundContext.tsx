@@ -69,7 +69,6 @@ export function SoundProvider({ children }: { children: React.ReactNode }) {
     const toggleMute = useCallback(() => {
         setIsMuted((prev: boolean) => {
             const next = !prev;
-            console.log("🔊 Toggling Mute:", next ? "MUTED" : "UNMUTED");
             localStorage.setItem('luna_sound_muted', JSON.stringify(next));
 
             // Ensure context is running
@@ -344,9 +343,6 @@ export function SoundProvider({ children }: { children: React.ReactNode }) {
 
     const playSample = useCallback(async (url: string) => {
         if (isMuted || !initAudio() || !globalAudioCtx || !globalMasterGain) return;
-        // Implementation for sample playing if needed, similar to original hook
-        // For now, focusing on the synth sounds used in the app
-        console.log('Sample playback not fully migrated for:', url);
     }, [isMuted, initAudio]);
 
 

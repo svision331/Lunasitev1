@@ -7,6 +7,85 @@ const STORE_PATH = path.join(process.cwd(), 'src/data/gallery-store.json');
 const VIDEO_STORE_PATH = path.join(process.cwd(), 'src/data/videos.json');
 const UPLOAD_DIR = path.join(process.cwd(), 'public/uploads/gallery');
 const VIDEO_UPLOAD_DIR = path.join(process.cwd(), 'public/uploads/videos');
+const SETTINGS_STORE_PATH = path.join(process.cwd(), 'src/data/settings.json');
+const MISSIONS_STORE_PATH = path.join(process.cwd(), 'src/data/missions.json');
+const SHOWS_STORE_PATH = path.join(process.cwd(), 'src/data/shows.json');
+const COSMOS_STORE_PATH = path.join(process.cwd(), 'src/data/cosmos.json');
+
+import { Mission } from '@/data/missions';
+import { Show } from '@/data/shows';
+import { StarSystem } from '@/data/cosmos';
+
+export interface GlobalSettings {
+    maintenanceMode: boolean;
+    registrationEnabled: boolean;
+    siteTitle: string;
+    maxUsers: number;
+}
+
+const defaultSettings: GlobalSettings = {
+    maintenanceMode: false,
+    registrationEnabled: true,
+    siteTitle: "LUNA THE LOVEGOD",
+    maxUsers: 1000
+};
+
+export async function getGlobalSettings(): Promise<GlobalSettings> {
+    try {
+        const data = await fs.readFile(SETTINGS_STORE_PATH, 'utf-8');
+        return { ...defaultSettings, ...JSON.parse(data) };
+    } catch {
+        return defaultSettings;
+    }
+}
+
+export async function updateGlobalSettings(updates: Partial<GlobalSettings>): Promise<void> {
+    const current = await getGlobalSettings();
+    const newSettings = { ...current, ...updates };
+    await fs.writeFile(SETTINGS_STORE_PATH, JSON.stringify(newSettings, null, 2));
+}
+
+// Missions
+export async function getMissions(): Promise<Mission[]> {
+    try {
+        const data = await fs.readFile(MISSIONS_STORE_PATH, 'utf-8');
+        return JSON.parse(data);
+    } catch {
+        return [];
+    }
+}
+
+export async function saveMissions(missions: Mission[]): Promise<void> {
+    await fs.writeFile(MISSIONS_STORE_PATH, JSON.stringify(missions, null, 2));
+}
+
+// Shows
+export async function getShows(): Promise<Show[]> {
+    try {
+        const data = await fs.readFile(SHOWS_STORE_PATH, 'utf-8');
+        return JSON.parse(data);
+    } catch {
+        return [];
+    }
+}
+
+export async function saveShows(shows: Show[]): Promise<void> {
+    await fs.writeFile(SHOWS_STORE_PATH, JSON.stringify(shows, null, 2));
+}
+
+// Cosmos
+export async function getCosmos(): Promise<StarSystem[]> {
+    try {
+        const data = await fs.readFile(COSMOS_STORE_PATH, 'utf-8');
+        return JSON.parse(data);
+    } catch {
+        return [];
+    }
+}
+
+export async function saveCosmos(systems: StarSystem[]): Promise<void> {
+    await fs.writeFile(COSMOS_STORE_PATH, JSON.stringify(systems, null, 2));
+}
 
 export async function getPhotos(): Promise<Photo[]> {
     try {
@@ -21,6 +100,10 @@ export async function getPhotos(): Promise<Photo[]> {
 export async function savePhoto(photo: Photo): Promise<void> {
     const photos = await getPhotos();
     photos.unshift(photo);
+    await fs.writeFile(STORE_PATH, JSON.stringify(photos, null, 2));
+}
+
+export async function savePhotos(photos: Photo[]): Promise<void> {
     await fs.writeFile(STORE_PATH, JSON.stringify(photos, null, 2));
 }
 

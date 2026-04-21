@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { CheckCircle2, Circle, Lock, ArrowRight, ShieldCheck, Trophy } from "lucide-react";
 import { MISSIONS, Mission } from "@/data/missions";
 import { useSoundEffects } from "@/hooks/useSoundEffects";
+import { fetchMissions } from "@/app/actions/fetchers";
+import { useEffect } from "react";
 
 interface MissionLogProps {
     onClose: () => void;
@@ -11,6 +13,12 @@ export function MissionLog({ onClose }: MissionLogProps) {
     const [missions, setMissions] = useState<Mission[]>(MISSIONS);
     const [completedCount, setCompletedCount] = useState(0);
     const { playClick, playSuccess } = useSoundEffects();
+
+    useEffect(() => {
+        fetchMissions().then(res => {
+            if (res && res.length) setMissions(res);
+        });
+    }, []);
 
     const handleAction = (mission: Mission) => {
         if (mission.status === 'LOCKED') return;

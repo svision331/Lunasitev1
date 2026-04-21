@@ -6,6 +6,8 @@ import { Shield, Globe } from 'lucide-react';
 import { TechBorder } from '@/components/ui/TechBorder';
 import { HoloCard } from '@/components/ui/HoloCard';
 import { motion, AnimatePresence } from 'framer-motion';
+import { fetchCosmos } from '@/app/actions/fetchers';
+import { useEffect } from 'react';
 
 interface CosmosMapProps {
     onClose?: () => void;
@@ -14,6 +16,13 @@ interface CosmosMapProps {
 export function CosmosMap({ onClose }: CosmosMapProps) {
     const [hoveredSystem, setHoveredSystem] = useState<StarSystem | null>(null);
     const [activeSystem, setActiveSystem] = useState<StarSystem | null>(null);
+    const [systems, setSystems] = useState<StarSystem[]>(COSMOS_SYSTEMS);
+
+    useEffect(() => {
+        fetchCosmos().then(res => {
+            if (res && res.length) setSystems(res);
+        });
+    }, []);
 
     return (
         <TechBorder className="w-full h-full" color="cyan" cornerSize={12}>
@@ -53,7 +62,7 @@ export function CosmosMap({ onClose }: CosmosMapProps) {
 
                     {/* Interactive Systems */}
                     <div className="absolute inset-0">
-                        {COSMOS_SYSTEMS.map(system => (
+                        {systems.map(system => (
                             <StarSystemNode
                                 key={system.id}
                                 system={system}

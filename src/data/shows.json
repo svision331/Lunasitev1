@@ -1,0 +1,52 @@
+[
+  {
+    "id": "show-001",
+    "type": "Artist Show",
+    "title": "Ice Giant Lover Girl Live",
+    "date": "Feb 14, 2026",
+    "time": "8:00 PM",
+    "venue": "Bushwick",
+    "ticketsLeft": 27,
+    "price": 25,
+    "soldOut": false,
+    "description": "An intimate performance featuring tracks from the Ice Giant Lover Girl era."
+  },
+  {
+    "id": "show-002",
+    "type": "Nebula Bash",
+    "title": "Cosmic Valentine Ball",
+    "date": "Feb 14, 2026",
+    "time": "10:00 PM",
+    "venue": "Secret Location",
+    "ticketsLeft": 143,
+    "price": 30,
+    "soldOut": false,
+    "theme": "Cosmic Love",
+    "description": "A themed nightclub experience where cosmic energy meets NYC nightlife."
+  },
+  {
+    "id": "show-003",
+    "type": "Artist Show",
+    "title": "STS-47 Album Release",
+    "date": "Mar 21, 2026",
+    "time": "9:00 PM",
+    "venue": "Brooklyn Steel",
+    "ticketsLeft": 412,
+    "price": 35,
+    "soldOut": false,
+    "description": "Full album performance with special visual installations."
+  },
+  {
+    "id": "show-004",
+    "type": "Nebula Bash",
+    "title": "Solar Flare: Spring Equinox",
+    "date": "Mar 20, 2026",
+    "time": "11:00 PM",
+    "venue": "Secret Location",
+    "ticketsLeft": 89,
+    "price": 40,
+    "soldOut": false,
+    "theme": "Spring Equinox",
+    "description": "Celebrate the spring equinox with cosmic beats and celestial vibes."
+  }
+]

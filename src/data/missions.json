@@ -1,0 +1,36 @@
+[
+    {
+        "id": "m1",
+        "title": "Initialize Connection",
+        "description": "Join the official Discord server to sync with the community.",
+        "status": "ACTIVE",
+        "reward": "+100 SYNC",
+        "link": "https://discord.gg/lunathelovegod",
+        "actionLabel": "Connect"
+    },
+    {
+        "id": "m2",
+        "title": "Stream \"Ice Giant\"",
+        "description": "Listen to the latest release on Spotify.",
+        "status": "ACTIVE",
+        "reward": "+200 VIBE",
+        "link": "https://open.spotify.com/artist/3bf4MuySAAvfxhHNW4du3x",
+        "actionLabel": "Stream"
+    },
+    {
+        "id": "m3",
+        "title": "Spread the Signal",
+        "description": "Share the coordinates on Instagram Stories.",
+        "status": "LOCKED",
+        "reward": "Access Key",
+        "actionLabel": "Share"
+    },
+    {
+        "id": "m4",
+        "title": "Decode the Message",
+        "description": "hidden_message_corrupted_...",
+        "status": "LOCKED",
+        "reward": "???",
+        "actionLabel": "Decrypt"
+    }
+]

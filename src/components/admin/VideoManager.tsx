@@ -144,7 +144,7 @@ function VideoFormModal({ video, onClose, onSuccess }: { video: Video | null, on
             try {
                 const thumbs = await generateThumbnails(file);
                 setGeneratedThumbnails(thumbs);
-                if (thumbs.length > 0) setSelectedThumbnail(thumbs[1]); // Default to the second one (usually better than 1st)
+                if (thumbs.length > 0) setSelectedThumbnail(thumbs[1]);
             } catch (err) {
                 console.error('Failed to generate thumbnails', err);
             } finally {

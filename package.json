@@ -11,6 +11,7 @@
   "dependencies": {
     "@ai-sdk/openai": "^3.0.12",
     "@ai-sdk/react": "^3.0.80",
+    "@next/swc-darwin-arm64": "^16.2.4",
     "ai": "^6.0.78",
     "ai-sdk-ollama": "^3.5.0",
     "clsx": "^2.1.1",

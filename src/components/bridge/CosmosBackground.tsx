@@ -1,5 +1,7 @@
 import React from 'react';
-import { COSMOS_SYSTEMS } from '@/data/cosmos';
+import { COSMOS_SYSTEMS, StarSystem } from '@/data/cosmos';
+import { fetchCosmos } from '@/app/actions/fetchers';
+import { useState, useEffect } from 'react';
 
 interface CosmosBackgroundProps {
     isPaused: boolean;
@@ -7,6 +9,13 @@ interface CosmosBackgroundProps {
 
 export const CosmosBackground = React.memo(function CosmosBackground({ isPaused }: CosmosBackgroundProps) {
     const animationState = isPaused ? 'paused' : 'running';
+    const [systems, setSystems] = useState<StarSystem[]>(COSMOS_SYSTEMS);
+
+    useEffect(() => {
+        fetchCosmos().then(res => {
+            if (res && res.length) setSystems(res);
+        });
+    }, []);
 
     return (
         <>
@@ -80,8 +89,8 @@ export const CosmosBackground = React.memo(function CosmosBackground({ isPaused 
                     <circle cx="50%" cy="50%" r="35%" fill="none" stroke="white" strokeOpacity="0.05" strokeWidth="1" strokeDasharray="8 4" />
 
                     {/* Flight Paths (Connection Lines) */}
-                    {COSMOS_SYSTEMS.map((system, i) => {
-                        const next = COSMOS_SYSTEMS[(i + 1) % COSMOS_SYSTEMS.length];
+                    {systems.map((system, i) => {
+                        const next = systems[(i + 1) % systems.length];
                         return (
                             <g key={`path-${i}`}>
                                 <path

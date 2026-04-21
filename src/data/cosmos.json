@@ -1,0 +1,137 @@
+[
+    {
+        "id": "GLD-1",
+        "name": "Golden Hour System",
+        "type": "star",
+        "coordinates": { "x": 50, "y": 50, "z": 0 },
+        "location": "System Core",
+        "metrics": {
+            "radius": "1.5 Solar",
+            "temperature": "5,800 K",
+            "mass": "1.0 M☉",
+            "luminosity": "1.0 L☉"
+        },
+        "visuals": {
+            "color": "text-amber-400",
+            "core_size": "w-6 h-6",
+            "glow_intensity": "shadow-[0_0_30px_rgba(251,191,36,0.6)]",
+            "pulse_rate": "4s"
+        },
+        "spotifyData": {
+            "trackTitle": "GOLDEN HOUR",
+            "album": "Single",
+            "streams": "12.5K",
+            "duration": "3:12",
+            "bpm": "105",
+            "key": "E Maj"
+        }
+    },
+    {
+        "id": "STS-47",
+        "name: "STS-47 Sector",
+        "type": "pulsar",
+        "coordinates": { "x": 25, "y": 30, "z": -10 },
+        "location": "Deep Space",
+        "metrics": {
+            "radius": "2.1 Solar",
+            "temperature": "12,000 K",
+            "mass": "3.5 M☉",
+            "luminosity": "200 L☉"
+        },
+        "visuals": {
+            "color": "text-cyan-400",
+            "core_size": "w-4 h-4",
+            "glow_intensity": "shadow-[0_0_20px_rgba(34,211,238,0.7)]",
+            "pulse_rate": "1s"
+        },
+        "spotifyData": {
+            "trackTitle": "STS-47",
+            "album": "Single",
+            "streams": "8.2K",
+            "duration": "2:45",
+            "bpm": "142",
+            "key": "A Min"
+        }
+    },
+    {
+        "id": "SOL-P",
+        "name": "Solar Power",
+        "type": "star",
+        "coordinates": { "x": 80, "y": 35, "z": 5 },
+        "location": "Outer Rim",
+        "metrics": {
+            "radius": "4.0 Solar",
+            "temperature": "3,500 K",
+            "mass": "0.8 M☉",
+            "luminosity": "0.6 L☉"
+        },
+        "visuals": {
+            "color": "text-red-500",
+            "core_size": "w-5 h-5",
+            "glow_intensity": "shadow-[0_0_25px_rgba(239,68,68,0.5)]",
+            "pulse_rate": "6s"
+        },
+        "spotifyData": {
+            "trackTitle": "SOLAR POWER",
+            "album": "Single",
+            "streams": "15.1K",
+            "duration": "3:05",
+            "bpm": "118",
+            "key": "F Maj"
+        }
+    },
+    {
+        "id": "HVR-C",
+        "name": "Hovercraft Nebula",
+        "type": "nebula",
+        "coordinates": { "x": 70, "y": 75, "z": 15 },
+        "location": "Nebula",
+        "metrics": {
+            "radius": "15.0 Solar",
+            "temperature": "10 K",
+            "mass": "50 M☉",
+            "luminosity": "0.1 L☉"
+        },
+        "visuals": {
+            "color": "text-purple-500",
+            "core_size": "w-8 h-8",
+            "glow_intensity": "shadow-[0_0_40px_rgba(168,85,247,0.4)]",
+            "pulse_rate": "10s"
+        },
+        "spotifyData": {
+            "trackTitle": "HOVERCRAFT",
+            "album": "Single",
+            "streams": "9.8K",
+            "duration": "2:55",
+            "bpm": "130",
+            "key": "C# Min"
+        }
+    },
+    {
+        "id": "CMF-X",
+        "name": "COMF System",
+        "type": "star",
+        "coordinates": { "x": 30, "y": 70, "z": -5 },
+        "location": "Unknown",
+        "metrics": {
+            "radius": "1.1 Solar",
+            "temperature": "6,000 K",
+            "mass": "1.0 M☉",
+            "luminosity": "1.1 L☉"
+        },
+        "visuals": {
+            "color": "text-emerald-400",
+            "core_size": "w-3 h-3",
+            "glow_intensity": "shadow-[0_0_15px_rgba(52,211,153,0.5)]",
+            "pulse_rate": "3s"
+        },
+        "spotifyData": {
+            "trackTitle": "COMF",
+            "album": "Single",
+            "streams": "11.2K",
+            "duration": "3:30",
+            "bpm": "95",
+            "key": "B Min"
+        }
+    }
+]

@@ -4,10 +4,23 @@ import { motion } from 'framer-motion';
 import { upcomingShows, getNextShow } from '@/data/shows';
 import { ShowCard, CountdownTimer } from '@/components/ui';
 import { useSoundEffects } from '@/hooks/useSoundEffects';
+import { fetchShows } from '@/app/actions/fetchers';
+import { useState, useEffect } from 'react';
+import { Show } from '@/data/shows';
 
 export function LiveShows() {
-    const nextShow = getNextShow();
+    const [shows, setShows] = useState<Show[]>(upcomingShows);
     const { playHover, playClick } = useSoundEffects();
+
+    useEffect(() => {
+        fetchShows().then(res => {
+            if (res && res.length) setShows(res);
+        });
+    }, []);
+
+    const now = new Date();
+    const futureShows = shows.filter(s => new Date(s.date) > now).sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+    const nextShow = futureShows[0] || null;
 
     return (
         <section id="live" className="section bg-slate-950/50">
@@ -63,7 +76,7 @@ export function LiveShows() {
 
                 {/* Show Cards Grid */}
                 <div className="grid md:grid-cols-2 gap-8">
-                    {upcomingShows.map((show, i) => (
+                    {shows.map((show, i) => (
                         <ShowCard key={show.id} show={show} index={i} />
                     ))}
                 </div>

@@ -14,47 +14,50 @@ interface ShardData {
     depth: number;
 }
 
-// Random shard generation
-const generateDebris = (count: number): ShardData[] => {
-    return Array.from({ length: count }).map((_, i) => ({
+const generateDebris = (count: number): ShardData[] =>
+    Array.from({ length: count }).map((_, i) => ({
         id: i,
         x: Math.random() * 100,
         y: Math.random() * 100,
         size: Math.random() * 20 + 5,
         rotation: Math.random() * 360,
-        duration: Math.random() * 20 + 20, // Slower for more "floaty" feel
+        duration: Math.random() * 20 + 20,
         delay: Math.random() * 5,
-        depth: Math.random() * 0.5 + 0.1, // Parallax depth
+        depth: Math.random() * 0.5 + 0.1,
     }));
-};
 
-function DebrisShard({ shard }: { shard: ShardData }) {
+// Single scroll listener shared across all shards
+function DebrisLayer({ shards }: { shards: ShardData[] }) {
     const { scrollY } = useScroll();
-    // distinct parallax for each shard based on its depth
-    const y = useTransform(scrollY, [0, 1000], [0, shard.depth * 300]);
 
     return (
-        <motion.div
-            style={{
-                left: `${shard.x}%`,
-                top: `${shard.y}%`,
-                width: shard.size,
-                height: shard.size,
-                y,
-                clipPath: 'polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)' // Move to style prop to avoid CSS file for now, but valid here
-            }}
-            className="absolute bg-gradient-to-tr from-cyan-500/10 to-transparent border border-white/5 backdrop-blur-[1px]"
-            animate={{
-                rotate: [shard.rotation, shard.rotation + 360],
-                y: [0, -20, 0], // Gentle float independent of parallax
-            }}
-            transition={{
-                duration: shard.duration,
-                repeat: Infinity,
-                ease: "linear",
-                delay: shard.delay,
-            }}
-        />
+        <>
+            {shards.map((shard) => {
+                // eslint-disable-next-line react-hooks/rules-of-hooks
+                const y = useTransform(scrollY, [0, 1000], [0, shard.depth * 300]);
+                return (
+                    <motion.div
+                        key={shard.id}
+                        style={{
+                            left: `${shard.x}%`,
+                            top: `${shard.y}%`,
+                            width: shard.size,
+                            height: shard.size,
+                            y,
+                            clipPath: 'polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)',
+                        }}
+                        className="absolute bg-gradient-to-tr from-cyan-500/10 to-transparent border border-white/5"
+                        animate={{ rotate: [shard.rotation, shard.rotation + 360] }}
+                        transition={{
+                            duration: shard.duration,
+                            repeat: Infinity,
+                            ease: 'linear',
+                            delay: shard.delay,
+                        }}
+                    />
+                );
+            })}
+        </>
     );
 }
 
@@ -63,17 +66,18 @@ export function SpaceDebris() {
 
     useEffect(() => {
         const isMobile = window.innerWidth < 768;
+        // Reduced from 20 → 10 desktop, 8 → 4 mobile
         const timer = setTimeout(() => {
-            setDebris(generateDebris(isMobile ? 8 : 20));
+            setDebris(generateDebris(isMobile ? 4 : 10));
         }, 0);
         return () => clearTimeout(timer);
     }, []);
 
+    if (!debris.length) return null;
+
     return (
         <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-            {debris.map((shard) => (
-                <DebrisShard key={shard.id} shard={shard} />
-            ))}
+            <DebrisLayer shards={debris} />
         </div>
     );
 }

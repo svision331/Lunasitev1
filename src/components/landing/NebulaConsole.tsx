@@ -168,9 +168,9 @@ export function NebulaConsole({ onEnter }: NebulaConsoleProps) {
             <div className="relative h-full flex items-center justify-center p-2 md:p-4">
                 {/* Main Console Frame */}
                 <motion.div
-                    initial={{ opacity: 0, scale: 0.95 }}
+                    initial={{ opacity: 0, scale: 0.97 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.8, ease: "circOut" }}
+                    transition={{ duration: 0.6, ease: "easeOut" }}
                     className="w-full max-w-6xl h-full md:h-auto max-h-full flex flex-col pointer-events-auto"
                 >
                     <TechBorder className="w-full h-full" color="cyan" cornerSize={20}>
@@ -180,9 +180,9 @@ export function NebulaConsole({ onEnter }: NebulaConsoleProps) {
 
                                 {/* Left Sidebar - Hidden on Mobile */}
                                 <motion.aside
-                                    initial={{ x: -20, opacity: 0 }}
+                                    initial={{ x: -16, opacity: 0 }}
                                     animate={{ x: 0, opacity: 1 }}
-                                    transition={{ delay: 0.2, duration: 0.5 }}
+                                    transition={{ delay: 0.15, duration: 0.4, ease: "easeOut" }}
                                     className="hidden md:flex col-span-12 md:col-span-3 flex-col gap-6"
                                 >
                                     <TechBorder className="h-auto shrink-0" color="emerald" cornerSize={12}>
@@ -290,11 +290,11 @@ export function NebulaConsole({ onEnter }: NebulaConsoleProps) {
                                                         <Vortex
                                                             backgroundColor="transparent"
                                                             rangeY={800}
-                                                            particleCount={150} // Heavy trim: 600 -> 150
-                                                            baseHue={190} // Cyan/Blue range
-                                                            rangeSpeed={0.8}
+                                                            particleCount={80}
+                                                            baseHue={190}
+                                                            rangeSpeed={0.6}
                                                             baseRadius={1}
-                                                            rangeRadius={2}
+                                                            rangeRadius={1.5}
                                                             containerClassName="w-full h-full"
                                                             className="flex items-center flex-col justify-center px-2 md:px-10 py-4 w-full h-full"
                                                         >
@@ -392,9 +392,9 @@ export function NebulaConsole({ onEnter }: NebulaConsoleProps) {
 
                                 {/* Right Sidebar - Hidden on Mobile */}
                                 <motion.aside
-                                    initial={{ x: 20, opacity: 0 }}
+                                    initial={{ x: 16, opacity: 0 }}
                                     animate={{ x: 0, opacity: 1 }}
-                                    transition={{ delay: 0.4, duration: 0.5 }}
+                                    transition={{ delay: 0.2, duration: 0.4, ease: "easeOut" }}
                                     className="hidden md:flex col-span-12 md:col-span-3 flex-col gap-6"
                                 >
                                     <HoloCard variant="default" className="p-4 h-full relative overflow-hidden flex flex-col">

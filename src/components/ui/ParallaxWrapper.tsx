@@ -1,12 +1,11 @@
 'use client';
 
 import { useRef, ReactNode } from 'react';
-import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { useSettings } from '@/context/SettingsContext';
 
 interface ParallaxWrapperProps {
     children: ReactNode;
-    /** The amount of parallax offset. Positive values move slower (pull up), negative values move faster (push down). */
     offset?: number;
     className?: string;
 }
@@ -17,20 +16,12 @@ export function ParallaxWrapper({ children, offset = 50, className = '' }: Paral
 
     const { scrollYProgress } = useScroll({
         target: ref,
-        offset: ['start end', 'end start'] // When top of element hits bottom of viewport, to when bottom of element hits top of viewport
+        offset: ['start end', 'end start'],
     });
 
-    // Apply parallax. For example, [-100, 100] means it moves from 100px up to 100px down relative to its normal position over the scroll range.
-    const rawY = useTransform(scrollYProgress, [0, 1], [-offset, offset]);
-    
-    // Add spring physics for smoother movement (especially on trackpads/scroll wheels)
-    const y = useSpring(rawY, {
-        stiffness: 100,
-        damping: 30,
-        restDelta: 0.001
-    });
+    // Direct transform — removed useSpring to save physics CPU across 8 simultaneous instances
+    const y = useTransform(scrollYProgress, [0, 1], [-offset * 0.5, offset * 0.5]);
 
-    // Disable parallax if user prefers reduced motion
     if (settings?.reducedMotion) {
         return <div className={className}>{children}</div>;
     }

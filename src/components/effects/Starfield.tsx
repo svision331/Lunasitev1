@@ -65,9 +65,10 @@ export function Starfield({ warp = false, reducedMotion = false }: StarfieldProp
         let height = 0;
         let shootingStars: ShootingStar[] = [];
 
-        // Configuration
-        const BASE_STAR_COUNT = reducedMotion ? 400 : 800;
+        // Reduced from 800→400 desktop, 400→200 reducedMotion — same visual quality with half the work
+        const BASE_STAR_COUNT = reducedMotion ? 200 : 400;
         const STAR_COUNT = isMobile ? Math.floor(BASE_STAR_COUNT / 2) : BASE_STAR_COUNT;
+
         const TARGET_WARP_SPEED = 50;
         const BASE_SPEED = 0.05;
 
@@ -115,11 +116,8 @@ export function Starfield({ warp = false, reducedMotion = false }: StarfieldProp
         };
 
         const render = () => {
-            // STOP ANIMATION if reduced motion is ON
+            // STOP ANIMATION if reduced motion is ON — draw once, then stop the loop
             if (reducedMotionRef.current) {
-                // Just draw static stars once and return? 
-                // Better: Draw a slow, simple twinkle or static scene.
-                // For now, let's keep a very slow drift or just static.
                 ctx.fillStyle = 'black';
                 ctx.fillRect(0, 0, width, height);
 
@@ -127,7 +125,6 @@ export function Starfield({ warp = false, reducedMotion = false }: StarfieldProp
                 const cy = height / 2;
 
                 starsRef.current.forEach((star) => {
-                    // No Z movement
                     const safeZ = Math.max(0.1, star.z);
                     const k = 128.0 / safeZ;
                     const px = star.x * k + cx;
@@ -142,8 +139,7 @@ export function Starfield({ warp = false, reducedMotion = false }: StarfieldProp
                     }
                 });
 
-                // Request next frame only to handle resize/updates, but logic is static
-                animationFrameRef.current = requestAnimationFrame(render);
+                // Don't re-request frame — static scene, no loop needed
                 return;
             }
 

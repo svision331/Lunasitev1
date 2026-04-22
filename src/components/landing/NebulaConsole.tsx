@@ -375,6 +375,7 @@ export function NebulaConsole({ onEnter }: NebulaConsoleProps) {
                                                     <Music size={14} className="mr-2" />
                                                     <span className="font-display">AUDIO</span>
                                                 </CyberButton>
+
                                                 <CyberButton
                                                     variant={activeModule === 'COMMS' ? 'primary' : 'ghost'}
                                                     className={`flex-1 text-[8px] sm:text-[10px] md:text-xs py-2 md:py-3 flex flex-col md:flex-row items-center justify-center min-w-0 ${activeModule === 'COMMS' ? 'text-amber-400 border-amber-500/50' : '!text-white hover:text-white/80'}`}

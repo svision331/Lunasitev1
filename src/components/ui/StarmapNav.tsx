@@ -19,10 +19,12 @@ interface StarmapNavProps {
 export function StarmapNav({ activeId, onNavigate }: StarmapNavProps) {
     const nodes: Node[] = [
         { id: 'HOME', label: 'Bridge', x: 50, y: 50 },
-        { id: 'MISSION', label: 'Mission', x: 20, y: 30 },
-        { id: 'MEDIA', label: 'Archives', x: 80, y: 30 },
-        { id: 'COMMS', label: 'Comms', x: 50, y: 80 },
+        { id: 'MISSION', label: 'Mission', x: 20, y: 25 },
+        { id: 'COSMOS', label: 'Cosmos', x: 80, y: 25 },
+        { id: 'MEDIA', label: 'Media', x: 80, y: 75 },
+        { id: 'COMMS', label: 'Comms', x: 20, y: 75 },
     ];
+
 
     return (
         <div className="relative w-full h-64 md:h-full min-h-[200px] border border-white/5 rounded-xl bg-black/40 overflow-hidden group">

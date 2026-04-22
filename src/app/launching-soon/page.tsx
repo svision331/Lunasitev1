@@ -3,7 +3,8 @@
 import { useState, useEffect, useRef } from 'react';
 
 // Set your launch date here
-const LAUNCH_DATE = new Date('2025-06-01T00:00:00');
+const LAUNCH_DATE = new Date('2026-09-01T00:00:00');
+
 
 function useCountdown(target: Date) {
     const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });

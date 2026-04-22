@@ -334,6 +334,8 @@ body {
   border: 1px solid rgba(34, 211, 238, 0.3);
   border-radius: 0.5rem;
   font-variant-numeric: tabular-nums;
+  perspective: 600px;
+  transform-style: preserve-3d;
   transition: all 0.3s var(--ease-out-expo);
 }
 

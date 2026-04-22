@@ -79,7 +79,7 @@ export function Footer() {
 
                 {/* Bottom bar */}
                 <div className="text-center text-sm text-slate-400 pt-8 border-t border-slate-700/50">
-                    <p>© {currentYear} LUNATHELOVEGOD • Nebula Enterprises</p>
+                    <p>© {currentYear} <Link href="/admin/settings" className="hover:text-cyan-400 transition-colors cursor-default">LUNATHELOVEGOD</Link> • Nebula Enterprises</p>
                     <p className="text-xs mt-2 text-slate-500">
                         Built with cosmic energy in NYC
                     </p>

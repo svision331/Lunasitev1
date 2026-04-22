@@ -16,7 +16,7 @@ export function ShowManager({ initialShows }: Props) {
 
     const addShow = () => {
         const newShow: Show = {
-            id: `show-${Date.now()}`,
+            id: `show-${crypto.randomUUID()}`,
             type: 'Artist Show',
             title: 'New Event',
             date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
@@ -24,15 +24,22 @@ export function ShowManager({ initialShows }: Props) {
             venue: 'TBA',
             ticketsLeft: 100,
             price: 25,
-            soldOut: false
+            soldOut: false,
+            description: '',
+            theme: ''
         };
         setShows([newShow, ...shows]);
     };
 
-    const removeShow = (id: string) => {
-        if(confirm('Are you sure you want to remove this show?')) {
-            setShows(shows.filter(s => s.id !== id));
-        }
+    const removeShow = async (id: string) => {
+        const updatedShows = shows.filter(s => s.id !== id);
+        setShows(updatedShows);
+        
+        setIsLoading(true);
+        const res = await updateShowsAction(updatedShows);
+        setMessage(res.success ? 'Event deleted!' : 'Failed to delete');
+        setIsLoading(false);
+        setTimeout(() => setMessage(''), 3000);
     };
 
     const updateShow = (id: string, field: keyof Show, value: any) => {
@@ -70,37 +77,97 @@ export function ShowManager({ initialShows }: Props) {
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 gap-4">
+            <div className="grid grid-cols-1 gap-6">
                 {shows.map((show) => (
-                    <div key={show.id} className="bg-slate-900 border border-white/10 rounded-xl p-4 flex flex-col gap-4">
-                        <div className="flex justify-between items-start">
-                            <input 
-                                type="text"
-                                value={show.title}
-                                onChange={(e) => updateShow(show.id, 'title', e.target.value)}
-                                className="bg-transparent border-b border-white/10 text-xl font-bold text-cyan-400 focus:border-cyan-400 outline-none w-1/2"
-                            />
-                            <button onClick={() => removeShow(show.id)} className="text-red-400 hover:text-red-300">
-                                <Trash2 size={16} />
-                            </button>
+                    <div key={show.id} className="bg-slate-900 border border-white/10 rounded-xl p-6 flex flex-col gap-6 relative group">
+                        <button 
+                            onClick={() => removeShow(show.id)} 
+                            className="absolute top-4 right-4 p-2 bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white rounded-full transition-all opacity-0 group-hover:opacity-100 shadow-lg z-50"
+                            title="Delete Event"
+                        >
+                            <Trash2 size={18} />
+                        </button>
+
+                        <div className="flex flex-col md:flex-row gap-6">
+                            <div className="flex-1 space-y-4">
+                                <div>
+                                    <label className="block text-[10px] uppercase tracking-widest text-slate-500 mb-1">Event Title</label>
+                                    <input 
+                                        type="text"
+                                        value={show.title}
+                                        onChange={(e) => updateShow(show.id, 'title', e.target.value)}
+                                        className="w-full bg-slate-800 border border-white/5 rounded px-3 py-2 text-xl font-bold text-cyan-400 focus:border-cyan-400 outline-none"
+                                    />
+                                </div>
+                                
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="block text-[10px] uppercase tracking-widest text-slate-500 mb-1">Type</label>
+                                        <select 
+                                            value={show.type} 
+                                            onChange={e => updateShow(show.id, 'type', e.target.value)}
+                                            className="w-full bg-slate-800 border border-white/5 rounded px-3 py-2 text-sm text-white outline-none focus:border-cyan-400"
+                                        >
+                                            <option value="Artist Show">Artist Show</option>
+                                            <option value="Nebula Bash">Nebula Bash</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label className="block text-[10px] uppercase tracking-widest text-slate-500 mb-1">Theme (Optional)</label>
+                                        <input 
+                                            type="text" 
+                                            value={show.theme || ''} 
+                                            onChange={e => updateShow(show.id, 'theme', e.target.value)} 
+                                            className="w-full bg-slate-800 border border-white/5 rounded px-3 py-2 text-sm text-white outline-none focus:border-cyan-400"
+                                            placeholder="None"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 flex-[1.5]">
+                                <div>
+                                    <label className="block text-[10px] uppercase tracking-widest text-slate-500 mb-1">Date</label>
+                                    <input type="text" value={show.date} onChange={e => updateShow(show.id, 'date', e.target.value)} className="w-full bg-slate-800 border border-white/5 rounded px-3 py-2 text-sm text-white outline-none focus:border-cyan-400" />
+                                </div>
+                                <div>
+                                    <label className="block text-[10px] uppercase tracking-widest text-slate-500 mb-1">Time</label>
+                                    <input type="text" value={show.time} onChange={e => updateShow(show.id, 'time', e.target.value)} className="w-full bg-slate-800 border border-white/5 rounded px-3 py-2 text-sm text-white outline-none focus:border-cyan-400" />
+                                </div>
+                                <div>
+                                    <label className="block text-[10px] uppercase tracking-widest text-slate-500 mb-1">Venue</label>
+                                    <input type="text" value={show.venue} onChange={e => updateShow(show.id, 'venue', e.target.value)} className="w-full bg-slate-800 border border-white/5 rounded px-3 py-2 text-sm text-white outline-none focus:border-cyan-400" />
+                                </div>
+                                <div>
+                                    <label className="block text-[10px] uppercase tracking-widest text-slate-500 mb-1">Tickets Left</label>
+                                    <input type="number" value={show.ticketsLeft} onChange={e => updateShow(show.id, 'ticketsLeft', parseInt(e.target.value)||0)} className="w-full bg-slate-800 border border-white/5 rounded px-3 py-2 text-sm text-white outline-none focus:border-cyan-400" />
+                                </div>
+                                <div>
+                                    <label className="block text-[10px] uppercase tracking-widest text-slate-500 mb-1">Price ($)</label>
+                                    <input type="number" value={show.price} onChange={e => updateShow(show.id, 'price', parseFloat(e.target.value)||0)} className="w-full bg-slate-800 border border-white/5 rounded px-3 py-2 text-sm text-white outline-none focus:border-cyan-400" />
+                                </div>
+                                <div className="flex items-end pb-2">
+                                    <label className="flex items-center gap-2 cursor-pointer group/sold">
+                                        <input 
+                                            type="checkbox" 
+                                            checked={show.soldOut} 
+                                            onChange={e => updateShow(show.id, 'soldOut', e.target.checked)}
+                                            className="w-4 h-4 rounded border-white/10 bg-slate-800 text-cyan-500 focus:ring-cyan-500"
+                                        />
+                                        <span className="text-[10px] uppercase tracking-widest text-slate-400 group-hover/sold:text-white transition-colors">Sold Out</span>
+                                    </label>
+                                </div>
+                            </div>
                         </div>
-                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-sm">
-                            <div>
-                                <label className="block text-xs uppercase tracking-wider text-slate-500 mb-1">Date</label>
-                                <input type="text" value={show.date} onChange={e => updateShow(show.id, 'date', e.target.value)} className="w-full bg-slate-800 rounded px-2 py-1 outline-none focus:ring-1 ring-cyan-500" />
-                            </div>
-                            <div>
-                                <label className="block text-xs uppercase tracking-wider text-slate-500 mb-1">Time</label>
-                                <input type="text" value={show.time} onChange={e => updateShow(show.id, 'time', e.target.value)} className="w-full bg-slate-800 rounded px-2 py-1 outline-none focus:ring-1 ring-cyan-500" />
-                            </div>
-                            <div>
-                                <label className="block text-xs uppercase tracking-wider text-slate-500 mb-1">Venue</label>
-                                <input type="text" value={show.venue} onChange={e => updateShow(show.id, 'venue', e.target.value)} className="w-full bg-slate-800 rounded px-2 py-1 outline-none focus:ring-1 ring-cyan-500" />
-                            </div>
-                            <div>
-                                <label className="block text-xs uppercase tracking-wider text-slate-500 mb-1">Tickets Left</label>
-                                <input type="number" value={show.ticketsLeft} onChange={e => updateShow(show.id, 'ticketsLeft', parseInt(e.target.value)||0)} className="w-full bg-slate-800 rounded px-2 py-1 outline-none focus:ring-1 ring-cyan-500" />
-                            </div>
+
+                        <div>
+                            <label className="block text-[10px] uppercase tracking-widest text-slate-500 mb-1">Description</label>
+                            <textarea 
+                                value={show.description || ''} 
+                                onChange={e => updateShow(show.id, 'description', e.target.value)} 
+                                className="w-full bg-slate-800 border border-white/5 rounded px-3 py-2 text-sm text-slate-300 outline-none focus:border-cyan-400 h-20 resize-none"
+                                placeholder="Add event description..."
+                            />
                         </div>
                     </div>
                 ))}

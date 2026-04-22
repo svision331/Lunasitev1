@@ -25,6 +25,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                         <Link href="/admin/lore" className="text-sm font-medium text-slate-300 hover:text-cyan-400 transition-colors uppercase tracking-widest">
                             Cosmic Lore
                         </Link>
+                        <Link href="/admin/knowledge" className="text-sm font-medium text-slate-300 hover:text-cyan-400 transition-colors uppercase tracking-widest">
+                            Knowledge Base
+                        </Link>
+                        <Link href="/admin/waitlist" className="text-sm font-medium text-slate-300 hover:text-cyan-400 transition-colors uppercase tracking-widest">
+                            Waitlist
+                        </Link>
                         <Link href="/admin/settings" className="text-sm font-medium text-slate-300 hover:text-cyan-400 transition-colors uppercase tracking-widest">
                             Settings
                         </Link>
@@ -51,6 +57,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 </Link>
                 <Link href="/admin/lore" className="text-xs text-slate-300 whitespace-nowrap uppercase tracking-widest">
                     Lore
+                </Link>
+                <Link href="/admin/knowledge" className="text-xs text-slate-300 whitespace-nowrap uppercase tracking-widest">
+                    Knowledge Base
+                </Link>
+                <Link href="/admin/waitlist" className="text-xs text-slate-300 whitespace-nowrap uppercase tracking-widest">
+                    Waitlist
                 </Link>
                 <Link href="/admin/settings" className="text-xs text-slate-300 whitespace-nowrap uppercase tracking-widest">
                     Settings

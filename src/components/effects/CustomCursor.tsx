@@ -3,33 +3,43 @@
 import { useEffect, useState } from 'react';
 import { motion, useMotionValue, useSpring } from 'framer-motion';
 import { useSettings } from '@/context/SettingsContext';
+import { usePathname } from 'next/navigation';
 
 export function CustomCursor() {
     const { settings } = useSettings();
+    const pathname = usePathname();
     const [hidden, setHidden] = useState(true);
     const [clicked, setClicked] = useState(false);
     const [linkHovered, setLinkHovered] = useState(false);
 
+    const isAdminPage = pathname?.startsWith('/admin');
+
     const cursorX = useMotionValue(-100);
     const cursorY = useMotionValue(-100);
 
-    const springConfig = { damping: 25, stiffness: 300, mass: 0.5 };
+    // Tightened spring configs for a snappier feel
+    const springConfig = { damping: 20, stiffness: 800, mass: 0.1 };
     const cursorXSpring = useSpring(cursorX, springConfig);
     const cursorYSpring = useSpring(cursorY, springConfig);
 
-    const springConfigSlow = { damping: 30, stiffness: 200, mass: 1.5 };
+    const springConfigSlow = { damping: 25, stiffness: 350, mass: 0.4 };
     const cursorXSpringSlow = useSpring(cursorX, springConfigSlow);
     const cursorYSpringSlow = useSpring(cursorY, springConfigSlow);
 
     useEffect(() => {
-        // Only run on client
         if (typeof window === 'undefined') return;
 
-        // Apply cursor: none globally
+        // Only apply cursor: none on non-admin pages
+        if (isAdminPage) {
+            // Ensure native cursor is restored on admin pages
+            document.documentElement.style.cursor = '';
+            document.body.style.cursor = '';
+            return;
+        }
+
+        // Apply cursor: none globally on public pages
         const style = document.createElement('style');
-        style.innerHTML = `
-          * { cursor: none !important; }
-        `;
+        style.innerHTML = `* { cursor: none !important; }`;
         document.head.appendChild(style);
 
         const moveMouse = (e: MouseEvent) => {
@@ -40,45 +50,36 @@ export function CustomCursor() {
 
         const handleMouseLeave = () => setHidden(true);
         const handleMouseEnter = () => setHidden(false);
-
         const handleMouseDown = () => setClicked(true);
         const handleMouseUp = () => setClicked(false);
 
-        // Detect hover on clickable elements
-        const handleLinkHoverEvents = () => {
-            const clickableElements = document.querySelectorAll('a, button, input-[type="submit"], input-[type="button"], [role="button"], [tabindex]:not([tabindex="-1"])');
-
-            clickableElements.forEach((el) => {
-                el.addEventListener('mouseenter', () => setLinkHovered(true));
-                el.addEventListener('mouseleave', () => setLinkHovered(false));
-            });
+        // Optimized event delegation for hover detection
+        const handleMouseOver = (e: MouseEvent) => {
+            const target = e.target as HTMLElement;
+            const isClickable = target?.closest('a, button, [role="button"], input, select, textarea');
+            setLinkHovered(!!isClickable);
         };
 
-        window.addEventListener('mousemove', moveMouse);
+        window.addEventListener('mousemove', moveMouse, { passive: true });
+        window.addEventListener('mouseover', handleMouseOver);
         document.addEventListener('mouseleave', handleMouseLeave);
         document.addEventListener('mouseenter', handleMouseEnter);
         document.addEventListener('mousedown', handleMouseDown);
         document.addEventListener('mouseup', handleMouseUp);
 
-        // Call initially and setup a mutation observer to catch dynamically added elements
-        handleLinkHoverEvents();
-        const observer = new MutationObserver(() => {
-            handleLinkHoverEvents();
-        });
-        observer.observe(document.body, { childList: true, subtree: true });
-
         return () => {
-            document.head.removeChild(style);
+            if (document.head.contains(style)) document.head.removeChild(style);
             window.removeEventListener('mousemove', moveMouse);
+            window.removeEventListener('mouseover', handleMouseOver);
             document.removeEventListener('mouseleave', handleMouseLeave);
             document.removeEventListener('mouseenter', handleMouseEnter);
             document.removeEventListener('mousedown', handleMouseDown);
             document.removeEventListener('mouseup', handleMouseUp);
-            observer.disconnect();
         };
-    }, [cursorX, cursorY, hidden]);
+    }, [cursorX, cursorY, hidden, isAdminPage]);
 
-    if (settings.reducedMotion) return null;
+    // Don't render custom cursor on admin pages or with reduced motion
+    if (settings.reducedMotion || isAdminPage) return null;
 
     return (
         <div className={`pointer-events-none fixed inset-0 z-[9999] transition-opacity duration-300 ${hidden ? 'opacity-0' : 'opacity-100'}`}>
@@ -90,13 +91,9 @@ export function CustomCursor() {
                     y: cursorYSpring,
                     translateX: '-50%',
                     translateY: '-50%',
-                    scale: clicked ? 0.7 : linkHovered ? 1.5 : 1,
-                    backgroundColor: linkHovered ? '#f472b6' : '#22d3ee', // pink-400 : cyan-400
-                    boxShadow: linkHovered
-                        ? '0 0 15px 4px rgba(244, 114, 182, 0.6)'
-                        : '0 0 10px 2px rgba(34, 211, 238, 0.5)',
+                    scale: clicked ? 0.7 : linkHovered ? 1.8 : 1,
+                    backgroundColor: linkHovered ? '#f472b6' : '#22d3ee',
                 }}
-                transition={{ type: 'spring', stiffness: 400, damping: 20 }}
             />
 
             {/* Trailing Aura */}
@@ -107,11 +104,11 @@ export function CustomCursor() {
                     y: cursorYSpringSlow,
                     translateX: '-50%',
                     translateY: '-50%',
-                    scale: clicked ? 1.5 : linkHovered ? 1.2 : 1,
+                    scale: clicked ? 1.5 : linkHovered ? 1.4 : 1,
                     borderColor: linkHovered ? 'rgba(244, 114, 182, 0.4)' : 'rgba(34, 211, 238, 0.3)',
                 }}
-                transition={{ type: 'spring', stiffness: 300, damping: 25 }}
             />
         </div>
     );
 }
+

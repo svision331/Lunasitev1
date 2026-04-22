@@ -16,7 +16,7 @@ export function LoreManager({ initialCosmos }: Props) {
 
     const addSystem = () => {
         const newSystem: StarSystem = {
-            id: `SYS-${Date.now()}`,
+            id: `SYS-${crypto.randomUUID()}`,
             name: 'New Unknown System',
             type: 'star',
             coordinates: { x: 50, y: 50, z: 0 },
@@ -28,10 +28,15 @@ export function LoreManager({ initialCosmos }: Props) {
         setSystems([newSystem, ...systems]);
     };
 
-    const removeSystem = (id: string) => {
-        if(confirm('Are you sure you want to remove this star system from the lore?')) {
-            setSystems(systems.filter(s => s.id !== id));
-        }
+    const removeSystem = async (id: string) => {
+        const updatedSystems = systems.filter(s => s.id !== id);
+        setSystems(updatedSystems);
+        
+        setIsLoading(true);
+        const res = await updateCosmosAction(updatedSystems);
+        setMessage(res.success ? 'System deleted!' : 'Failed to delete');
+        setIsLoading(false);
+        setTimeout(() => setMessage(''), 3000);
     };
 
     const updateSystem = (id: string, field: keyof StarSystem, value: any) => {
@@ -64,59 +69,72 @@ export function LoreManager({ initialCosmos }: Props) {
 
             <div className="grid grid-cols-1 gap-6">
                 {systems.map((sys) => (
-                    <div key={sys.id} className="bg-slate-900 border border-white/10 rounded-xl p-4 flex flex-col gap-4">
-                        <div className="flex justify-between items-start">
-                            <input type="text" value={sys.name} onChange={(e) => updateSystem(sys.id, 'name', e.target.value)} className="bg-transparent border-b border-white/10 text-xl font-bold text-cyan-400 focus:border-cyan-400 outline-none w-1/2" />
-                            <button onClick={() => removeSystem(sys.id)} className="text-red-400 hover:text-red-300"><Trash2 size={16} /></button>
-                        </div>
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-                            <div>
-                                <label className="block text-xs uppercase tracking-wider text-slate-500 mb-1">Type</label>
-                                <select value={sys.type} onChange={e => updateSystem(sys.id, 'type', e.target.value)} className="w-full bg-slate-800 rounded px-2 py-2 outline-none focus:ring-1 ring-cyan-500">
-                                    <option value="star">Star</option>
-                                    <option value="blackhole">Blackhole</option>
-                                    <option value="nebula">Nebula</option>
-                                    <option value="pulsar">Pulsar</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label className="block text-xs uppercase tracking-wider text-slate-500 mb-1">Real Location</label>
-                                <input type="text" value={sys.location} onChange={e => updateSystem(sys.id, 'location', e.target.value)} className="w-full bg-slate-800 rounded px-2 py-1 outline-none focus:ring-1 ring-cyan-500" />
-                            </div>
-                            <div className="col-span-2 grid grid-cols-3 gap-2">
+                    <div key={sys.id} className="bg-slate-900 border border-white/10 rounded-xl p-6 flex flex-col gap-6 relative group">
+                        <button 
+                            onClick={() => removeSystem(sys.id)} 
+                            className="absolute top-4 right-4 p-2 bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white rounded-full transition-all opacity-0 group-hover:opacity-100 shadow-lg z-50"
+                            title="Delete Star System"
+                        >
+                            <Trash2 size={18} />
+                        </button>
+
+                        <div className="flex flex-col md:flex-row gap-6">
+                            <div className="flex-1 space-y-4">
                                 <div>
-                                    <label className="block text-xs uppercase tracking-wider text-slate-500 mb-1">Nav X</label>
-                                    <input type="number" value={sys.coordinates.x} onChange={e => updateSystem(sys.id, 'coordinates', {...sys.coordinates, x: parseFloat(e.target.value)||0})} className="w-full bg-slate-800 rounded px-2 py-1 outline-none" />
+                                    <label className="block text-[10px] uppercase tracking-widest text-slate-500 mb-1">System Name</label>
+                                    <input type="text" value={sys.name} onChange={(e) => updateSystem(sys.id, 'name', e.target.value)} className="w-full bg-slate-800 border border-white/5 rounded px-3 py-2 text-xl font-bold text-cyan-400 focus:border-cyan-400 outline-none" />
+                                </div>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="block text-[10px] uppercase tracking-widest text-slate-500 mb-1">Type</label>
+                                        <select value={sys.type} onChange={e => updateSystem(sys.id, 'type', e.target.value)} className="w-full bg-slate-800 border border-white/5 rounded px-3 py-2 text-sm text-white outline-none focus:border-cyan-400">
+                                            <option value="star">Star</option>
+                                            <option value="blackhole">Blackhole</option>
+                                            <option value="nebula">Nebula</option>
+                                            <option value="pulsar">Pulsar</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label className="block text-[10px] uppercase tracking-widest text-slate-500 mb-1">Real Location</label>
+                                        <input type="text" value={sys.location} onChange={e => updateSystem(sys.id, 'location', e.target.value)} className="w-full bg-slate-800 border border-white/5 rounded px-3 py-2 text-sm text-white outline-none focus:border-cyan-400" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-3 gap-4 flex-1">
+                                <div>
+                                    <label className="block text-[10px] uppercase tracking-widest text-slate-500 mb-1">Nav X</label>
+                                    <input type="number" value={sys.coordinates.x} onChange={e => updateSystem(sys.id, 'coordinates', {...sys.coordinates, x: parseFloat(e.target.value)||0})} className="w-full bg-slate-800 border border-white/5 rounded px-3 py-2 text-sm text-white outline-none focus:border-cyan-400" />
                                 </div>
                                 <div>
-                                    <label className="block text-xs uppercase tracking-wider text-slate-500 mb-1">Nav Y</label>
-                                    <input type="number" value={sys.coordinates.y} onChange={e => updateSystem(sys.id, 'coordinates', {...sys.coordinates, y: parseFloat(e.target.value)||0})} className="w-full bg-slate-800 rounded px-2 py-1 outline-none" />
+                                    <label className="block text-[10px] uppercase tracking-widest text-slate-500 mb-1">Nav Y</label>
+                                    <input type="number" value={sys.coordinates.y} onChange={e => updateSystem(sys.id, 'coordinates', {...sys.coordinates, y: parseFloat(e.target.value)||0})} className="w-full bg-slate-800 border border-white/5 rounded px-3 py-2 text-sm text-white outline-none focus:border-cyan-400" />
                                 </div>
                                 <div>
-                                    <label className="block text-xs uppercase tracking-wider text-slate-500 mb-1">Nav Z</label>
-                                    <input type="number" value={sys.coordinates.z} onChange={e => updateSystem(sys.id, 'coordinates', {...sys.coordinates, z: parseFloat(e.target.value)||0})} className="w-full bg-slate-800 rounded px-2 py-1 outline-none" />
+                                    <label className="block text-[10px] uppercase tracking-widest text-slate-500 mb-1">Nav Z</label>
+                                    <input type="number" value={sys.coordinates.z} onChange={e => updateSystem(sys.id, 'coordinates', {...sys.coordinates, z: parseFloat(e.target.value)||0})} className="w-full bg-slate-800 border border-white/5 rounded px-3 py-2 text-sm text-white outline-none focus:border-cyan-400" />
                                 </div>
                             </div>
                         </div>
 
-                        <div className="border-t border-white/5 pt-4 mt-2">
-                            <label className="block text-xs uppercase tracking-wider text-slate-500 mb-3">Spotify Sync Data</label>
-                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                        <div className="border-t border-white/5 pt-4">
+                            <label className="block text-[10px] uppercase tracking-widest text-slate-500 mb-3">Spotify Sync Data</label>
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                                 <div>
-                                    <span className="text-xs text-slate-600">Track</span>
-                                    <input type="text" value={sys.spotifyData.trackTitle} onChange={e => updateSystem(sys.id, 'spotifyData', {...sys.spotifyData, trackTitle: e.target.value})} className="w-full bg-slate-800 rounded px-2 py-1 mt-1 outline-none" />
+                                    <span className="text-[10px] text-slate-600 uppercase">Track</span>
+                                    <input type="text" value={sys.spotifyData.trackTitle} onChange={e => updateSystem(sys.id, 'spotifyData', {...sys.spotifyData, trackTitle: e.target.value})} className="w-full bg-slate-800 border border-white/5 rounded px-2 py-1 mt-1 text-sm text-white outline-none" />
                                 </div>
                                 <div>
-                                    <span className="text-xs text-slate-600">Album</span>
-                                    <input type="text" value={sys.spotifyData.album} onChange={e => updateSystem(sys.id, 'spotifyData', {...sys.spotifyData, album: e.target.value})} className="w-full bg-slate-800 rounded px-2 py-1 mt-1 outline-none" />
+                                    <span className="text-[10px] text-slate-600 uppercase">Album</span>
+                                    <input type="text" value={sys.spotifyData.album} onChange={e => updateSystem(sys.id, 'spotifyData', {...sys.spotifyData, album: e.target.value})} className="w-full bg-slate-800 border border-white/5 rounded px-2 py-1 mt-1 text-sm text-white outline-none" />
                                 </div>
                                 <div>
-                                    <span className="text-xs text-slate-600">BPM</span>
-                                    <input type="text" value={sys.spotifyData.bpm} onChange={e => updateSystem(sys.id, 'spotifyData', {...sys.spotifyData, bpm: e.target.value})} className="w-full bg-slate-800 rounded px-2 py-1 mt-1 outline-none" />
+                                    <span className="text-[10px] text-slate-600 uppercase">BPM</span>
+                                    <input type="text" value={sys.spotifyData.bpm} onChange={e => updateSystem(sys.id, 'spotifyData', {...sys.spotifyData, bpm: e.target.value})} className="w-full bg-slate-800 border border-white/5 rounded px-2 py-1 mt-1 text-sm text-white outline-none" />
                                 </div>
                                 <div>
-                                    <span className="text-xs text-slate-600">Key</span>
-                                    <input type="text" value={sys.spotifyData.key} onChange={e => updateSystem(sys.id, 'spotifyData', {...sys.spotifyData, key: e.target.value})} className="w-full bg-slate-800 rounded px-2 py-1 mt-1 outline-none" />
+                                    <span className="text-[10px] text-slate-600 uppercase">Key</span>
+                                    <input type="text" value={sys.spotifyData.key} onChange={e => updateSystem(sys.id, 'spotifyData', {...sys.spotifyData, key: e.target.value})} className="w-full bg-slate-800 border border-white/5 rounded px-2 py-1 mt-1 text-sm text-white outline-none" />
                                 </div>
                             </div>
                         </div>

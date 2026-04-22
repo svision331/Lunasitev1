@@ -16,10 +16,15 @@ export function PhotoManager({ initialPhotos }: Props) {
     const [message, setMessage] = useState('');
     const [uploading, setUploading] = useState(false);
 
-    const removePhoto = (id: string) => {
-        if(confirm('Delete this photo?')) {
-            setPhotos(photos.filter(p => p.id !== id));
-        }
+    const removePhoto = async (id: string) => {
+        const updatedPhotos = photos.filter(p => p.id !== id);
+        setPhotos(updatedPhotos);
+        
+        setIsLoading(true);
+        const res = await updatePhotosAction(updatedPhotos);
+        setMessage(res.success ? 'Photo deleted!' : 'Failed to delete');
+        setIsLoading(false);
+        setTimeout(() => setMessage(''), 3000);
     };
 
     const updatePhoto = (id: string, field: keyof Photo, value: any) => {
@@ -71,26 +76,38 @@ export function PhotoManager({ initialPhotos }: Props) {
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {photos.map((photo) => (
-                    <div key={photo.id} className="bg-slate-900 border border-white/10 rounded-xl p-4 flex gap-4">
+                    <div key={photo.id} className="bg-slate-900 border border-white/10 rounded-xl p-4 flex gap-4 relative group">
+                        <button 
+                            onClick={() => removePhoto(photo.id)} 
+                            className="absolute top-2 right-2 p-1.5 bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white rounded-full transition-all opacity-0 group-hover:opacity-100 shadow-lg z-10"
+                            title="Delete Photo"
+                        >
+                            <Trash2 size={14} />
+                        </button>
+                        
                         <div className="w-1/3 aspect-square bg-slate-800 rounded relative overflow-hidden">
                             <img src={photo.url} alt={photo.caption} className="object-cover w-full h-full" />
                         </div>
-                        <div className="flex-1 flex flex-col justify-between">
-                            <div className="space-y-2">
-                                <input type="text" value={photo.caption} onChange={(e) => updatePhoto(photo.id, 'caption', e.target.value)} className="w-full bg-slate-800 border-none text-sm text-cyan-400 p-1 rounded outline-none" placeholder="Caption" />
-                                <input type="text" value={photo.user} onChange={(e) => updatePhoto(photo.id, 'user', e.target.value)} className="w-full bg-slate-800 border-none text-xs text-slate-400 p-1 rounded outline-none" placeholder="Username" />
-                                <div className="flex gap-2">
-                                    <select value={photo.aspectRatio || 'square'} onChange={e => updatePhoto(photo.id, 'aspectRatio', e.target.value)} className="bg-slate-800 text-xs p-1 rounded outline-none text-white">
+                        <div className="flex-1 flex flex-col justify-between py-1">
+                            <div className="space-y-3">
+                                <div>
+                                    <label className="block text-[10px] uppercase tracking-widest text-slate-500 mb-1">Caption</label>
+                                    <input type="text" value={photo.caption} onChange={(e) => updatePhoto(photo.id, 'caption', e.target.value)} className="w-full bg-slate-800 border border-white/5 text-sm text-cyan-400 px-2 py-1 rounded outline-none focus:border-cyan-400" placeholder="Caption" />
+                                </div>
+                                <div>
+                                    <label className="block text-[10px] uppercase tracking-widest text-slate-500 mb-1">User</label>
+                                    <input type="text" value={photo.user} onChange={(e) => updatePhoto(photo.id, 'user', e.target.value)} className="w-full bg-slate-800 border border-white/5 text-xs text-slate-400 px-2 py-1 rounded outline-none focus:border-cyan-400" placeholder="Username" />
+                                </div>
+                                <div>
+                                    <label className="block text-[10px] uppercase tracking-widest text-slate-500 mb-1">Aspect Ratio</label>
+                                    <select value={photo.aspectRatio || 'square'} onChange={e => updatePhoto(photo.id, 'aspectRatio', e.target.value)} className="w-full bg-slate-800 border border-white/5 text-xs p-1 rounded outline-none text-white focus:border-cyan-400">
                                         <option value="square">Square</option>
                                         <option value="portrait">Portrait</option>
                                         <option value="landscape">Landscape</option>
                                     </select>
                                 </div>
-                            </div>
-                            <div className="flex justify-end mt-2">
-                                <button onClick={() => removePhoto(photo.id)} className="text-red-400 hover:text-red-300"><Trash2 size={16} /></button>
                             </div>
                         </div>
                     </div>

@@ -16,19 +16,26 @@ export function MissionManager({ initialMissions }: Props) {
 
     const addMission = () => {
         const newMission: Mission = {
-            id: `m-${Date.now()}`,
-            title: 'New Event',
-            description: 'Event description',
+            id: `m-${crypto.randomUUID()}`,
+            title: 'New Mission',
+            description: 'Mission description',
             status: 'ACTIVE',
-            reward: 'Bonus'
+            reward: 'Bonus',
+            link: '',
+            actionLabel: 'Connect'
         };
         setMissions([newMission, ...missions]);
     };
 
-    const removeMission = (id: string) => {
-        if(confirm('Are you sure you want to remove this event?')) {
-            setMissions(missions.filter(m => m.id !== id));
-        }
+    const removeMission = async (id: string) => {
+        const updatedMissions = missions.filter(m => m.id !== id);
+        setMissions(updatedMissions);
+        
+        setIsLoading(true);
+        const res = await updateMissionsAction(updatedMissions);
+        setMessage(res.success ? 'Mission deleted!' : 'Failed to delete');
+        setIsLoading(false);
+        setTimeout(() => setMessage(''), 3000);
     };
 
     const updateMission = (id: string, field: keyof Mission, value: any) => {
@@ -39,7 +46,7 @@ export function MissionManager({ initialMissions }: Props) {
         setIsLoading(true);
         setMessage('');
         const res = await updateMissionsAction(missions);
-        setMessage(res.success ? 'Events updated!' : (res.error || 'Failed to save'));
+        setMessage(res.success ? 'Missions updated!' : (res.error || 'Failed to save'));
         setIsLoading(false);
         setTimeout(() => setMessage(''), 3000);
     };
@@ -48,7 +55,7 @@ export function MissionManager({ initialMissions }: Props) {
         <div className="space-y-6">
             <div className="flex justify-between items-center bg-slate-900 border border-white/10 p-4 rounded-xl">
                 <button onClick={addMission} className="flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded text-cyan-400 font-bold transition-colors">
-                    <Plus size={16} /> Add New Event
+                    <Plus size={16} /> Add New Mission
                 </button>
                 <div className="flex items-center gap-4">
                     <span className="text-cyan-400 text-sm font-bold">{message}</span>
@@ -59,30 +66,54 @@ export function MissionManager({ initialMissions }: Props) {
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 gap-4">
+            <div className="grid grid-cols-1 gap-6">
                 {missions.map((mission) => (
-                    <div key={mission.id} className="bg-slate-900 border border-white/10 rounded-xl p-4 flex flex-col gap-4">
-                        <div className="flex justify-between items-start">
-                            <input type="text" value={mission.title} onChange={(e) => updateMission(mission.id, 'title', e.target.value)} className="bg-transparent border-b border-white/10 text-xl font-bold text-cyan-400 focus:border-cyan-400 outline-none w-1/2" />
-                            <button onClick={() => removeMission(mission.id)} className="text-red-400 hover:text-red-300"><Trash2 size={16} /></button>
+                    <div key={mission.id} className="bg-slate-900 border border-white/10 rounded-xl p-6 flex flex-col gap-6 relative group">
+                        <button 
+                            onClick={() => removeMission(mission.id)} 
+                            className="absolute top-4 right-4 p-2 bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white rounded-full transition-all opacity-0 group-hover:opacity-100 shadow-lg z-50"
+                            title="Delete Mission"
+                        >
+                            <Trash2 size={18} />
+                        </button>
+
+                        <div className="flex flex-col md:flex-row gap-6">
+                            <div className="flex-1 space-y-4">
+                                <div>
+                                    <label className="block text-[10px] uppercase tracking-widest text-slate-500 mb-1">Mission Title</label>
+                                    <input type="text" value={mission.title} onChange={(e) => updateMission(mission.id, 'title', e.target.value)} className="w-full bg-slate-800 border border-white/5 rounded px-3 py-2 text-xl font-bold text-cyan-400 focus:border-cyan-400 outline-none" />
+                                </div>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="block text-[10px] uppercase tracking-widest text-slate-500 mb-1">Status</label>
+                                        <select value={mission.status} onChange={e => updateMission(mission.id, 'status', e.target.value)} className="w-full bg-slate-800 border border-white/5 rounded px-3 py-2 text-sm text-white outline-none focus:border-cyan-400">
+                                            <option value="ACTIVE">ACTIVE</option>
+                                            <option value="LOCKED">LOCKED</option>
+                                            <option value="COMPLETED">COMPLETED</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label className="block text-[10px] uppercase tracking-widest text-slate-500 mb-1">Reward</label>
+                                        <input type="text" value={mission.reward} onChange={e => updateMission(mission.id, 'reward', e.target.value)} className="w-full bg-slate-800 border border-white/5 rounded px-3 py-2 text-sm text-white outline-none focus:border-cyan-400" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="flex-1 space-y-4">
+                                <div>
+                                    <label className="block text-[10px] uppercase tracking-widest text-slate-500 mb-1">External Link (Optional)</label>
+                                    <input type="text" value={mission.link || ''} onChange={e => updateMission(mission.id, 'link', e.target.value)} className="w-full bg-slate-800 border border-white/5 rounded px-3 py-2 text-sm text-white outline-none focus:border-cyan-400" placeholder="https://..." />
+                                </div>
+                                <div>
+                                    <label className="block text-[10px] uppercase tracking-widest text-slate-500 mb-1">Button Label</label>
+                                    <input type="text" value={mission.actionLabel || ''} onChange={e => updateMission(mission.id, 'actionLabel', e.target.value)} className="w-full bg-slate-800 border border-white/5 rounded px-3 py-2 text-sm text-white outline-none focus:border-cyan-400" placeholder="Connect / Stream / etc" />
+                                </div>
+                            </div>
                         </div>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
-                            <div>
-                                <label className="block text-xs uppercase tracking-wider text-slate-500 mb-1">Status</label>
-                                <select value={mission.status} onChange={e => updateMission(mission.id, 'status', e.target.value)} className="w-full bg-slate-800 rounded px-2 py-2 outline-none focus:ring-1 ring-cyan-500">
-                                    <option value="ACTIVE">ACTIVE</option>
-                                    <option value="LOCKED">LOCKED</option>
-                                    <option value="COMPLETED">COMPLETED</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label className="block text-xs uppercase tracking-wider text-slate-500 mb-1">Reward</label>
-                                <input type="text" value={mission.reward} onChange={e => updateMission(mission.id, 'reward', e.target.value)} className="w-full bg-slate-800 rounded px-2 py-1 outline-none focus:ring-1 ring-cyan-500" />
-                            </div>
-                            <div className="sm:col-span-2">
-                                <label className="block text-xs uppercase tracking-wider text-slate-500 mb-1">Description</label>
-                                <textarea value={mission.description} onChange={e => updateMission(mission.id, 'description', e.target.value)} className="w-full bg-slate-800 rounded px-2 py-2 outline-none focus:ring-1 ring-cyan-500 h-20" />
-                            </div>
+
+                        <div>
+                            <label className="block text-[10px] uppercase tracking-widest text-slate-500 mb-1">Description</label>
+                            <textarea value={mission.description} onChange={e => updateMission(mission.id, 'description', e.target.value)} className="w-full bg-slate-800 border border-white/5 rounded px-3 py-2 text-sm text-slate-300 outline-none focus:border-cyan-400 h-20 resize-none" placeholder="Explain the mission..." />
                         </div>
                     </div>
                 ))}

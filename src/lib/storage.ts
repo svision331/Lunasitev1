@@ -11,6 +11,7 @@ const SETTINGS_STORE_PATH = path.join(process.cwd(), 'src/data/settings.json');
 const MISSIONS_STORE_PATH = path.join(process.cwd(), 'src/data/missions.json');
 const SHOWS_STORE_PATH = path.join(process.cwd(), 'src/data/shows.json');
 const COSMOS_STORE_PATH = path.join(process.cwd(), 'src/data/cosmos.json');
+const KNOWLEDGE_STORE_PATH = path.join(process.cwd(), 'src/data/knowledge.md');
 
 import { Mission } from '@/data/missions';
 import { Show } from '@/data/shows';
@@ -161,4 +162,16 @@ export async function saveVideoFile(file: File): Promise<string> {
 
     await fs.writeFile(filePath, buffer);
     return `/uploads/videos/${fileName}`;
+}
+
+export async function getKnowledge(): Promise<string> {
+    try {
+        return await fs.readFile(KNOWLEDGE_STORE_PATH, 'utf-8');
+    } catch {
+        return '';
+    }
+}
+
+export async function saveKnowledge(content: string): Promise<void> {
+    await fs.writeFile(KNOWLEDGE_STORE_PATH, content);
 }

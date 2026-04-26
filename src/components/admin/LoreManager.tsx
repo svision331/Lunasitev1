@@ -39,6 +39,7 @@ export function LoreManager({ initialCosmos }: Props) {
         setTimeout(() => setMessage(''), 3000);
     };
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const updateSystem = (id: string, field: keyof StarSystem, value: any) => {
         setSystems(systems.map(s => s.id === id ? { ...s, [field]: value } : s));
     };

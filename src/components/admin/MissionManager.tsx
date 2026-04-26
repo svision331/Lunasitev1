@@ -38,6 +38,7 @@ export function MissionManager({ initialMissions }: Props) {
         setTimeout(() => setMessage(''), 3000);
     };
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const updateMission = (id: string, field: keyof Mission, value: any) => {
         setMissions(missions.map(m => m.id === id ? { ...m, [field]: value } : m));
     };

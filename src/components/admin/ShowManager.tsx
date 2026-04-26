@@ -42,6 +42,7 @@ export function ShowManager({ initialShows }: Props) {
         setTimeout(() => setMessage(''), 3000);
     };
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const updateShow = (id: string, field: keyof Show, value: any) => {
         setShows(shows.map(s => s.id === id ? { ...s, [field]: value } : s));
     };

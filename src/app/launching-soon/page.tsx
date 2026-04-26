@@ -37,10 +37,13 @@ function CountdownUnit({ value, label }: { value: number; label: string }) {
 
     useEffect(() => {
         if (prev.current !== value) {
-            setFlip(true);
-            const t = setTimeout(() => setFlip(false), 600);
+            const t1 = setTimeout(() => setFlip(true), 0);
+            const t2 = setTimeout(() => setFlip(false), 600);
             prev.current = value;
-            return () => clearTimeout(t);
+            return () => {
+                clearTimeout(t1);
+                clearTimeout(t2);
+            };
         }
     }, [value]);
 
@@ -226,7 +229,7 @@ export default function LaunchingSoonPage() {
                             </svg>
                         </div>
                         <p className="text-cyan-300 font-mono text-sm uppercase tracking-widest mb-1">Transmission Received</p>
-                        <p className="text-slate-400 font-mono text-xs">You're on the list. We'll notify you when the signal goes live.</p>
+                        <p className="text-slate-400 font-mono text-xs">You&apos;re on the list. We&apos;ll notify you when the signal goes live.</p>
                     </div>
                 ) : (
                     <form onSubmit={handleSubmit} className="w-full max-w-md">

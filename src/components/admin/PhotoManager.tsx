@@ -27,6 +27,7 @@ export function PhotoManager({ initialPhotos }: Props) {
         setTimeout(() => setMessage(''), 3000);
     };
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const updatePhoto = (id: string, field: keyof Photo, value: any) => {
         setPhotos(photos.map(p => p.id === id ? { ...p, [field]: value } : p));
     };

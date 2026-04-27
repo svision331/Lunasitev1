@@ -11,6 +11,8 @@
   "dependencies": {
     "@ai-sdk/openai": "^3.0.12",
     "@ai-sdk/react": "^3.0.80",
+    "@upstash/redis": "^1.37.0",
+    "@vercel/blob": "^2.3.3",
     "ai": "^6.0.78",
     "ai-sdk-ollama": "^3.5.0",
     "clsx": "^2.1.1",

@@ -123,6 +123,7 @@ function StarField() {
 export default function LaunchingSoonPage() {
     const { days, hours, minutes, seconds } = useCountdown(LAUNCH_DATE);
     const [email, setEmail] = useState('');
+    const [instagram, setInstagram] = useState('');
     const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
     const [errorMsg, setErrorMsg] = useState('');
 
@@ -130,6 +131,11 @@ export default function LaunchingSoonPage() {
         e.preventDefault();
         if (!email || !email.includes('@')) {
             setErrorMsg('Please enter a valid email address.');
+            setStatus('error');
+            return;
+        }
+        if (!instagram) {
+            setErrorMsg('Please enter your Instagram handle.');
             setStatus('error');
             return;
         }
@@ -141,12 +147,13 @@ export default function LaunchingSoonPage() {
             const res = await fetch('/api/waitlist', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email }),
+                body: JSON.stringify({ email, instagram }),
             });
 
             if (res.ok) {
                 setStatus('success');
                 setEmail('');
+                setInstagram('');
             } else {
                 const data = await res.json();
                 setErrorMsg(data.error || 'Something went wrong. Try again.');
@@ -236,25 +243,40 @@ export default function LaunchingSoonPage() {
                         <p className="text-slate-400 font-mono text-xs uppercase tracking-[0.2em] mb-4">
                             Join the mailing list — be first to enter the void
                         </p>
-                        <div className="flex flex-col sm:flex-row gap-3">
-                            <div className="flex-1 relative">
-                                <input
-                                    id="waitlist-email"
-                                    type="email"
-                                    value={email}
-                                    onChange={e => { setEmail(e.target.value); setStatus('idle'); setErrorMsg(''); }}
-                                    placeholder="your@email.com"
-                                    disabled={status === 'loading'}
-                                    className="w-full bg-white/5 border border-white/10 focus:border-cyan-400/60 rounded-xl px-4 py-3 text-white font-mono text-sm placeholder-slate-600 outline-none transition-all duration-300 hover:border-white/20"
-                                    style={{ backdropFilter: 'blur(12px)' }}
-                                    autoComplete="email"
-                                />
+                        <div className="flex flex-col gap-3">
+                            <div className="flex flex-col sm:flex-row gap-3">
+                                <div className="flex-1 relative">
+                                    <input
+                                        id="waitlist-email"
+                                        type="email"
+                                        value={email}
+                                        onChange={e => { setEmail(e.target.value); setStatus('idle'); setErrorMsg(''); }}
+                                        placeholder="your@email.com"
+                                        disabled={status === 'loading'}
+                                        className="w-full bg-white/5 border border-white/10 focus:border-cyan-400/60 rounded-xl px-4 py-3 text-white font-mono text-sm placeholder-slate-600 outline-none transition-all duration-300 hover:border-white/20"
+                                        style={{ backdropFilter: 'blur(12px)' }}
+                                        autoComplete="email"
+                                    />
+                                </div>
+                                <div className="flex-1 relative">
+                                    <input
+                                        id="waitlist-instagram"
+                                        type="text"
+                                        value={instagram}
+                                        onChange={e => { setInstagram(e.target.value); setStatus('idle'); setErrorMsg(''); }}
+                                        placeholder="@instagram"
+                                        disabled={status === 'loading'}
+                                        className="w-full bg-white/5 border border-white/10 focus:border-cyan-400/60 rounded-xl px-4 py-3 text-white font-mono text-sm placeholder-slate-600 outline-none transition-all duration-300 hover:border-white/20"
+                                        style={{ backdropFilter: 'blur(12px)' }}
+                                        autoComplete="username"
+                                    />
+                                </div>
                             </div>
                             <button
                                 type="submit"
                                 id="waitlist-submit"
                                 disabled={status === 'loading'}
-                                className="glow-button px-6 py-3 rounded-xl text-xs font-mono uppercase tracking-widest text-white disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+                                className="glow-button w-full px-6 py-3 rounded-xl text-xs font-mono uppercase tracking-widest text-white disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
                             >
                                 <span>
                                     {status === 'loading' ? (

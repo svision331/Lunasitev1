@@ -6,6 +6,7 @@ const WAITLIST_PATH = path.join(process.cwd(), 'src/data/waitlist.json');
 
 interface WaitlistEntry {
     email: string;
+    instagram: string;
     signedUpAt: string;
 }
 
@@ -24,11 +25,14 @@ async function saveWaitlist(entries: WaitlistEntry[]): Promise<void> {
 
 export async function POST(req: NextRequest) {
     try {
-        const { email } = await req.json();
+        const { email, instagram } = await req.json();
 
         // Basic validation
         if (!email || typeof email !== 'string') {
             return NextResponse.json({ error: 'Email is required.' }, { status: 400 });
+        }
+        if (!instagram || typeof instagram !== 'string') {
+            return NextResponse.json({ error: 'Instagram handle is required.' }, { status: 400 });
         }
 
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -45,7 +49,11 @@ export async function POST(req: NextRequest) {
         }
 
         // Add new entry
-        waitlist.push({ email: normalizedEmail, signedUpAt: new Date().toISOString() });
+        waitlist.push({ 
+            email: normalizedEmail, 
+            instagram: instagram.trim(),
+            signedUpAt: new Date().toISOString() 
+        });
         await saveWaitlist(waitlist);
 
         return NextResponse.json({ success: true, message: 'You have been added to the waitlist.' });

@@ -2,21 +2,7 @@ import { Mail, Users } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 
-interface WaitlistEntry {
-    email: string;
-    signedUpAt: string;
-}
-
-async function getWaitlist(): Promise<WaitlistEntry[]> {
-    try {
-        const { readFile } = await import('fs/promises');
-        const path = await import('path');
-        const data = await readFile(path.join(process.cwd(), 'src/data/waitlist.json'), 'utf-8');
-        return JSON.parse(data);
-    } catch {
-        return [];
-    }
-}
+import { getWaitlist } from '@/lib/storage';
 
 export default async function AdminWaitlistPage() {
     const entries = await getWaitlist();
@@ -45,19 +31,21 @@ export default async function AdminWaitlistPage() {
                 </div>
             ) : (
                 <div className="bg-slate-900 border border-white/10 rounded-xl overflow-hidden">
-                    <div className="grid grid-cols-[1fr_auto] gap-4 px-6 py-3 border-b border-white/5 text-[10px] uppercase tracking-widest text-slate-500 font-mono">
+                    <div className="grid grid-cols-[1fr_1fr_auto] gap-4 px-6 py-3 border-b border-white/5 text-[10px] uppercase tracking-widest text-slate-500 font-mono">
                         <span>Email</span>
+                        <span>Instagram</span>
                         <span>Signed Up</span>
                     </div>
                     <div className="divide-y divide-white/5">
                         {entries.map((entry, idx) => (
-                            <div key={idx} className="grid grid-cols-[1fr_auto] gap-4 px-6 py-4 hover:bg-white/2 transition-colors items-center">
+                            <div key={idx} className="grid grid-cols-[1fr_1fr_auto] gap-4 px-6 py-4 hover:bg-white/2 transition-colors items-center">
                                 <div className="flex items-center gap-3">
                                     <div className="w-7 h-7 rounded-full bg-cyan-400/10 border border-cyan-400/20 flex items-center justify-center flex-shrink-0">
                                         <Mail size={12} className="text-cyan-400" />
                                     </div>
                                     <span className="text-white font-mono text-sm">{entry.email}</span>
                                 </div>
+                                <span className="text-white font-mono text-sm">{entry.instagram || 'N/A'}</span>
                                 <span className="text-slate-500 font-mono text-xs whitespace-nowrap">
                                     {new Date(entry.signedUpAt).toLocaleDateString('en-US', {
                                         month: 'short', day: 'numeric', year: 'numeric',

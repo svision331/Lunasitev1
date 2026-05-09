@@ -1,38 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
-import fs from 'fs/promises';
-import path from 'path';
-
-const WAITLIST_PATH = path.join(process.cwd(), 'src/data/waitlist.json');
-
-interface WaitlistEntry {
-    email: string;
-    instagram: string;
-    signedUpAt: string;
-}
-
-async function getWaitlist(): Promise<WaitlistEntry[]> {
-    try {
-        const data = await fs.readFile(WAITLIST_PATH, 'utf-8');
-        return JSON.parse(data);
-    } catch {
-        return [];
-    }
-}
-
-async function saveWaitlist(entries: WaitlistEntry[]): Promise<void> {
-    await fs.writeFile(WAITLIST_PATH, JSON.stringify(entries, null, 2));
-}
+import { getWaitlist, saveWaitlist } from '@/lib/storage';
 
 export async function POST(req: NextRequest) {
     try {
         const { email, instagram } = await req.json();
 
         // Basic validation
-        if (!email || typeof email !== 'string') {
-            return NextResponse.json({ error: 'Email is required.' }, { status: 400 });
+        if (!email || typeof email !== 'string' || email.length > 254) {
+            return NextResponse.json({ error: 'Valid email is required.' }, { status: 400 });
         }
-        if (!instagram || typeof instagram !== 'string') {
-            return NextResponse.json({ error: 'Instagram handle is required.' }, { status: 400 });
+        if (!instagram || typeof instagram !== 'string' || instagram.length > 30) {
+            return NextResponse.json({ error: 'Valid Instagram handle is required.' }, { status: 400 });
         }
 
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -63,12 +41,4 @@ export async function POST(req: NextRequest) {
     }
 }
 
-export async function GET() {
-    // Admin endpoint to view all waitlist entries
-    try {
-        const waitlist = await getWaitlist();
-        return NextResponse.json({ count: waitlist.length, entries: waitlist });
-    } catch {
-        return NextResponse.json({ error: 'Failed to fetch waitlist.' }, { status: 500 });
-    }
-}
+

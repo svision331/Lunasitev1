@@ -16,6 +16,7 @@ const MISSIONS_STORE_PATH = path.join(process.cwd(), 'src/data/missions.json');
 const SHOWS_STORE_PATH = path.join(process.cwd(), 'src/data/shows.json');
 const COSMOS_STORE_PATH = path.join(process.cwd(), 'src/data/cosmos.json');
 const KNOWLEDGE_STORE_PATH = path.join(process.cwd(), 'src/data/knowledge.md');
+const WAITLIST_STORE_PATH = path.join(process.cwd(), 'src/data/waitlist.json');
 const UPLOAD_DIR = path.join(process.cwd(), 'public/uploads/gallery');
 const VIDEO_UPLOAD_DIR = path.join(process.cwd(), 'public/uploads/videos');
 
@@ -227,6 +228,34 @@ export async function saveKnowledge(content: string): Promise<void> {
         await redis.set('knowledge', content);
     } else {
         await fs.writeFile(KNOWLEDGE_STORE_PATH, content);
+    }
+}
+
+// Waitlist
+export interface WaitlistEntry {
+    email: string;
+    instagram: string;
+    signedUpAt: string;
+}
+
+export async function getWaitlist(): Promise<WaitlistEntry[]> {
+    if (redis) {
+        const data = await redis.get<WaitlistEntry[]>('waitlist');
+        if (data) return data;
+    }
+    try {
+        const data = await fs.readFile(WAITLIST_STORE_PATH, 'utf-8');
+        return JSON.parse(data);
+    } catch {
+        return [];
+    }
+}
+
+export async function saveWaitlist(entries: WaitlistEntry[]): Promise<void> {
+    if (redis) {
+        await redis.set('waitlist', entries);
+    } else {
+        await fs.writeFile(WAITLIST_STORE_PATH, JSON.stringify(entries, null, 2));
     }
 }
 

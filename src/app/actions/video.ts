@@ -52,7 +52,7 @@ export async function uploadVideoAction(formData: FormData) {
         await saveVideo(newVideo);
         revalidatePath('/');
         return { success: true, video: newVideo };
-    } catch (error) {
+    } catch (error: unknown) {
         console.error('Upload video error:', error);
         return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
     }
@@ -63,7 +63,7 @@ export async function updateVideoAction(id: string, updates: Partial<Video>) {
         await updateVideo(id, updates);
         revalidatePath('/');
         return { success: true };
-    } catch (error) {
+    } catch (error: unknown) {
         console.error('Update video error:', error);
         return { success: false, error: 'Failed to update video' };
     }
@@ -74,7 +74,7 @@ export async function deleteVideoAction(id: string) {
         await deleteVideo(id);
         revalidatePath('/');
         return { success: true };
-    } catch (error) {
+    } catch (error: unknown) {
         console.error('Delete video error:', error);
         return { success: false, error: 'Failed to delete video' };
     }
